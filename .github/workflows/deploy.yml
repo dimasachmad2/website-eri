@@ -64,7 +64,8 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./out/
-          # Docroot domain enviroresources.co.id (relatif ke home FTP u161175783).
-          server-dir: domains/enviroresources.co.id/public_html/
+          # FTP u161175783 mendarat DI DALAM public_html, jadi naik 1 level (../)
+          # untuk mencapai docroot asli domain: <home>/domains/enviroresources.co.id/public_html/
+          server-dir: ../domains/enviroresources.co.id/public_html/
           # Saat dijalankan manual dengan clean=true: hapus isi folder tujuan dulu.
           dangerous-clean-slate: ${{ inputs.clean == true }}
