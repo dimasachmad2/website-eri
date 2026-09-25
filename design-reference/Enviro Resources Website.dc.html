@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"><script src="./image-slot.js"></script><style>body{margin:0;background:#fff;font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink,#0f1f15);-webkit-font-smoothing:antialiased}a{color:var(--brand,#23862a);text-decoration:none}a:hover{color:var(--brandD,#16601b)}*{box-sizing:border-box}input,select,textarea{font-family:inherit}@keyframes waPop{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}@keyframes waMsg{from{opacity:0;transform:translateY(8px) scale(.9)}to{opacity:1;transform:none}}@keyframes waDot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}@keyframes tMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}@keyframes mBar{from{width:0}to{width:100%}}@keyframes mNode{0%{box-shadow:0 0 0 0 rgba(var(--bright-rgb,79,194,85),.5)}70%{box-shadow:0 0 0 14px rgba(var(--bright-rgb,79,194,85),0)}100%{box-shadow:0 0 0 0 rgba(var(--bright-rgb,79,194,85),0)}}@keyframes waPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.55)}70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}</style></helmet>
+<div style="{{ rootStyle }}">
+<header style="position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line,#e6ece8)">
+  <div style="max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <a href="#" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:12px;color:var(--ink,#0f1f15)" style-hover="color:var(--ink,#0f1f15)"><img src="assets/logo-mark.png" alt="" style="height: 36px; display: block"><div style="display:flex;flex-direction:column;gap:3px;line-height:1"><div style="font-size:16px;font-weight:800;letter-spacing:-.01em;white-space:nowrap">PT <span style="color:#28992e">ENVIRO RESOURCES</span></div><div style="display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:.42em;color:var(--ink,#0f1f15)">INDONESIA</div></div></a>
+    <nav style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+      <a href="#" onClick="{{ navHome.go }}" style="padding:8px 11px;border-radius:6px;font-size:14px;font-weight:600;color:{{ navHome.color }};background:{{ navHome.bg }}" style-hover="background:var(--tint,#f2f6f3)">{{ t.nav.home }}</a>
+      <div onMouseEnter="{{ aboutEnter }}" onMouseLeave="{{ aboutLeave }}" style="position:relative">
+        <a href="#" onClick="{{ aboutToggle }}" style="display:flex;align-items:center;gap:6px;padding:8px 11px;border-radius:6px;font-size:14px;font-weight:600;color:{{ navAbout.color }};background:{{ navAbout.bg }}" style-hover="background:var(--tint,#f2f6f3)">{{ t.nav.about }}<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3.5l3 3 3-3"></path></svg></a>
+        <sc-if value="{{ aboutOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;padding-top:8px;min-width:230px;z-index:40">
+            <div style="background:#fff;border:1px solid var(--line,#e6ece8);border-radius:10px;box-shadow:0 16px 40px rgba(var(--dark-rgb,14,42,26),.14);padding:6px;display:flex;flex-direction:column;animation:waMsg .18s ease-out both">
+              <sc-for list="{{ aboutSub }}" as="n" hint-placeholder-count="3">
+                <a href="#" onClick="{{ n.go }}" style="padding:10px 12px;border-radius:6px;font-size:14px;font-weight:600;color:{{ n.color }};background:{{ n.bg }}" style-hover="background:var(--tint,#f2f6f3)">{{ n.label }}</a>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+        <a href="#" onClick="{{ n.go }}" style="padding:8px 11px;border-radius:6px;font-size:14px;font-weight:600;color:{{ n.color }};background:{{ n.bg }}" style-hover="background:var(--tint,#f2f6f3)">{{ n.label }}</a>
+      </sc-for>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;background:var(--tint,#eef3ef);border-radius:8px;padding:3px;font-size:12px;font-weight:700">
+        <a href="#" onClick="{{ setID }}" style="padding:6px 10px;border-radius:6px;background:{{ idBg }};color:{{ idFg }}">ID</a>
+        <a href="#" onClick="{{ setEN }}" style="padding:6px 10px;border-radius:6px;background:{{ enBg }};color:{{ enFg }}">EN</a>
+      </div>
+      <a href="#" onClick="{{ goContact }}" style="padding:12px 18px;background:var(--brand,#23862a);color:#fff;border-radius:8px;font-weight:700;font-size:14px" style-hover="background:var(--brandD,#1b6e21);color:#fff">{{ t.cta }}</a>
+    </div>
+  </div>
+</header>
+
+<main style="flex:1">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <sc-if value="{{ heroOverlay }}" hint-placeholder-val="{{ true }}">
+    <section style="position:relative;min-height:600px;background:var(--dark,#0e2a1a);overflow:hidden;display:flex;align-items:center">
+      <div style="position:absolute;inset:0"><image-slot id="hero-bg" shape="rect" placeholder="Foto hero: area industri / IPAL" src="assets/photos/1774789599304-cca1e1ffbb95.jpg" credit="Photo by Subhash Chand on Unsplash" credit-href="https://unsplash.com/@hsubhash" style="width:100%;height:100%"></image-slot></div>
+      <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(var(--dark-rgb,9,30,18),.95) 0%,rgba(var(--dark-rgb,9,30,18),.75) 50%,rgba(var(--dark-rgb,9,30,18),.15) 100%);-webkit-mask-image:linear-gradient(to top,transparent 0,#000 72px);mask-image:linear-gradient(to top,transparent 0,#000 72px)"></div>
+      <div style="position:relative;pointer-events:none;width:100%;max-width:1280px;margin:0 auto;padding:96px 32px 112px">
+        <div style="max-width:700px;color:#fff">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--eyebrowD,#8fdc93);margin-bottom:24px">{{ t.hero.eyebrow }}</div>
+          <h1 style="font-size:clamp(40px,5.4vw,64px);line-height:1.04;font-weight:800;letter-spacing:-.025em;margin:0 0 24px;text-wrap:pretty">Solutions for a Greener Tomorrow</h1>
+          <p style="font-size:18px;line-height:1.6;color:var(--ondark,#c9d8ce);margin:0 0 36px;max-width:600px;text-wrap:pretty">{{ t.hero.sub }}</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;pointer-events:auto">
+            <a href="#" onClick="{{ goContact }}" style="padding:16px 24px;background:var(--bright,#4fc255);color:var(--dark,#0e2a1a);border-radius:8px;font-weight:700" style-hover="background:var(--bright,#6fd474);color:var(--dark,#0e2a1a)">{{ t.hero.b1 }}</a>
+            <a href="assets/Company-Profile-PT-ERI-2026.pdf" download="Company Profile PT ERI 2026.pdf" style="padding:16px 24px;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;font-weight:600" style-hover="background:rgba(255,255,255,.08);color:#fff">{{ t.hero.b2 }}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+  <sc-if value="{{ heroSplit }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:1280px;margin:0 auto;padding:72px 32px 120px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:56px;align-items:center">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--brand,#23862a);margin-bottom:24px"><span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span>{{ t.hero.eyebrow }}</div>
+        <h1 style="font-size:clamp(40px,5vw,60px);line-height:1.04;font-weight:800;letter-spacing:-.025em;margin:0 0 24px">Solutions for a Greener Tomorrow</h1>
+        <p style="font-size:18px;line-height:1.6;color:var(--muted,#56675c);margin:0 0 36px;text-wrap:pretty">{{ t.hero.sub }}</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="#" onClick="{{ goContact }}" style="padding:16px 24px;background:var(--brand,#23862a);color:#fff;border-radius:8px;font-weight:700" style-hover="background:var(--brandD,#1b6e21);color:#fff">{{ t.hero.b1 }}</a>
+          <a href="assets/Company-Profile-PT-ERI-2026.pdf" download="Company Profile PT ERI 2026.pdf" style="padding:16px 24px;border:1px solid var(--line,#cfdad2);color:var(--ink,#0f1f15);border-radius:8px;font-weight:600">{{ t.hero.b2 }}</a>
+        </div>
+      </div>
+      <div style="height:520px;border-radius:14px;overflow:hidden"><image-slot id="hero-split" shape="rect" placeholder="Foto hero: area industri / IPAL" src="assets/photos/1774789599304-cca1e1ffbb95.jpg" credit="Photo by Subhash Chand on Unsplash" credit-href="https://unsplash.com/@hsubhash" style="width:100%;height:100%"></image-slot></div>
+    </section>
+  </sc-if>
+
+  <div style="max-width:1280px;margin:48px auto 0;padding:0 32px;position:relative">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(var(--dark-rgb,14,42,26),.12);overflow:hidden">
+      <sc-for list="{{ t.focus }}" as="f" hint-placeholder-count="3">
+        <div style="padding:32px;border-right:1px solid var(--line,#e6ece8)"><div style="width:52px;height:52px;border-radius:12px;background:var(--tint,#eef6ef);display:flex;align-items:center;justify-content:center;margin-bottom:18px"><img src="{{ f.icon }}" alt="" style="width:26px;height:26px;display:block"></div><div style="font-size:19px;font-weight:700;margin-bottom:8px">{{ f.t }}</div><div style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ f.d }}</div></div>
+      </sc-for>
+    </div>
+  </div>
+
+  <section style="max-width:1280px;margin:0 auto;padding:72px 32px 0">
+    <div style="display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--muted2,#8a9a90);flex:none">{{ t.clients.label }}</div>
+      <div style="flex:1;min-width:280px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px">
+        <sc-for list="{{ clientSlots }}" as="c" hint-placeholder-count="6">
+          <div style="height:72px;border:1px solid var(--line,#e1e8e3);border-radius:10px;padding:12px;filter:grayscale(1);opacity:.85" style-hover="filter:none;opacity:1"><image-slot id="client-logo-{{ $index }}" shape="rect" fit="contain" placeholder="Logo klien" style="width:100%;height:100%"></image-slot></div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1280px;margin:0 auto;padding:112px 32px 0">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:40px">
+      <div><div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.home.svcEyebrow }}</div><h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0">{{ t.home.svcTitle }}</h2></div>
+      <a href="#" onClick="{{ goServices }}" style="font-weight:700">{{ t.home.svcAll }} →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+      <sc-for list="{{ allServices }}" as="sv" hint-placeholder-count="12">
+        <a href="#" onClick="{{ goServices }}" style="padding:24px;border:1px solid var(--line,#e1e8e3);border-radius:10px;min-height:128px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;color:var(--ink,#0f1f15)" style-hover="border-color:var(--brand,#23862a);color:var(--ink,#0f1f15)">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted2,#8a9a90)">{{ sv.cat }}</div>
+          <div style="font-size:17px;font-weight:700;line-height:1.3">{{ sv.t }}</div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="max-width:1280px;margin:0 auto;padding:112px 32px 0">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:64px;align-items:stretch">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.method.eyebrow }}</div>
+        <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 16px;line-height:1.1">{{ t.method.title }}</h2>
+        <p style="font-size:15px;line-height:1.6;color:var(--muted,#56675c);margin:0 0 32px;max-width:480px">{{ t.method.note }}</p>
+        <div onMouseEnter="{{ mEnter }}" onMouseLeave="{{ mLeave }}" style="border-top:1px solid var(--line,#e1e8e3)">
+          <sc-for list="{{ mSteps }}" as="s" hint-placeholder-count="5">
+            <div onClick="{{ s.pick }}" style="cursor:pointer;padding-top:18px;border-bottom:1px solid var(--line,#e1e8e3)">
+              <div style="display:flex;align-items:center;gap:16px">
+                <div style="width:42px;height:42px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ s.badgeBg }};transition:background .4s"><img src="{{ s.iconSrc }}" alt="" style="width:20px;height:20px;display:block"></div>
+                <div style="flex:1;font-size:18px;font-weight:700;color:{{ s.titleColor }};transition:color .3s">{{ s.t }}</div>
+                <div style="font-size:13px;font-weight:700;color:var(--muted2,#8a9a90)">{{ s.n }}</div>
+              </div>
+              <div style="display:grid;grid-template-rows:{{ s.rows }};transition:grid-template-rows .45s ease"><div style="overflow:hidden"><p style="margin:0;padding:10px 0 0 58px;font-size:15px;line-height:1.6;color:var(--muted,#56675c)">{{ s.d }}</p></div></div>
+              <div style="height:2px;margin-top:18px;overflow:hidden"><div onAnimationEnd="{{ mNext }}" style="height:100%;background:var(--brand,#23862a);width:{{ s.bar }};animation:{{ s.anim }};animation-play-state:{{ mPlay }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="position:relative;min-height:560px;border-radius:16px;overflow:hidden;background:var(--dark,#0e2a1a)">
+        <sc-for list="{{ mSteps }}" as="s" hint-placeholder-count="1">
+          <div style="position:absolute;inset:0;opacity:{{ s.imgOp }};transform:scale({{ s.scale }});transition:opacity .7s ease,transform 1.4s ease"><image-slot id="method-{{ $index }}" shape="rect" placeholder="Foto tahap" src="{{ s.img }}" credit="{{ s.credit }}" credit-href="{{ s.href }}" style="width:100%;height:100%"></image-slot></div>
+        </sc-for>
+        <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(var(--dark-rgb,9,30,18),.92) 0%,rgba(var(--dark-rgb,9,30,18),.3) 50%,rgba(var(--dark-rgb,9,30,18),0) 75%)"></div>
+        <div style="position:absolute;left:32px;right:32px;bottom:32px;color:#fff;pointer-events:none;display:flex;justify-content:space-between;align-items:end;gap:24px">
+          <div><div style="font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--eyebrowD,#8fdc93);margin-bottom:8px">{{ mLabel }}</div><div style="font-size:clamp(22px,2.4vw,30px);font-weight:800;line-height:1.15;max-width:420px">{{ mTitle }}</div></div>
+          <div style="font-size:56px;font-weight:800;line-height:1;white-space:nowrap">{{ mNum }}<span style="font-size:20px;color:var(--ondark,#a9c2b0)"> / 05</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1280px;margin:0 auto;padding:112px 32px 0">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:40px">
+      <div><div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.home.pfEyebrow }}</div><h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0">{{ t.home.pfTitle }}</h2></div>
+      <a href="#" onClick="{{ goPortfolio }}" style="font-weight:700">{{ t.home.pfAll }} →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+      <sc-for list="{{ homeProjects }}" as="p" hint-placeholder-count="3">
+        <div>
+          <div style="height:260px;margin-bottom:16px"><image-slot id="proj-{{ p.key }}" radius="10" placeholder="Foto proyek" src="{{ p.img }}" credit="{{ p.credit }}" credit-href="{{ p.href }}" style="width:100%;height:100%"></image-slot></div>
+          <div style="font-size:12px;font-weight:700;color:var(--eyebrow,#23862a);margin-bottom:6px">{{ p.tag }}</div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:4px">{{ p.t }}</div>
+          <div style="font-size:14px;color:var(--muted2,#8a9a90)">{{ p.loc }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="margin:112px 0 0;background:var(--tint,#f2f6f3)">
+    <div style="max-width:1280px;margin:0 auto;padding:96px 32px 0">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;margin-bottom:40px">
+        <div style="display:flex;flex-direction:column;align-items:center"><div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px"><span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span>{{ t.testi.eyebrow }}<span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span></div><h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0">{{ t.testi.title }}</h2></div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.04em;padding:6px 10px;border-radius:999px;background:#fff;color:var(--muted,#56675c);border:1px solid var(--line,#e1e8e3)">{{ t.testi.status }}</div>
+      </div>
+    </div>
+    <div style="overflow:hidden;padding-bottom:96px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%)">
+      <div style="display:flex;gap:20px;padding-right:20px;width:max-content;animation:tMarquee 60s linear infinite" style-hover="animation-play-state:paused">
+        <sc-for list="{{ testis }}" as="q" hint-placeholder-count="3">
+          <figure style="margin:0;width:380px;flex:none;padding:32px;border-radius:14px;background:{{ q.bg }};color:{{ q.fg }};display:flex;flex-direction:column;gap:28px;border:1px solid {{ q.border }}">
+            <svg width="36" height="28" viewBox="0 0 36 28" fill="#4fc255"><path d="M0 28V16C0 7 5 1.5 14 0l1.5 4C10 5.5 7.5 9 7.5 13H14v15H0zm21 0V16c0-9 5-14.5 14-16l1 4c-5.5 1.5-8 5-8 9h6.5v15H21z"></path></svg>
+            <blockquote style="margin:0;flex:1;font-size:17px;line-height:1.6;font-weight:500;text-wrap:pretty">{{ q.text }}</blockquote>
+            <figcaption style="display:flex;align-items:center;gap:14px;padding-top:24px;border-top:1px solid {{ q.border }}">
+              <div style="width:48px;height:48px;flex:none"><image-slot id="{{ q.slot }}" shape="circle" placeholder="Foto" style="width:100%;height:100%"></image-slot></div>
+              <div><div style="font-size:15px;font-weight:700">{{ q.name }}</div><div style="font-size:13px;color:{{ q.sub }};margin-top:2px">{{ q.role }}</div></div>
+            </figcaption>
+          </figure>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1280px;margin:0 auto;padding:112px 32px 0">
+    <div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:40px">
+        <div><div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.sectors.eyebrow }}</div><h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0">{{ t.sectors.title }}</h2></div>
+        <p style="font-size:15px;line-height:1.6;color:var(--muted,#56675c);margin:0;max-width:560px">{{ t.sectors.note }}</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">
+        <sc-for list="{{ t.sectors.list }}" as="s" hint-placeholder-count="8">
+          <div style="position:relative;height:220px;border-radius:12px;overflow:hidden;background:var(--dark,#0e2a1a)">
+            <image-slot id="sector-{{ $index }}" shape="rect" placeholder="Foto sektor" src="{{ s.img }}" credit="{{ s.credit }}" credit-href="{{ s.href }}" style="width:100%;height:100%"></image-slot>
+            <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(var(--dark-rgb,9,30,18),.92) 0%,rgba(var(--dark-rgb,9,30,18),.35) 55%,rgba(var(--dark-rgb,9,30,18),.05) 100%)"></div>
+            <div style="position:absolute;left:20px;right:20px;bottom:18px;pointer-events:none;color:#fff">
+              <div style="font-size:12px;font-weight:700;color:var(--soft,#8fdc93);letter-spacing:.06em;margin-bottom:6px">{{ s.n }}</div>
+              <div style="font-size:18px;font-weight:700;line-height:1.3">{{ s.t }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="position:relative;margin:112px 0 0;overflow:hidden">
+    <div style="position:relative;max-width:1280px;margin:0 auto;padding:0 32px">
+    <div style="display:flex;flex-direction:column;gap:48px;max-width:920px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px"><span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span>FAQ<span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span></div>
+        <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 16px;line-height:1.1">{{ t.faq.title }}</h2>
+        <p style="font-size:15px;line-height:1.6;color:var(--muted,#56675c);margin:0;max-width:560px;text-wrap:pretty">{{ t.faq.sub }}</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="5">
+          <div style="border-radius:12px;background:{{ f.bg }};border:1px solid {{ f.border }};box-shadow:{{ f.shadow }};transition:background .4s,border-color .4s,box-shadow .4s;overflow:hidden">
+            <button onClick="{{ f.toggle }}" style="width:100%;display:flex;align-items:center;gap:24px;padding:24px 28px;background:none;border:0;cursor:pointer;text-align:left;font-family:inherit">
+              <span style="flex:none;width:44px;font-size:14px;font-weight:800;letter-spacing:.04em;color:{{ f.numColor }};transition:color .4s">{{ f.n }}</span>
+              <span style="flex:1;font-size:18px;font-weight:700;line-height:1.35;color:{{ f.qColor }};transition:color .4s">{{ f.q }}</span>
+              <span style="width:40px;height:40px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ f.iconBg }};transform:rotate({{ f.rot }});transition:transform .3s ease"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="{{ f.iconFg }}" stroke-width="2.2" stroke-linecap="round"><path d="M7 1v12M1 7h12"></path></svg></span>
+            </button>
+            <div style="display:grid;grid-template-rows:{{ f.rows }};transition:grid-template-rows .45s ease"><div style="overflow:hidden"><p style="margin:0;padding:0 92px 28px 96px;font-size:15px;line-height:1.75;color:{{ f.aColor }};opacity:{{ f.aOp }};transform:translateY({{ f.aY }});transition:opacity .45s .08s,transform .45s .08s">{{ f.a }}</p></div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ notHome }}" hint-placeholder-val="{{ false }}">
+  <section style="position:relative;background:var(--dark,#0e2a1a);color:#fff;overflow:hidden">
+    <div style="position:absolute;top:0;right:0;bottom:0;width:58%;-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 45%);mask-image:linear-gradient(90deg,transparent 0%,#000 45%)"><image-slot id="page-hero-{{ ph.key }}" shape="rect" placeholder="Foto header halaman" src="{{ ph.img }}" credit="{{ ph.credit }}" credit-href="{{ ph.href }}" style="width:100%;height:100%"></image-slot></div>
+    <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(var(--dark-rgb,9,30,18),1) 35%,rgba(var(--dark-rgb,9,30,18),.55) 70%,rgba(var(--dark-rgb,9,30,18),.25) 100%)"></div>
+    <div style="position:absolute;left:0;top:0;bottom:0;width:45%;pointer-events:none;background-image:radial-gradient(rgba(var(--soft-rgb,143,220,147),.14) 1px,transparent 1px);background-size:22px 22px;-webkit-mask-image:linear-gradient(90deg,#000,transparent);mask-image:linear-gradient(90deg,#000,transparent)"></div>
+    <div style="position:relative;pointer-events:none;max-width:1280px;margin:0 auto;padding:96px 32px 88px;min-height:420px;display:flex;flex-direction:column;justify-content:center">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:28px;pointer-events:auto"><a href="#" onClick="{{ goHome }}" style="color:var(--ondark,#c9d8ce)" style-hover="color:#fff">{{ t.nav.home }}</a><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--soft,#8fdc93)" stroke-width="1.6"><path d="M4.5 2.5L8 6l-3.5 3.5"></path></svg><span style="color:var(--soft,#8fdc93)">{{ ph.crumb }}</span></div>
+      <h1 style="font-size:clamp(36px,4.6vw,56px);font-weight:800;letter-spacing:-.025em;line-height:1.06;margin:0 0 22px;max-width:760px;text-wrap:balance">{{ ph.title }}</h1>
+      <div style="display:flex;gap:18px;max-width:640px"><span style="flex:none;width:3px;border-radius:2px;background:var(--bright,#4fc255)"></span><p style="font-size:18px;line-height:1.6;color:var(--ondark,#c9d8ce);margin:0;text-wrap:pretty">{{ ph.sub }}</p></div>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:88px 32px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px;align-items:center">
+    <div style="height:440px"><image-slot id="about-office" radius="14" placeholder="Foto kantor / tim" src="assets/photos/1517048676732-d65bc937f952.jpg" credit="Photo by Dylan Gillis on Unsplash" credit-href="https://unsplash.com/@mainermedia" style="width:100%;height:100%"></image-slot></div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">PT ENVIRO RESOURCES INDONESIA</div>
+      <p style="font-size:24px;line-height:1.45;font-weight:600;margin:0 0 20px;text-wrap:pretty">{{ t.about.intro }}</p>
+      <p style="font-size:16px;line-height:1.7;color:var(--muted,#56675c);margin:0">{{ t.about.approach }}</p>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:20px">
+      <div style="background:var(--dark,#0e2a1a);color:#fff;border-radius:14px;padding:48px">
+        <div style="font-size:13px;font-weight:700;color:var(--soft,#8fdc93);letter-spacing:.06em;margin-bottom:20px">{{ t.about.visionL }}</div>
+        <p style="font-size:28px;line-height:1.35;font-weight:700;margin:0;text-wrap:pretty">{{ t.about.vision }}</p>
+      </div>
+      <div style="background:var(--tint,#f2f6f3);border-radius:14px;padding:48px">
+        <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.about.missionL }}</div>
+        <sc-for list="{{ t.about.mission }}" as="m" hint-placeholder-count="4">
+          <div style="display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line,#d7e2da)"><span style="font-weight:800;color:var(--brand,#23862a);flex:none;width:28px">{{ m.n }}</span><span style="font-size:16px;line-height:1.55">{{ m.t }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.about.principlesL }}</div>
+    <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 40px">{{ t.about.principlesT }}</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <sc-for list="{{ t.about.principles }}" as="p" hint-placeholder-count="4">
+        <div style="padding:28px;border:1px solid var(--line,#e1e8e3);border-radius:12px"><div style="font-size:13px;font-weight:700;color:var(--brand,#23862a);margin-bottom:28px">{{ p.n }}</div><div style="font-size:19px;font-weight:700;margin-bottom:8px">{{ p.t }}</div><div style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ p.d }}</div></div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:40px">
+      <div><div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px"><span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span>{{ t.about.valuesL }}</div><h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0;max-width:640px;line-height:1.12">{{ t.about.valuesT }}</h2></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px">
+      <sc-for list="{{ values }}" as="v" hint-placeholder-count="5">
+        <div style="padding:32px 28px;border:1px solid var(--line,#e1e8e3);border-radius:14px;background:#fff;display:flex;flex-direction:column;gap:14px" style-hover="background:var(--tint,#f2f6f3)">
+          <div style="width:48px;height:48px;border-radius:12px;background:var(--tint,#eef6ef);display:flex;align-items:center;justify-content:center"><img src="{{ v.icon }}" alt="" style="width:24px;height:24px;display:block"></img></div>
+          <div style="font-size:18px;font-weight:700;margin-top:8px">{{ v.t }}</div>
+          <div style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ v.d }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="background:var(--tint,#f2f6f3);border-radius:16px;padding:56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:48px;align-items:start">
+      <div><div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px"><span style="width:28px;height:2px;background:var(--eyebrow,#23862a)"></span>{{ t.about.compL }}</div><h2 style="font-size:clamp(28px,3vw,36px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.15">{{ t.about.compT }}</h2></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+        <sc-for list="{{ t.about.comp }}" as="c" hint-placeholder-count="4">
+          <div style="padding:24px;background:#fff;border-radius:12px"><div style="font-size:17px;font-weight:700;margin-bottom:8px">{{ c.t }}</div><div style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ c.d }}</div></div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isServices }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:88px 32px 0">
+    <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.svc.docL }}</div>
+    <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 12px">{{ t.svc.docT }}</h2>
+    <p style="font-size:16px;line-height:1.6;color:var(--muted,#56675c);margin:0 0 36px;max-width:720px">{{ t.svc.docNote }}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+      <sc-for list="{{ t.svc.docs }}" as="d" hint-placeholder-count="6">
+        <div style="padding:28px;border:1px solid var(--line,#e1e8e3);border-radius:12px;display:flex;gap:20px;align-items:baseline"><span style="font-size:14px;font-weight:800;color:var(--brand,#23862a)">{{ d.n }}</span><span style="font-size:18px;font-weight:700;line-height:1.35">{{ d.t }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.svc.techL }}</div>
+    <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 36px">{{ t.svc.techT }}</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:0 40px">
+      <sc-for list="{{ t.svc.tech }}" as="d" hint-placeholder-count="6">
+        <div style="padding:24px 0;border-top:1px solid var(--line,#e1e8e3)"><div style="font-size:18px;font-weight:700;margin-bottom:6px">{{ d.t }}</div><div style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ d.d }}</div></div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="background:var(--dark,#0e2a1a);color:#fff;border-radius:14px;padding:56px">
+      <div style="font-size:13px;font-weight:700;color:var(--soft,#8fdc93);letter-spacing:.06em;margin-bottom:12px">{{ t.fw.eyebrow }}</div>
+      <h2 style="font-size:clamp(28px,3vw,36px);font-weight:800;letter-spacing:-.02em;margin:0 0 12px">{{ t.fw.title }}</h2>
+      <p style="font-size:16px;line-height:1.6;color:var(--ondark,#a9c2b0);margin:0 0 40px;max-width:720px">{{ t.fw.sub }}</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+        <div style="border:1px solid var(--dark2,#2c5238);border-radius:10px;padding:24px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--soft,#8fdc93);margin-bottom:16px">{{ t.fw.baseL }}</div>
+          <div style="font-size:19px;font-weight:700;margin-bottom:6px">PP 22 Tahun 2021</div>
+          <div style="font-size:13px;color:var(--ondark,#a9c2b0);line-height:1.55;margin-bottom:18px">{{ t.fw.pp }}</div>
+          <div style="font-size:19px;font-weight:700;margin-bottom:6px">Permen LHK 4 Tahun 2021</div>
+          <div style="font-size:13px;color:var(--ondark,#a9c2b0);line-height:1.55">{{ t.fw.permen }}</div>
+        </div>
+        <div style="border:1px solid var(--dark2,#2c5238);border-radius:10px;padding:24px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--soft,#8fdc93);margin-bottom:16px">{{ t.fw.objL }}</div>
+          <sc-for list="{{ t.fw.obj }}" as="o" hint-placeholder-count="4"><div style="font-size:15px;padding:10px 0;border-bottom:1px solid var(--dark2,#1f3f2a)">{{ o }}</div></sc-for>
+        </div>
+        <div style="border:1px solid var(--dark2,#2c5238);border-radius:10px;padding:24px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--soft,#8fdc93);margin-bottom:16px">{{ t.fw.resL }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="padding:8px 14px;border:1px solid var(--bright,#4fc255);border-radius:999px;font-size:14px;font-weight:600">AMDAL</span><span style="padding:8px 14px;border:1px solid var(--bright,#4fc255);border-radius:999px;font-size:14px;font-weight:600">UKL-UPL</span><span style="padding:8px 14px;border:1px solid var(--bright,#4fc255);border-radius:999px;font-size:14px;font-weight:600">SPPL</span><span style="padding:8px 14px;border:1px solid var(--bright,#4fc255);border-radius:999px;font-size:14px;font-weight:600">DELH</span><span style="padding:8px 14px;border:1px solid var(--bright,#4fc255);border-radius:999px;font-size:14px;font-weight:600">DPLH</span>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:14px;line-height:1.65;color:var(--ondark,#a9c2b0);margin:32px 0 0;padding-top:24px;border-top:1px solid var(--dark2,#2c5238)"><b style="color:#fff">{{ t.fw.prinL }}</b>: {{ t.fw.prin }}</p>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:20px">
+    <div style="padding:40px;border:1px solid var(--line,#e1e8e3);border-radius:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">KBLI 42203</div>
+      <h3 style="font-size:26px;font-weight:800;letter-spacing:-.01em;margin:0 0 14px">{{ t.infra.title }}</h3>
+      <p style="font-size:15px;line-height:1.65;color:var(--muted,#56675c);margin:0 0 24px">{{ t.infra.scope }}</p>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">{{ t.infra.focusL }}</div>
+      <sc-for list="{{ t.infra.focus }}" as="f" hint-placeholder-count="5"><div style="display:flex;gap:12px;padding:9px 0;font-size:15px;border-bottom:1px solid var(--tint,#eef3ef)"><span style="color:var(--brand,#23862a);font-weight:800">✓</span>{{ f }}</div></sc-for>
+    </div>
+    <div style="padding:40px;border:1px solid var(--line,#e1e8e3);border-radius:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">KBLI 38110 · 38219</div>
+      <h3 style="font-size:26px;font-weight:800;letter-spacing:-.01em;margin:0 0 24px">{{ t.nonb3.title }}</h3>
+      <sc-for list="{{ t.nonb3.items }}" as="i" hint-placeholder-count="2">
+        <div style="padding:20px 0;border-top:1px solid var(--line,#e1e8e3)"><div style="font-size:17px;font-weight:700;margin-bottom:8px">{{ i.t }}</div><div style="font-size:15px;line-height:1.65;color:var(--muted,#56675c)">{{ i.d }}</div></div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.method.eyebrow }}</div>
+    <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 40px">{{ t.method.title }}</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border-top:2px solid var(--ink,#0f1f15)">
+      <sc-for list="{{ t.method.steps }}" as="s" hint-placeholder-count="5">
+        <div style="padding:24px 24px 0 0"><div style="font-size:36px;font-weight:800;color:var(--brand,#23862a);margin-bottom:14px">{{ s.n }}</div><div style="font-size:17px;font-weight:700;margin-bottom:8px">{{ s.t }}</div><div style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ s.d }}</div></div>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isPortfolio }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:64px 32px 0">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+        <a href="#" onClick="{{ f.pick }}" style="padding:10px 18px;border-radius:999px;font-size:14px;font-weight:700;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</a>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:32px 20px">
+      <sc-for list="{{ shownProjects }}" as="p" hint-placeholder-count="6">
+        <div>
+          <div style="height:240px;margin-bottom:16px"><image-slot id="proj-{{ p.key }}" radius="10" placeholder="Foto proyek" src="{{ p.img }}" credit="{{ p.credit }}" credit-href="{{ p.href }}" style="width:100%;height:100%"></image-slot></div>
+          <div style="font-size:12px;font-weight:700;color:var(--eyebrow,#23862a);margin-bottom:6px">{{ p.tag }}</div>
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px">{{ p.t }}</div>
+          <div style="font-size:14px;color:var(--muted2,#8a9a90)">{{ p.loc }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isLegal }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:88px 32px 0">
+    <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">KBLI</div>
+    <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 36px">{{ t.legal.kbliT }}</h2>
+    <div style="border:1px solid var(--line,#e1e8e3);border-radius:12px;overflow:hidden">
+      <sc-for list="{{ t.legal.kbli }}" as="k" hint-placeholder-count="5">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 32px;padding:24px 28px;border-bottom:1px solid var(--line,#e1e8e3)">
+          <span style="font-size:22px;font-weight:800;color:var(--brand,#23862a)">{{ k.c }}</span>
+          <span style="font-size:16px;font-weight:700;line-height:1.4">{{ k.t }}</span>
+          <span style="font-size:14px;line-height:1.6;color:var(--muted,#56675c)">{{ k.d }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="max-width:1280px;margin:0 auto;padding:104px 32px 0">
+    <div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:12px">{{ t.legal.docL }}</div>
+    <h2 style="font-size:clamp(30px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0 0 36px">{{ t.legal.docT }}</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px">
+      <sc-for list="{{ t.legal.docs }}" as="d" hint-placeholder-count="4">
+        <div>
+          <div style="aspect-ratio:3/4;margin-bottom:14px;border:1px solid var(--line,#e1e8e3);border-radius:10px;overflow:hidden"><image-slot id="legal-{{ $index }}" shape="rect" fit="contain" placeholder="Scan dokumen" style="width:100%;height:100%"></image-slot></div>
+          <div style="font-size:16px;font-weight:700">{{ d }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isTeam }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:72px 32px 0">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:32px 20px">
+      <sc-for list="{{ team }}" as="m" hint-placeholder-count="14">
+        <div>
+          <div style="aspect-ratio:4/5;margin-bottom:14px"><image-slot id="team-{{ $index }}" radius="10" placeholder="Foto" style="width:100%;height:100%"></image-slot></div>
+          <div style="font-size:16px;font-weight:700;line-height:1.35">{{ m }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isArticles }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:72px 32px 0">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:40px 24px">
+      <sc-for list="{{ t.articles }}" as="a" hint-placeholder-count="4">
+        <div>
+          <div style="height:220px;margin-bottom:18px"><image-slot id="article-{{ $index }}" radius="10" placeholder="Gambar artikel" src="{{ a.img }}" credit="{{ a.credit }}" credit-href="{{ a.href }}" style="width:100%;height:100%"></image-slot></div>
+          <div style="display:flex;gap:10px;font-size:12px;font-weight:700;margin-bottom:10px"><span style="color:var(--brand,#23862a)">{{ a.cat }}</span><span style="color:var(--muted2,#b0bcb4)">·</span><span style="color:var(--muted2,#8a9a90)">{{ a.status }}</span></div>
+          <div style="font-size:20px;font-weight:700;line-height:1.35;letter-spacing:-.01em;text-wrap:pretty">{{ a.t }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:1280px;margin:0 auto;padding:72px 32px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:56px">
+    <div>
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div><div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:8px">{{ t.contact.officeL }}</div><div style="font-size:18px;line-height:1.55;font-weight:600">Citraland CBD S6/01, Driyorejo,<br><br>Gresik, Jawa Timur</div></div>
+        <div><div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:8px">{{ t.contact.phoneL }}</div><a href="https://wa.me/628111360999" style="font-size:26px;font-weight:800;color:var(--ink,#0f1f15)">0811-1360-999</a></div>
+        <div><div style="font-size:13px;font-weight:700;color:var(--eyebrow,#23862a);letter-spacing:.06em;margin-bottom:8px">EMAIL</div><div style="display:flex;flex-direction:column;gap:4px;font-size:18px;font-weight:600"><a href="mailto:info@envirors.id" style="color:var(--ink,#0f1f15)">info@envirors.id</a><a href="mailto:admin@envirors.id" style="color:var(--ink,#0f1f15)">admin@envirors.id</a></div></div>
+      </div>
+      <div style="height:280px;margin-top:40px;border-radius:12px;background:repeating-linear-gradient(135deg,#eef3ef 0 12px,#f5f8f6 12px 24px);display:flex;align-items:flex-end;padding:16px;font-size:12px;color:var(--muted2,#8a9a90)">Google Maps embed: Citraland CBD, Driyorejo</div>
+    </div>
+    <div style="background:var(--tint,#f2f6f3);border-radius:14px;padding:40px">
+      <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+        <h2 style="font-size:28px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px">{{ t.contact.formT }}</h2>
+        <p style="font-size:15px;line-height:1.6;color:var(--muted,#56675c);margin:0 0 28px">{{ t.contact.formSub }}</p>
+        <form onSubmit="{{ submit }}" style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700">{{ t.contact.f.name }}<input required="" style="padding:14px;border:1px solid var(--line,#cfdad2);border-radius:8px;font-size:15px;background:#fff"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700">{{ t.contact.f.company }}<input style="padding:14px;border:1px solid var(--line,#cfdad2);border-radius:8px;font-size:15px;background:#fff"></label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700">Email<input type="email" required="" style="padding:14px;border:1px solid var(--line,#cfdad2);border-radius:8px;font-size:15px;background:#fff"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700">{{ t.contact.f.phone }}<input style="padding:14px;border:1px solid var(--line,#cfdad2);border-radius:8px;font-size:15px;background:#fff"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700">{{ t.contact.f.service }}
+            <select style="padding:14px;border:1px solid var(--line,#cfdad2);border-radius:8px;font-size:15px;background:#fff">
+              <sc-for list="{{ allServices }}" as="sv" hint-placeholder-count="12"><option>{{ sv.t }}</option></sc-for>
+              <option>{{ t.contact.f.other }}</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700">{{ t.contact.f.msg }}<textarea rows="5" style="padding:14px;border:1px solid var(--line,#cfdad2);border-radius:8px;font-size:15px;background:#fff;resize:vertical"></textarea></label>
+          <button type="submit" style="padding:16px 24px;background:var(--brand,#23862a);color:#fff;border:0;border-radius:8px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;align-self:flex-start">{{ t.contact.f.send }}</button>
+        </form>
+      </sc-if>
+      <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:40px 0"><div style="width:56px;height:56px;border-radius:50%;background:var(--brand,#23862a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:24px">✓</div><h2 style="font-size:28px;font-weight:800;margin:0 0 10px">{{ t.contact.thanksT }}</h2><p style="font-size:16px;line-height:1.6;color:var(--muted,#56675c);margin:0">{{ t.contact.thanks }}</p></div>
+      </sc-if>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ showCtaBand }}" hint-placeholder-val="{{ true }}">
+  <section style="max-width:1280px;margin:0 auto;padding:112px 32px 0">
+    <div style="position:relative;background:var(--dark,#0e2a1a);color:#fff;border-radius:14px;overflow:hidden;padding:104px 56px;display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap">
+      <div style="position:absolute;right:-3%;top:50%;width:min(860px,74%);aspect-ratio:1200/480;transform:translateY(-50%);pointer-events:none">
+        <div style="position:absolute;inset:0;background:var(--soft,#8fdc93);-webkit-mask:url(assets/indonesia-dots.svg) center/contain no-repeat;mask:url(assets/indonesia-dots.svg) center/contain no-repeat"></div>
+        <sc-for list="{{ cities }}" as="c" hint-placeholder-count="0">
+          <div style="position:absolute;left:{{ c.x }};top:{{ c.y }};width:0;height:0">
+            <span style="position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#fff;animation:{{ c.anim }}"></span>
+            <sc-if value="{{ c.label }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:10px;top:-9px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 6px rgba(0,0,0,.5)">{{ c.name }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(var(--dark-rgb,9,30,18),1) 0%,rgba(var(--dark-rgb,9,30,18),.85) 36%,rgba(var(--dark-rgb,9,30,18),0) 68%)"></div>
+      
+      <div style="position:relative;pointer-events:none;max-width:620px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--eyebrowD,#8fdc93);margin-bottom:16px">{{ t.nav.contact }}</div>
+        <h2 style="font-size:clamp(28px,3.4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.12">{{ t.ctaBand }}</h2>
+      </div><div style="position:relative;display:flex;gap:12px;flex-wrap:wrap">
+        <a href="https://wa.me/628111360999" style="padding:16px 24px;background:#fff;color:var(--dark,#0e2a1a);border-radius:8px;font-weight:700">WhatsApp 0811-1360-999</a>
+        <a href="#" onClick="{{ goContact }}" style="padding:16px 24px;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:8px;font-weight:700" style-hover="color:#fff;background:rgba(255,255,255,.1)">{{ t.cta }}</a>
+      </div>
+    </div>
+  </section>
+</sc-if>
+</main>
+
+<footer style="margin-top:112px;background:var(--dark,#0e2a1a);color:var(--ondark,#a9c2b0)">
+  <div style="max-width:1280px;margin:0 auto;padding:64px 32px 32px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;font-size:14px;line-height:1.9;padding-bottom:40px;border-bottom:1px solid var(--dark2,#26482f)">
+      <div><div style="color:#fff;font-weight:800;font-size:16px;margin-bottom:8px">PT Enviro Resources Indonesia</div>Citraland CBD S6/01, Driyorejo,<br><br>Gresik, Jawa Timur</div>
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">{{ t.footer.company }}</div>
+        <div style="display:flex;flex-direction:column"><a href="#" onClick="{{ goAbout }}" style="color:var(--ondark,#a9c2b0)">{{ t.nav.about }}</a><a href="#" onClick="{{ goTeam }}" style="color:var(--ondark,#a9c2b0)">{{ t.nav.team }}</a><a href="#" onClick="{{ goLegal }}" style="color:var(--ondark,#a9c2b0)">{{ t.nav.legal }}</a><a href="#" onClick="{{ goArticles }}" style="color:var(--ondark,#a9c2b0)">{{ t.nav.articles }}</a></div></div>
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">{{ t.nav.services }}</div>
+        <div style="display:flex;flex-direction:column"><sc-for list="{{ t.footer.svc }}" as="s" hint-placeholder-count="4"><a href="#" onClick="{{ goServices }}" style="color:var(--ondark,#a9c2b0)">{{ s }}</a></sc-for></div></div>
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">{{ t.nav.contact }}</div>
+        <div style="display:flex;flex-direction:column"><a href="https://wa.me/628111360999" style="color:var(--ondark,#a9c2b0)">0811-1360-999</a><a href="mailto:info@envirors.id" style="color:var(--ondark,#a9c2b0)">info@envirors.id</a><a href="mailto:admin@envirors.id" style="color:var(--ondark,#a9c2b0)">admin@envirors.id</a></div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:24px;font-size:13px"><span>© 2026 PT Enviro Resources Indonesia</span><span>Solutions for a Greener Tomorrow</span></div>
+  </div>
+</footer>
+
+<sc-if value="{{ showWA }}" hint-placeholder-val="{{ true }}">
+  <div style="position:fixed;right:24px;bottom:24px;z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:16px">
+    <sc-if value="{{ waOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="width:320px;max-width:calc(100vw - 48px);border-radius:16px;overflow:hidden;background:#efe7dd;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:waPop .28s cubic-bezier(.2,.9,.3,1.2) both;transform-origin:bottom right">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:#075e54;color:#fff">
+          <div style="width:40px;height:40px;border-radius:50%;background:#fff;color:#075e54;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0">ERI</div>
+          <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">PT Enviro Resources Indonesia</div><div style="font-size:12px;opacity:.85">{{ waStatus }}</div></div>
+          <button onClick="{{ waToggle }}" aria-label="Tutup" style="background:none;border:0;color:#fff;font-size:22px;line-height:1;cursor:pointer;padding:4px">×</button>
+        </div>
+        <div style="padding:20px 16px;display:flex;flex-direction:column;gap:8px;min-height:120px">
+          <sc-if value="{{ waTyping }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-start;display:flex;gap:4px;padding:12px 14px;background:#fff;border-radius:0 10px 10px 10px;animation:waMsg .2s ease-out both">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--muted2,#8a9a90);animation:waDot 1.2s infinite"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--muted2,#8a9a90);animation:waDot 1.2s .15s infinite"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--muted2,#8a9a90);animation:waDot 1.2s .3s infinite"></span>
+            </div>
+          </sc-if>
+          <sc-for list="{{ waShown }}" as="m" hint-placeholder-count="0">
+            <div style="align-self:flex-start;max-width:85%;padding:8px 12px 6px;background:#fff;border-radius:0 10px 10px 10px;font-size:14px;line-height:1.45;color:#111b21;box-shadow:0 1px 1px rgba(0,0,0,.08);animation:waMsg .3s ease-out both">{{ m }}<div style="text-align:right;font-size:11px;color:#8696a0;margin-top:2px">{{ waTime }}</div></div>
+          </sc-for>
+        </div>
+        <div style="padding:12px 16px 16px">
+          <a href="https://wa.me/628111360999" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#25d366;color:#fff;border-radius:999px;font-weight:700;font-size:14px" style-hover="color:#fff;background:#1ebe5a">{{ waCta }}</a>
+        </div>
+      </div>
+    </sc-if>
+    <button onClick="{{ waToggle }}" aria-label="WhatsApp" style="width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.2);animation:waPulse 2.4s infinite" style-hover="background:#1ebe5a">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.57.93.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.2 4.23-9.43 9.44-9.43a9.37 9.37 0 0 1 6.67 2.77 9.37 9.37 0 0 1 2.76 6.67c0 5.2-4.23 9.43-9.44 9.43zm8.03-17.46A11.3 11.3 0 0 0 12.05.72C5.8.72.7 5.8.7 12.07c0 2 .52 3.95 1.52 5.67L.6 23.64l6.04-1.58a11.3 11.3 0 0 0 5.4 1.38h.01c6.26 0 11.35-5.09 11.35-11.35 0-3.03-1.18-5.88-3.32-8.03z"></path></svg>
+    </button>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;palette&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;hutan&quot;,&quot;arang&quot;,&quot;samudra&quot;,&quot;tanah&quot;],&quot;default&quot;:&quot;arang&quot;,&quot;tsType&quot;:&quot;'hutan' | 'arang' | 'samudra' | 'tanah'&quot;,&quot;section&quot;:&quot;Warna&quot;},&quot;heroLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overlay&quot;,&quot;split&quot;],&quot;default&quot;:&quot;overlay&quot;,&quot;tsType&quot;:&quot;'overlay' | 'split'&quot;},&quot;floatingWhatsApp&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    page: localStorage.getItem('eri_page') || 'home',
+    lang: localStorage.getItem('eri_lang') || 'id',
+    filter: 'all',
+    sent: false
+  };
+  go = (page) => (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    localStorage.setItem('eri_page', page);
+    this.setState({ page, sent: false });
+    window.scrollTo(0, 0);
+  };
+  setLang = (lang) => (e) => { e.preventDefault(); localStorage.setItem('eri_lang', lang); this.setState({ lang }); };
+  icon(paths, color) {
+    color = color.replace(/var\(--([\w-]+),(#[0-9a-fA-F]+)\)/, (m, k, fb) => (this.pal()[k] || fb));
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>');
+  }
+  pal() {
+    const P = {
+      hutan: ['#0e2a1a','#0f1f15','#23862a','#1b6e21','#4fc255','#8fdc93','#56675c','#8a9a90','#c9d8ce','#e1e8e3','#f2f6f3','#2c5238','#23862a','#8fdc93'],
+      arang: ['#151719','#16181a','#23862a','#1b6e21','#4fc255','#8fdc93','#5b5f63','#8c9094','#c6c9cc','#e5e3de','#f4f2ed','#2e3236','#23862a','#8fdc93'],
+      samudra: ['#0b2233','#0e1b25','#23862a','#1b6e21','#4fc255','#8fdc93','#526474','#8595a4','#bfcfdb','#dde5ec','#eef3f7','#20405a','#1e6f9f','#7cc6ec'],
+      tanah: ['#26211a','#211c15','#23862a','#1b6e21','#4fc255','#e3b766','#665d4f','#998f7e','#d8cebd','#e7dfd1','#f6f1e7','#433a2c','#a8701c','#e3b766']
+    };
+    const v = P[this.props.palette] || P.arang;
+    const o = {}; ['dark','ink','brand','brandD','bright','soft','muted','muted2','ondark','line','tint','dark2','eyebrow','eyebrowD'].forEach((k, i) => o[k] = v[i]);
+    return o;
+  }
+  photo(...list) {
+    return list.map(([id, name, user]) => ({ img: 'assets/photos/' + id + '.jpg', credit: 'Photo by ' + name + ' on Unsplash', href: 'https://unsplash.com/@' + user }));
+  }
+  content() {
+    const B = (id, en) => ({ id, en });
+    const num = (arr) => arr.map((x, i) => ({ n: String(i + 1).padStart(2, '0'), ...x }));
+    return {
+      nav: { home: B('Beranda', 'Home'), about: B('Tentang Kami', 'About Us'), services: B('Layanan', 'Services'), portfolio: B('Portofolio', 'Portfolio'), legal: B('Legalitas', 'Legal'), team: B('Tim Ahli', 'Our Experts'), articles: B('Artikel', 'Insights'), contact: B('Kontak', 'Contact') },
+      cta: B('Minta Penawaran', 'Request a Quote'),
+      ctaBand: B('Mari diskusikan kebutuhan lingkungan perusahaan Anda', "Let's discuss your company's environmental needs"),
+      hero: {
+        eyebrow: B('KONSULTAN LINGKUNGAN · GRESIK, JAWA TIMUR', 'ENVIRONMENTAL CONSULTANTS · GRESIK, EAST JAVA'),
+        sub: B('Konsultasi lingkungan, pengurusan perizinan lingkungan, ANDALALIN, SIPA air tanah, perizinan kesehatan & keamanan pangan, dan jasa konstruksi sistem pengolahan air.', 'Environmental consulting, environmental permitting, traffic impact analysis (ANDALALIN), groundwater permits (SIPA), health & food safety permits, and water treatment system construction.'),
+        b1: B('Konsultasi Sekarang', 'Discuss Your Project'),
+        b2: B('Unduh Company Profile', 'Download Company Profile')
+      },
+      focus: num([
+        { t: B('Konsultasi lingkungan', 'Environmental consulting'), d: B('Penyusunan dokumen, persetujuan teknis, pelaporan, audit, serta pendampingan kepatuhan.', 'Document preparation, technical approvals, reporting, audits, and compliance support.') },
+        { t: B('Prasarana pengolahan limbah', 'Waste treatment infrastructure'), d: B('Perencanaan dan konstruksi bangunan sipil untuk mendukung sistem pengolahan limbah.', 'Planning and civil construction to support waste treatment systems.') },
+        { t: B('Pengelolaan limbah non-B3', 'Non-hazardous waste management'), d: B('Pengumpulan, pengangkutan, pengolahan, dan pembuangan sesuai ruang lingkup izin usaha.', 'Collection, transport, treatment, and disposal within the scope of our business license.') }
+      ]).map((f, i) => ({ ...f, icon: this.icon(['<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2.5h6v3H9zM9 13l2 2 4-4"/>', '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M9 14a3 3 0 0 0 3 3"/>', '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/>'][i], 'var(--brand,#23862a)') })),
+      home: {
+        svcEyebrow: B('LAYANAN', 'SERVICES'), svcTitle: B('Dokumen, persetujuan, dan pelaporan', 'Documents, approvals, and reporting'), svcAll: B('Semua layanan', 'All services'),
+        pfEyebrow: B('PORTOFOLIO', 'PORTFOLIO'), pfTitle: B('Proyek terpilih', 'Selected projects'), pfAll: B('Lihat portofolio', 'View portfolio')
+      },
+      faq: {
+        title: B('Pertanyaan yang sering diajukan', 'Frequently asked questions'), sub: B('Belum menemukan jawaban? Tim kami siap membantu penapisan awal kebutuhan perizinan Anda.', "Can't find an answer? Our team can help with an initial screening of your permit needs."), cta: B('Tanya via WhatsApp', 'Ask via WhatsApp'),
+        list: [
+          { q: B('Apa perbedaan AMDAL, UKL-UPL, dan SPPL?', 'What is the difference between AMDAL, UKL-UPL, and SPPL?'), a: B('Ketiganya ditentukan oleh skala dan dampak kegiatan. AMDAL untuk kegiatan yang berdampak penting, UKL-UPL untuk kegiatan yang tidak berdampak penting, dan SPPL untuk usaha dengan dampak ringan. Jenis yang wajib dipenuhi ditetapkan melalui penapisan.', 'All three depend on the scale and impact of the activity. AMDAL applies to activities with significant impact, UKL-UPL to activities without significant impact, and SPPL to businesses with minor impact. The required type is determined through screening.') },
+          { q: B('Berapa lama proses penyusunan dokumen lingkungan?', 'How long does preparing an environmental document take?'), a: B('Durasi bergantung pada jenis dokumen, kelengkapan data, dan jadwal pembahasan di instansi berwenang. Estimasi waktu kami sampaikan setelah penapisan awal.', 'Duration depends on the document type, data completeness, and the review schedule of the competent authority. We provide a time estimate after initial screening.') },
+          { q: B('Data apa saja yang perlu disiapkan?', 'What data needs to be prepared?'), a: B('Umumnya legalitas usaha (NIB), kesesuaian tata ruang (KKPR), rencana tapak atau layout, serta deskripsi kegiatan dan kapasitas. Daftar lengkap kami berikan sesuai jenis dokumen.', 'Generally business legality (NIB), spatial conformity (KKPR), site plan or layout, and a description of activities and capacity. We provide a full list based on the document type.') },
+          { q: B('Apa itu Persetujuan Teknis (Pertek)?', 'What is a Technical Approval (Pertek)?'), a: B('Persetujuan Teknis adalah persetujuan dari instansi berwenang atas pemenuhan standar perlindungan lingkungan, misalnya untuk pembuangan air limbah atau emisi. Pertek menjadi bagian dari persetujuan lingkungan.', 'A Technical Approval is the competent authority’s approval that environmental protection standards are met, for example for wastewater discharge or emissions. It forms part of the environmental approval.') },
+          { q: B('Bagaimana cara memulai konsultasi?', 'How do I start a consultation?'), a: B('Hubungi kami melalui WhatsApp atau formulir kontak. Tim kami akan melakukan penapisan awal dan menyampaikan lingkup pekerjaan beserta penawaran.', 'Contact us via WhatsApp or the contact form. Our team will run an initial screening and share the scope of work along with a quote.') }
+        ]
+      },
+      clients: { label: B('DIPERCAYA OLEH', 'TRUSTED BY') },
+      testi: {
+        eyebrow: B('TESTIMONI', 'TESTIMONIALS'), title: B('Apa kata klien kami', 'What our clients say'), status: B('Contoh isi, menunggu data klien', 'Sample content, awaiting client data'),
+        list: [
+          { text: B('Tim ERI membantu kami memetakan kewajiban lingkungan sejak awal, sehingga proses persetujuan berjalan lebih terarah.', 'The ERI team helped us map our environmental obligations early, so the approval process ran in a clearer direction.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+          { text: B('Pendampingan saat pembahasan dokumen sangat membantu. Revisi dari instansi ditindaklanjuti dengan cepat.', 'Support during document review was very helpful. Revisions from the authority were followed up quickly.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+          { text: B('Perencanaan IPAL disesuaikan dengan karakteristik limbah dan kondisi lahan kami.', 'The WWTP planning was tailored to our waste characteristics and site conditions.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+          { text: B('Jadwal pemantauan dan pelaporan berkala kami kini lebih tertib dan terdokumentasi.', 'Our periodic monitoring and reporting schedule is now more orderly and well documented.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+          { text: B('Komunikasi dengan tim konsultan jelas di setiap tahap, dari survei sampai persetujuan terbit.', 'Communication with the consulting team was clear at every stage, from survey to approval.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+          { text: B('Pengangkutan limbah non-B3 berjalan rutin sesuai jadwal dan dilengkapi dokumen yang rapi.', 'Non-hazardous waste collection runs on schedule with tidy supporting documents.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') }
+        ]
+      },
+      method: {
+        eyebrow: B('METODE PENDAMPINGAN', 'OUR METHOD'), title: B('Lima tahap, dari penapisan hingga tindak lanjut', 'Five stages, from screening to follow-up'),
+        note: B('Setiap tahap mengikuti kelengkapan data dan jadwal instansi berwenang.', 'Each stage follows data completeness and the schedule of the competent authority.'),
+        steps: num([
+          { t: B('Penapisan', 'Screening'), d: B('Menentukan kewajiban, kewenangan, data, dan ruang lingkup.', 'Determining obligations, authority, data, and scope.') },
+          { t: B('Survei dan pengumpulan data', 'Survey and data collection'), d: B('Memeriksa kondisi eksisting serta dokumen pendukung.', 'Reviewing existing conditions and supporting documents.') },
+          { t: B('Penyusunan dan kajian teknis', 'Drafting and technical study'), d: B('Mengolah data menjadi dokumen dan rekomendasi.', 'Turning data into documents and recommendations.') },
+          { t: B('Pembahasan dan perbaikan', 'Review and revision'), d: B('Mendampingi verifikasi, rapat, serta revisi dokumen.', 'Supporting verification, meetings, and document revisions.') },
+          { t: B('Persetujuan dan tindak lanjut', 'Approval and follow-up'), d: B('Menyerahkan keluaran dan rencana pemenuhan kewajiban.', 'Delivering outputs and a compliance fulfilment plan.') }
+        ])
+      },
+      sectors: {
+        eyebrow: B('SEKTOR', 'SECTORS'), title: B('Sektor yang kami layani', 'Sectors we serve'),
+        note: B('Lingkup penugasan ditetapkan setelah penapisan kegiatan, lokasi, skala, dan status perizinan.', 'Engagement scope is set after screening the activity, location, scale, and permit status.'),
+        list: num([B('Industri manufaktur', 'Manufacturing'), B('Pergudangan dan logistik', 'Warehousing and logistics'), B('Fasilitas komersial', 'Commercial facilities'), B('Rumah sakit dan layanan kesehatan', 'Hospitals and healthcare'), B('Perumahan dan kawasan', 'Housing and estates'), B('Hotel, restoran, dan usaha pangan', 'Hotels, restaurants, and food businesses'), B('Fasilitas pengelolaan limbah', 'Waste management facilities'), B('Usaha kecil dan menengah', 'Small and medium enterprises')].map((t, i) => ({ t, ...this.photo(['1504917595217-d4dc5ebe6122', 'Christopher Burns', 'christopher__burns'], ['1586528116311-ad8dd3c8310d', 'Ruchindra Gunasekara', 'ruchindra'], ['1497366216548-37526070297c', 'Nastuh Abootalebi', 'sunday_digital'], ['1519494026892-80bbd2d6fd0d', 'Martha Dominguez de Gouveia', 'marthadomingues'], ['1560518883-ce09059eeffa', 'Tierra Mallorca', 'tierramallorca'], ['1566073771259-6a8506099945', 'Sara Dubler', 'sara_dubler'], ['1532996122724-e3c354a0b15b', 'Nareeta Martin', 'splashabout'], ['1441986300917-64674bd600d8', 'Clark Street Mercantile', 'mercantile'])[i] })))
+      },
+      pages: {
+        about: { title: B('Mitra konsultasi dan pengelolaan lingkungan yang dipercaya', 'A trusted partner in environmental consulting and management'), sub: B('Mendampingi pelaku usaha dan instansi dalam pemenuhan kewajiban lingkungan, kesehatan lingkungan, dan perencanaan sistem pengolahan limbah, serta pengelolaan limbah.', 'Supporting businesses and institutions in meeting environmental and environmental-health obligations, planning waste treatment systems, and managing waste.') },
+        services: { title: B('Layanan dari kajian hingga konstruksi', 'Services from study to construction'), sub: B('Pendampingan disesuaikan dengan skala kegiatan, kewenangan, lokasi, dan status perizinan eksisting.', 'Support is tailored to activity scale, authority, location, and existing permit status.') },
+        portfolio: { title: B('Portofolio proyek', 'Project portfolio'), sub: B('Pilihan penugasan dokumen lingkungan, persetujuan teknis, dan prasarana pengolahan limbah.', 'Selected engagements in environmental documents, technical approvals, and waste treatment infrastructure.') },
+        legal: { title: B('Sertifikasi & legalitas', 'Certifications & legal'), sub: B('Ruang lingkup usaha dan dokumen legal yang menjadi dasar setiap penugasan.', 'The business scope and legal documents underpinning every engagement.') },
+        team: { title: B('Tenaga ahli', 'Our experts'), sub: B('Tim lintas disiplin teknik lingkungan, kesehatan lingkungan, arsitektur, hukum, dan administrasi.', 'A multidisciplinary team across environmental engineering, environmental health, architecture, law, and administration.') },
+        articles: { title: B('Artikel & wawasan', 'Articles & insights'), sub: B('Catatan seputar regulasi dan praktik perizinan lingkungan.', 'Notes on environmental regulation and permitting practice.') },
+        contact: { title: B('Mari diskusikan kebutuhan lingkungan perusahaan Anda', "Let's discuss your company's environmental needs"), sub: B('Ceritakan rencana kegiatan dan status perizinan Anda. Tim kami akan membantu menentukan kewajiban dan ruang lingkup kerja.', 'Tell us about your planned activity and permit status. Our team will help define obligations and scope of work.') }
+      },
+      about: {
+        intro: B('Mendampingi pelaku usaha dan instansi dalam pemenuhan kewajiban lingkungan, kesehatan lingkungan, dan perencanaan sistem pengolahan limbah, serta pengelolaan limbah.', 'Supporting businesses and institutions in meeting environmental and environmental-health obligations, planning waste treatment systems, and managing waste.'),
+        approach: B('Pendekatan kami menghubungkan kajian teknis, proses perizinan, dan kebutuhan operasional agar rekomendasi dapat diterapkan di lapangan.', 'Our approach connects technical studies, the permitting process, and operational needs so recommendations can be applied in the field.'),
+        visionL: B('VISI', 'VISION'), vision: B('Menjadi mitra konsultasi dan pengelolaan lingkungan yang dipercaya dalam mendukung kepatuhan serta kinerja lingkungan usaha.', 'To be a trusted environmental consulting and management partner supporting business compliance and environmental performance.'),
+        missionL: B('MISI', 'MISSION'),
+        mission: num([
+          B('Menyusun kajian dan dokumen lingkungan secara teliti serta dapat dipertanggungjawabkan.', 'Prepare environmental studies and documents carefully and accountably.'),
+          B('Mengembangkan solusi pengolahan limbah yang sesuai karakteristik kegiatan dan kondisi lapangan.', 'Develop waste treatment solutions suited to each activity and site condition.'),
+          B('Mendampingi proses perizinan, pelaporan, monitoring, dan peningkatan kinerja lingkungan.', 'Support permitting, reporting, monitoring, and environmental performance improvement.'),
+          B('Menjalankan pengelolaan limbah non-B3 sesuai ketentuan dan standar operasional.', 'Carry out non-hazardous waste management in line with regulations and operating standards.')
+        ].map(t => ({ t }))),
+        principlesL: B('PRINSIP KERJA', 'HOW WE WORK'), principlesT: B('Empat prinsip dalam setiap penugasan', 'Four principles in every engagement'),
+        principles: num([
+          { t: B('Kepatuhan', 'Compliance'), d: B('Rujukan regulasi dan kewenangan menjadi dasar setiap proses.', 'Regulatory references and authority form the basis of every process.') },
+          { t: B('Ketelitian teknis', 'Technical rigour'), d: B('Data lapangan, perhitungan, dan dokumen diperiksa secara berlapis.', 'Field data, calculations, and documents are checked in layers.') },
+          { t: B('Praktisitas', 'Practicality'), d: B('Rekomendasi mempertimbangkan fasilitas, personel, biaya, dan operasi klien.', "Recommendations consider the client's facilities, personnel, cost, and operations.") },
+          { t: B('Akuntabilitas', 'Accountability'), d: B('Lingkup kerja, keluaran, jadwal, dan komunikasi proyek disampaikan dengan jelas.', 'Scope, deliverables, schedule, and project communication are stated clearly.') }
+        ]),
+        valuesL: B('NILAI KERJA', 'OUR VALUES'), valuesT: B('Cara tim berkomunikasi dan menyelesaikan pekerjaan', 'How our team communicates and delivers'),
+        values: num([
+          { t: B('Akurat', 'Accurate'), d: B('Analisis dan dokumen berbasis data yang dapat ditelusuri.', 'Analysis and documents based on traceable data.') },
+          { t: B('Patuh', 'Compliant'), d: B('Ruang lingkup mengikuti kewajiban dan regulasi yang relevan.', 'Scope follows relevant obligations and regulations.') },
+          { t: B('Transparan', 'Transparent'), d: B('Progres, kebutuhan data, dan kendala disampaikan secara terbuka.', 'Progress, data needs, and obstacles are shared openly.') },
+          { t: B('Responsif', 'Responsive'), d: B('Koordinasi proyek dilakukan cepat dan terarah.', 'Project coordination is fast and focused.') },
+          { t: B('Bertanggung jawab', 'Responsible'), d: B('Rekomendasi mempertimbangkan dampak lingkungan dan kelayakan operasional.', 'Recommendations weigh environmental impact and operational feasibility.') }
+        ]),
+        compL: B('KOMPETENSI', 'CAPABILITIES'), compT: B('Kompetensi pelaksanaan proyek', 'Project delivery capabilities'),
+        comp: [
+          { t: B('Kajian dan dokumen', 'Studies and documents'), d: B('Pengumpulan data, evaluasi dampak, penyusunan matriks pengelolaan dan pemantauan.', 'Data collection, impact evaluation, management and monitoring matrices.') },
+          { t: B('Koordinasi perizinan', 'Permit coordination'), d: B('Pendampingan pemeriksaan administrasi, verifikasi teknis, perbaikan, dan tindak lanjut.', 'Support through administrative checks, technical verification, revisions, and follow-up.') },
+          { t: B('Rekayasa lingkungan', 'Environmental engineering'), d: B('Penilaian kebutuhan prasarana dan integrasi dengan operasi pengolahan limbah.', 'Assessing infrastructure needs and integration with waste treatment operations.') },
+          { t: B('Monitoring dan pelaporan', 'Monitoring and reporting'), d: B('Evaluasi pemenuhan kewajiban serta penyusunan laporan berkala.', 'Evaluating compliance and preparing periodic reports.') }
+        ]
+      },
+      svc: {
+        docL: B('DOKUMEN & PERSETUJUAN LINGKUNGAN', 'ENVIRONMENTAL DOCUMENTS & APPROVALS'), docT: B('Layanan dokumen dan persetujuan lingkungan', 'Environmental document and approval services'),
+        docNote: B('Pendampingan disesuaikan dengan skala kegiatan, kewenangan, lokasi, dan status perizinan eksisting.', 'Support is tailored to activity scale, authority, location, and existing permit status.'),
+        docs: num([B('AMDAL dan UKL-UPL', 'AMDAL and UKL-UPL'), B('DELH dan DPLH', 'DELH and DPLH'), B('Persetujuan Lingkungan', 'Environmental Approval'), B('Analisis Dampak Lalu Lintas (Andalalin)', 'Traffic Impact Analysis (Andalalin)'), B('Rincian Teknis Limbah B3', 'Hazardous Waste Technical Details'), B('SIPA (Surat Izin Pengusahaan Air Tanah)', 'SIPA (Groundwater Use Permit)')].map(t => ({ t }))),
+        techL: B('TEKNIS, OPERASI & PELAPORAN', 'TECHNICAL, OPERATIONS & REPORTING'), techT: B('Layanan teknis, operasi, dan pelaporan', 'Technical, operations, and reporting services'),
+        tech: [
+          { t: B('Persetujuan Teknis Emisi', 'Emission Technical Approval'), d: B('Kajian teknis pemenuhan baku mutu emisi.', 'Technical study for meeting emission quality standards.') },
+          { t: B('Persetujuan Teknis Air Limbah', 'Wastewater Technical Approval'), d: B('Kajian pemenuhan baku mutu air limbah (BMAL).', 'Study for meeting wastewater quality standards (BMAL).') },
+          { t: B('Surat Laik Operasi', 'Operational Feasibility Certificate (SLO)'), d: B('Pendampingan kesiapan teknis dan administrasi SLO.', 'Support for SLO technical and administrative readiness.') },
+          { t: B('Pelaporan RKL-RPL / UKL-UPL', 'RKL-RPL / UKL-UPL Reporting'), d: B('Penyusunan laporan pelaksanaan pengelolaan dan pemantauan lingkungan.', 'Preparing environmental management and monitoring implementation reports.') },
+          { t: B('Audit dan Monitoring Lingkungan', 'Environmental Audit and Monitoring'), d: B('Pemeriksaan kondisi lapangan, dokumen, serta tindak lanjut.', 'Inspection of site conditions, documents, and follow-up.') },
+          { t: B('Pendampingan PROPER', 'PROPER Assistance'), d: B('Pemetaan bukti pemenuhan dan penguatan kesiapan penilaian.', 'Mapping compliance evidence and strengthening assessment readiness.') }
+        ]
+      },
+      fw: {
+        eyebrow: B('KERANGKA PERIZINAN', 'PERMITTING FRAMEWORK'), title: B('Kerangka perizinan lingkungan', 'Environmental permitting framework'),
+        sub: B('Persetujuan lingkungan menjadi prasyarat yang terhubung dengan perizinan berusaha.', 'Environmental approval is a prerequisite linked to business licensing.'),
+        baseL: B('LANDASAN UTAMA', 'LEGAL BASIS'),
+        pp: B('Penyelenggaraan Perlindungan dan Pengelolaan Lingkungan Hidup', 'Implementation of Environmental Protection and Management'),
+        permen: B('Daftar kegiatan wajib AMDAL, UKL-UPL, atau SPPL menurut KBLI, skala, dan parameter kegiatan.', 'List of activities requiring AMDAL, UKL-UPL, or SPPL by KBLI code, scale, and activity parameters.'),
+        objL: B('OBJEK PENAPISAN', 'SCREENING CRITERIA'),
+        obj: [B('KBLI dan uraian kegiatan', 'KBLI code and activity description'), B('Kapasitas produksi', 'Production capacity'), B('Luas lahan atau bangunan', 'Land or building area'), B('Lokasi dan sensitivitas kawasan', 'Location and area sensitivity')],
+        resL: B('HASIL PENAPISAN', 'SCREENING OUTCOME'),
+        prinL: B('Prinsip pelaksanaan', 'Implementation principle'),
+        prin: B('Proses dimulai dari data rencana usaha yang final. Kesesuaian tata ruang, kewenangan penerbit, serta kebutuhan persetujuan teknis harus dipastikan sebelum dokumen diajukan. Perubahan desain di tengah proses dapat mengubah jenis dokumen dan ruang lingkup kajian.', 'The process starts from final business plan data. Spatial conformity, issuing authority, and technical approval needs must be confirmed before submission. Design changes mid-process can change the document type and study scope.')
+      },
+      infra: {
+        title: B('Solusi prasarana pengolahan limbah', 'Waste treatment infrastructure solutions'),
+        scope: B('Kajian kebutuhan prasarana, pengembangan konsep sistem, konstruksi bangunan sipil, serta koordinasi kesiapan operasi.', 'Infrastructure needs assessment, system concept development, civil construction, and operational readiness coordination.'),
+        focusL: B('Fokus perencanaan', 'Planning focus'),
+        focus: [B('Kesesuaian karakteristik limbah', 'Fit with waste characteristics'), B('Kapasitas dan beban pengolahan', 'Treatment capacity and load'), B('Integrasi dengan area produksi', 'Integration with production areas'), B('Akses operasi dan pemeliharaan', 'Operation and maintenance access'), B('Kepatuhan terhadap persyaratan teknis', 'Compliance with technical requirements')]
+      },
+      nonb3: {
+        title: B('Pengelolaan limbah non-B3', 'Non-hazardous waste management'),
+        items: [
+          { t: B('Pengumpulan dan pengangkutan', 'Collection and transport'), d: B('Pelayanan diarahkan untuk limbah atau sampah tidak berbahaya, dengan alur penanganan yang terdokumentasi dan tujuan pengelolaan yang sesuai.', 'Services for non-hazardous waste, with documented handling flows and appropriate destinations.') },
+          { t: B('Pengolahan dan pembuangan', 'Treatment and disposal'), d: B('Metode pengolahan disesuaikan dengan jenis limbah non-B3, kemampuan fasilitas, serta perizinan yang dimiliki atau digunakan melalui mitra.', 'Treatment methods match the waste type, facility capability, and permits held directly or through partners.') }
+        ]
+      },
+      legal: {
+        kbliT: B('Ruang lingkup KBLI', 'Registered business scope (KBLI)'),
+        kbli: [
+          { c: '74999', t: B('Aktivitas profesional, ilmiah, dan teknis lainnya YTDL', 'Other professional, scientific, and technical activities n.e.c.'), d: B('Landasan aktivitas konsultasi profesional sesuai perizinan perusahaan.', 'Basis for professional consulting activities under the company license.') },
+          { c: '71102', t: B('Aktivitas perancangan dan konsultasi teknis', 'Engineering design and technical consulting'), d: B('Landasan aktivitas konsultasi profesional perancangan.', 'Basis for professional design consulting.') },
+          { c: '42203', t: B('Konstruksi bangunan sipil prasarana sistem pengolahan limbah', 'Civil construction of waste treatment infrastructure'), d: B('Pelaksanaan prasarana sipil yang mendukung sistem pengolahan limbah.', 'Civil works supporting waste treatment systems.') },
+          { c: '38219', t: B('Pengolahan dan pembuangan limbah atau sampah tidak berbahaya lainnya', 'Treatment and disposal of other non-hazardous waste'), d: B('Pengolahan limbah non-B3, termasuk pengolahan organik menjadi kompos atau proses non-bahaya lainnya.', 'Non-hazardous waste treatment, including composting of organics and other non-hazardous processes.') },
+          { c: '38110', t: B('Pengumpulan limbah atau sampah tidak berbahaya', 'Collection of non-hazardous waste'), d: B('Pengumpulan limbah non-B3 untuk disalurkan ke fasilitas pengelolaan yang sesuai.', 'Collecting non-hazardous waste for delivery to suitable management facilities.') }
+        ],
+        docL: B('DOKUMEN LEGAL', 'LEGAL DOCUMENTS'), docT: B('Sertifikat dan dokumen perusahaan', 'Company certificates and documents'),
+        docs: [B('Akta Pendirian Perusahaan', 'Deed of Establishment'), B('Nomor Induk Berusaha (NIB)', 'Business Identification Number (NIB)'), B('NPWP Perusahaan', 'Company Tax ID (NPWP)'), B('Sertifikat Badan Usaha (SBU)', 'Business Entity Certificate (SBU)')]
+      },
+      articles: [
+        { cat: B('Regulasi', 'Regulation'), status: B('Contoh judul', 'Sample title'), t: B('Memahami penapisan AMDAL, UKL-UPL, dan SPPL menurut Permen LHK 4 Tahun 2021', 'Understanding AMDAL, UKL-UPL, and SPPL screening under Ministerial Regulation 4/2021') },
+        { cat: B('Persetujuan Teknis', 'Technical Approval'), status: B('Contoh judul', 'Sample title'), t: B('Kapan usaha Anda membutuhkan Persetujuan Teknis Air Limbah?', 'When does your business need a Wastewater Technical Approval?') },
+        { cat: B('Pelaporan', 'Reporting'), status: B('Contoh judul', 'Sample title'), t: B('Menyiapkan laporan RKL-RPL dan UKL-UPL secara berkala', 'Preparing periodic RKL-RPL and UKL-UPL reports') },
+        { cat: B('PROPER', 'PROPER'), status: B('Contoh judul', 'Sample title'), t: B('Memetakan bukti pemenuhan untuk penilaian PROPER', 'Mapping compliance evidence for PROPER assessment') }
+      ].map((a, i) => ({ ...a, ...this.photo(['1622322977875-e2d580e129ba', 'Patrick Federi', 'federi'], ['1532094349884-543bc11b234d', 'Hans Reniers', 'hansreniers'], ['1542744095-fcf48d80b0fd', 'Campaign Creators', 'campaign_creators'], ['1705147219565-fe9f6f369d03', 'Declan Sun', 'declansun'])[i] })),
+      contact: {
+        officeL: B('KANTOR PUSAT', 'HEAD OFFICE'), phoneL: B('TELEPON / WHATSAPP', 'PHONE / WHATSAPP'),
+        formT: B('Minta penawaran', 'Request a quote'), formSub: B('Isi formulir berikut, tim kami akan menghubungi Anda.', 'Fill in the form and our team will contact you.'),
+        f: { name: B('Nama', 'Name'), company: B('Perusahaan / Instansi', 'Company / Institution'), phone: B('Telepon', 'Phone'), service: B('Layanan yang dibutuhkan', 'Service needed'), other: B('Lainnya / belum tahu', 'Other / not sure'), msg: B('Rencana kegiatan & status perizinan', 'Planned activity & permit status'), send: B('Kirim Permintaan', 'Send Request') },
+        thanksT: B('Terima kasih', 'Thank you'), thanks: B('Permintaan Anda sudah kami terima. Tim kami akan menghubungi Anda melalui email atau telepon.', 'We have received your request. Our team will contact you by email or phone.')
+      },
+      footer: { company: B('Perusahaan', 'Company'), svc: [B('AMDAL & UKL-UPL', 'AMDAL & UKL-UPL'), B('Persetujuan Teknis', 'Technical Approvals'), B('Prasarana Pengolahan Limbah', 'Waste Treatment Infrastructure'), B('Pengelolaan Limbah Non-B3', 'Non-hazardous Waste')] },
+      filters: [['all', B('Semua', 'All')], ['doc', B('Dokumen Lingkungan', 'Environmental Documents')], ['tech', B('Persetujuan Teknis', 'Technical Approvals')], ['infra', B('Prasarana Limbah', 'Waste Infrastructure')], ['waste', B('Limbah Non-B3', 'Non-hazardous Waste')]],
+      projects: [
+        ['p1', 'doc', 'AMDAL'], ['p2', 'infra', B('IPAL', 'WWTP')], ['p3', 'doc', 'UKL-UPL'], ['p4', 'tech', B('Pertek Air Limbah', 'Wastewater Approval')], ['p5', 'doc', 'Andalalin'], ['p6', 'waste', B('Limbah Non-B3', 'Non-hazardous Waste')]
+      ].map(([key, cat, tag], i) => ({ key, cat, tag, ...this.photo(['1783393208952-5cf06f930c42', 'Heming paper', 'hemingpaper'], ['1622322977767-2c71d1787205', 'Patrick Federi', 'federi'], ['1760921678729-9658c8b792bb', 'Soo hong Lee', 'leesoohong'], ['1617155093730-a8bf47be792d', 'RephiLe water', 'revolution_in_filtration'], ['1711304548487-4950020f4d62', 'Dmitry Korkhau', 'korkhau'], ['1622322977879-af6982dcba00', 'Patrick Federi', 'federi'])[i], t: B('Nama proyek (menunggu data)', 'Project name (awaiting data)'), loc: B('Klien · Lokasi · Tahun', 'Client · Location · Year') }))
+    };
+  }
+  renderVals() {
+    const { page, lang, filter, sent } = this.state;
+    const tr = (v) => Array.isArray(v) ? v.map(tr) : (v && typeof v === 'object') ? (Object.keys(v).length === 2 && 'id' in v && 'en' in v ? v[lang] : Object.fromEntries(Object.entries(v).map(([k, x]) => [k, tr(x)]))) : v;
+    const t = tr(this.content());
+    const keys = ['home', 'about', 'services', 'portfolio', 'legal', 'team', 'articles', 'contact'];
+    const act = (on) => ({ color: on ? 'var(--brand,#23862a)' : 'var(--ink,#2b3a30)', bg: on ? 'var(--tint,#eef6ef)' : 'transparent' });
+    const navHome = { go: this.go('home'), ...act(page === 'home') };
+    const navAbout = act(['about', 'legal', 'team'].includes(page));
+    const aboutSub = ['about', 'legal', 'team'].map(k => ({ label: k === 'about' ? (lang === 'en' ? 'Company Overview' : 'Sekilas Perusahaan') : t.nav[k], go: (e) => { this.go(k)(e); this.setState({ aboutOpen: false }); }, ...act(page === k) }));
+    const mStep = this.state.mStep || 0, mPaused = !!this.state.mPaused;
+    const mIcons = ['<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>', '<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>', '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>', '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>', '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>'];
+    const mPh = this.photo(['1542744095-fcf48d80b0fd', 'Campaign Creators', 'campaign_creators'], ['1581092570490-cc40829efaae', 'ThisisEngineering', 'thisisengineering'], ['1532094349884-543bc11b234d', 'Hans Reniers', 'hansreniers'], ['1517048676732-d65bc937f952', 'Dylan Gillis', 'mainermedia'], ['1581092457781-8524efafa559', 'ThisisEngineering', 'thisisengineering']);
+    const stageW = lang === 'en' ? 'STAGE ' : 'TAHAP ';
+    const mSteps = t.method.steps.map((s, i) => {
+      const on = i === mStep;
+      return { ...s, ...mPh[i], iconSrc: this.icon(mIcons[i], on ? '#ffffff' : 'var(--brand,#23862a)'), badgeBg: on ? 'var(--brand,#23862a)' : 'var(--tint,#eef6ef)',
+        titleColor: on ? 'var(--ink,#0f1f15)' : 'var(--muted2,#8a9a90)', rows: on ? '1fr' : '0fr', bar: '0%', anim: on ? 'mBar 5s linear forwards' : 'none',
+        imgOp: on ? 1 : 0, scale: on ? 1 : 1.06, pick: () => this.state.mStep !== i && this.setState({ mStep: i }) };
+    });
+    const cur = mSteps[mStep];
+    const cities = [['Medan',8.8,18,1],['Pekanbaru',14.68,34.28],['Palembang',21.67,52.78],['Jakarta',26.09,69.86,1],['Bandung',27.69,73.58],['Semarang',33.63,73.9],['Surabaya',38.56,75.39,1],['Denpasar',43.78,82.86],['Pontianak',31.35,37.14],['Banjarmasin',42.45,54.53],['Balikpapan',47.18,43.69,1],['Makassar',52.65,64.17,1],['Manado',64.11,29.21],['Ambon',71.17,56.54],['Jayapura',97.67,50.35,1]].map(([name, x, y, l], i) => ({ name, x: x + '%', y: y + '%', label: !!l, anim: 'mNode 2.4s ' + (i * 0.17).toFixed(2) + 's infinite' }));
+    const nav = keys.filter(k => !['home', 'about', 'legal', 'team'].includes(k)).map(k => ({ label: t.nav[k], go: this.go(k), color: page === k ? 'var(--brand,#23862a)' : 'var(--ink,#2b3a30)', bg: page === k ? 'var(--tint,#eef6ef)' : 'transparent' }));
+    const allServices = [...t.svc.docs.map(d => ({ cat: lang === 'id' ? 'DOKUMEN' : 'DOCUMENTS', t: d.t })), ...t.svc.tech.map(d => ({ cat: lang === 'id' ? 'TEKNIS & PELAPORAN' : 'TECHNICAL & REPORTING', t: d.t }))];
+    const filters = t.filters.map(([k, label]) => ({ label, pick: (e) => { e.preventDefault(); this.setState({ filter: k }); }, bg: filter === k ? 'var(--dark,#0e2a1a)' : '#fff', fg: filter === k ? '#fff' : 'var(--ink,#0f1f15)', border: filter === k ? 'var(--dark,#0e2a1a)' : 'var(--line,#cfdad2)' }));
+    const team = ['Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.ST', 'Denissa Rahma Abidiana, S.T', 'M. Rifky Bintar Rahmadani, S.ST', 'Ahmad Fikri Haikal, S.T', 'Rossa Anggraini Ayu Aranais, S.KL', 'Jiemmy Ardian, S.Ars', 'Mochammad Erfian Ramadhan, S.T', 'Febby Dwi Kaffi Hutomo, S.T', 'Kenny Bellardo, S.ST', 'Yofy Eko Saputro, A.Md', 'Ade Al Munawar, S.H', 'Putut Djatmiko, S.E', 'Nurul Wahidah, A.Md'];
+    const heroLayout = this.props.heroLayout ?? 'overlay';
+    const pg = (k) => page === k;
+    return {
+      t, nav, allServices, filters, team,
+      ph: page === 'home' ? {} : (() => { const P = { about: ['1517048676732-d65bc937f952', 'Dylan Gillis', 'mainermedia'], services: ['1774789599304-cca1e1ffbb95', 'Subhash Chand', 'hsubhash'], portfolio: ['1622322977767-2c71d1787205', 'Patrick Federi', 'federi'], legal: ['1542744095-fcf48d80b0fd', 'Campaign Creators', 'campaign_creators'], team: ['1581094481644-f2ab64522498', 'ThisisEngineering', 'thisisengineering'], articles: ['1532094349884-543bc11b234d', 'Hans Reniers', 'hansreniers'], contact: ['1497366216548-37526070297c', 'Nastuh Abootalebi', 'sunday_digital'] }; const ph = this.photo(P[page] || P.about)[0]; return { ...t.pages[page], crumb: t.nav[page], key: page, ...ph }; })(),
+      values: t.about.values.map((v, i) => ({ ...v, icon: this.icon(['<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/>', '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>', '<path d="M12 21c-5-3-8-6.5-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.5-3 8-8 11z"/>'][i] || '', '#23862a') })),
+      homeProjects: t.projects.slice(0, 3),
+      shownProjects: filter === 'all' ? t.projects : t.projects.filter(p => p.cat === filter),
+      isHome: pg('home'), notHome: !pg('home'), isAbout: pg('about'), isServices: pg('services'), isPortfolio: pg('portfolio'),
+      isLegal: pg('legal'), isTeam: pg('team'), isArticles: pg('articles'), isContact: pg('contact'),
+      showCtaBand: !pg('contact'),
+      heroOverlay: heroLayout === 'overlay', heroSplit: heroLayout === 'split',
+      showWA: this.props.floatingWhatsApp ?? true,
+      waOpen: !!this.state.waOpen, waTyping: !!this.state.waTyping,
+      waShown: (this.state.lang === 'en'
+        ? ['Hello! 👋 Welcome to PT Enviro Resources Indonesia.', 'Need help with environmental documents, permits or monitoring? Our team is ready to assist.']
+        : ['Halo! 👋 Selamat datang di PT Enviro Resources Indonesia.', 'Butuh bantuan dokumen lingkungan, perizinan, atau pemantauan? Tim kami siap membantu.']).slice(0, this.state.waCount || 0),
+      waStatus: this.state.waTyping ? (this.state.lang === 'en' ? 'typing…' : 'mengetik…') : 'online',
+      waTime: new Date().toTimeString().slice(0, 5),
+      waCta: this.state.lang === 'en' ? 'Start chat on WhatsApp' : 'Mulai chat di WhatsApp',
+      waToggle: () => {
+        (this.waTimers || []).forEach(clearTimeout);
+        if (this.state.waOpen) return this.setState({ waOpen: false, waTyping: false, waCount: 0 });
+        this.setState({ waOpen: true, waTyping: true, waCount: 0 });
+        const T = (ms, s) => setTimeout(() => this.setState(s), ms);
+        this.waTimers = [T(900, { waTyping: false, waCount: 1 }), T(1300, { waTyping: true }), T(2300, { waTyping: false, waCount: 2 })];
+      },
+      sent, notSent: !sent,
+      submit: (e) => { e.preventDefault(); this.setState({ sent: true }); },
+      idBg: lang === 'id' ? '#fff' : 'transparent', idFg: lang === 'id' ? 'var(--ink,#0f1f15)' : 'var(--muted2,#7a8a80)',
+      enBg: lang === 'en' ? '#fff' : 'transparent', enFg: lang === 'en' ? 'var(--ink,#0f1f15)' : 'var(--muted2,#7a8a80)',
+      setID: this.setLang('id'), setEN: this.setLang('en'),
+      rootStyle: (() => { const p = this.pal(), r = (h) => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).join(','); const st = { minHeight: '100vh', display: 'flex', flexDirection: 'column' }; Object.entries(p).forEach(([k, v]) => st['--' + k] = v); st['--dark-rgb'] = r(p.dark); st['--bright-rgb'] = r(p.bright); st['--brand-rgb'] = r(p.brand); st['--soft-rgb'] = r(p.soft); return st; })(),
+      faqs: t.faq.list.map((f, i) => { const on = (this.state.faqOpen ?? 0) === i; return { ...f, n: String(i + 1).padStart(2, '0'), rows: on ? '1fr' : '0fr', rot: on ? '45deg' : '0deg',
+        bg: on ? 'var(--tint,#f2f6f3)' : '#fff', border: 'var(--line,#e1e8e3)', shadow: 'none',
+        numColor: on ? 'var(--brand,#23862a)' : 'var(--muted2,#8a9a90)', qColor: 'var(--ink,#0f1f15)', aColor: 'var(--muted,#56675c)', aOp: on ? 1 : 0, aY: '0px',
+        iconBg: 'transparent', iconFg: on ? '#23862a' : '#56675c', toggle: () => this.setState({ faqOpen: on ? -1 : i }) }; }),
+      clientSlots: [0, 1, 2, 3, 4, 5],
+      testis: [...t.testi.list, ...t.testi.list].map((q, i) => ({ ...q, slot: 'testi-' + (i % t.testi.list.length) })).map((q, i) => i % 3 === 0
+        ? { ...q, bg: 'var(--dark,#0e2a1a)', fg: '#fff', sub: 'var(--ondark,#c9d8ce)', border: 'rgba(255,255,255,.14)' }
+        : { ...q, bg: '#fff', fg: 'var(--ink,#0f1f15)', sub: 'var(--muted2,#8a9a90)', border: 'var(--line,#e1e8e3)' }),
+      navHome, navAbout, aboutSub, aboutOpen: !!this.state.aboutOpen,
+      aboutEnter: () => this.setState({ aboutOpen: true }), aboutLeave: () => this.setState({ aboutOpen: false }),
+      aboutToggle: (e) => { e.preventDefault(); this.setState(s => ({ aboutOpen: !s.aboutOpen })); },
+      mSteps, cities, mLabel: stageW + cur.n, mTitle: cur.t, mNum: cur.n, mPlay: mPaused ? 'paused' : 'running',
+      mNext: () => this.setState(st => ({ mStep: ((st.mStep || 0) + 1) % 5 })),
+      mEnter: () => this.setState({ mPaused: true }), mLeave: () => this.setState({ mPaused: false }),
+      goHome: this.go('home'), goAbout: this.go('about'), goServices: this.go('services'), goPortfolio: this.go('portfolio'),
+      goLegal: this.go('legal'), goTeam: this.go('team'), goArticles: this.go('articles'), goContact: this.go('contact')
+    };
+  }
+}
+</script>
+</body>
+</html>

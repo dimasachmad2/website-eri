@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+/* ── Design tokens: arah "1b Korporat" ─────────────────────────────────
+   Diambil dari mockup design-reference/. Diekspose sebagai utility Tailwind
+   (mis. bg-forest, text-brand, border-line). */
+@theme {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "JetBrains Mono", monospace;
+
+  --color-brand: #23862a;          /* hijau utama (logo) */
+  --color-brand-bright: #4fc255;   /* aksen terang / CTA */
+  --color-brand-light: #8fdc93;    /* teks aksen di latar gelap */
+  --color-ink: #0f1f15;            /* teks utama */
+  --color-forest: #0e2a1a;         /* latar hero gelap */
+  --color-forest-deep: #091e12;    /* overlay hero */
+  --color-muted: #56675c;          /* teks sekunder */
+  --color-muted-2: #2b3a30;        /* teks nav */
+  --color-faint: #8a9a90;          /* label kecil */
+  --color-tint: #eef3ef;           /* permukaan lembut */
+  --color-surface: #f2f6f3;        /* panel */
+  --color-line: #e1e8e3;           /* garis / border */
+  --color-ondark: #c9d8ce;         /* teks di latar gelap */
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

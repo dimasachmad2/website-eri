@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>body{margin:0;background:#ecebe6;font-family:system-ui,sans-serif}a{color:#23862a;text-decoration:none}a:hover{color:#16601b}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.6)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.55)}.dv-notes{max-width:880px;font:13px/1.6 system-ui,sans-serif;color:#333;margin:0 0 28px}</style></helmet>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Tiga arah desain Beranda — PT Enviro Resources Indonesia</span></div>
+<div class="dv-notes">
+<p style="margin:0 0 8px">Semua konten diambil dari company profile (layanan, metode, KBLI, sektor, tenaga ahli). Warna hijau diambil dari logo. Portofolio, sertifikat, dan artikel belum ada datanya di PDF, jadi saya tandai sebagai placeholder. Toggle ID/EN sudah ada di navigasi, tapi terjemahan lengkapnya baru dikerjakan di build final.</p>
+<p style="margin:0">Pilih satu arah (atau gabungkan). Setelah itu saya buat situs multi-halaman lengkap: Beranda, Tentang, Layanan, Portofolio, Legalitas, Tim Ahli, Artikel, dan Kontak.</p>
+</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Editorial — tenang, berbasis regulasi, serif + kertas</div>
+<div class="dv-card" style="width:1280px;background:#f6f4ee;font-family:'IBM Plex Sans',sans-serif;color:#1d211c">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 56px;border-bottom:1px solid #d9d5c9">
+    <img src="assets/logo.jpeg" alt="PT Enviro Resources Indonesia" style="height:44px;mix-blend-mode:multiply"></img>
+    <div style="display:flex;gap:28px;font-size:14px;color:#3a3f38">
+      <span>Tentang Kami</span><span>Layanan</span><span>Portofolio</span><span>Legalitas</span><span>Tim Ahli</span><span>Artikel</span><span>Kontak</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;font-size:13px">
+      <span style="letter-spacing:.08em"><b>ID</b> <span style="color:#9a998f">/ EN</span></span>
+      <span style="padding:10px 18px;border:1px solid #1d211c;border-radius:999px;font-weight:500">Hubungi Kami</span>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:64px;padding:88px 56px 72px;align-items:end">
+    <div>
+      <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#23862a;margin-bottom:28px">Solutions for a Greener Tomorrow</div>
+      <h1 style="font-family:'Newsreader',serif;font-weight:400;font-size:68px;line-height:1.04;letter-spacing:-.02em;margin:0;text-wrap:pretty">Mendampingi pelaku usaha dan instansi dalam pemenuhan kewajiban lingkungan.</h1>
+    </div>
+    <div>
+      <p style="font-size:17px;line-height:1.6;color:#454a43;margin:0 0 28px;text-wrap:pretty">Pendekatan kami menghubungkan kajian teknis, proses perizinan, dan kebutuhan operasional agar rekomendasi dapat diterapkan di lapangan.</p>
+      <div style="display:flex;gap:12px">
+        <span style="padding:14px 22px;background:#23862a;color:#fff;border-radius:999px;font-weight:500;font-size:15px">Diskusikan Kebutuhan Anda</span>
+        <span style="padding:14px 22px;border:1px solid #bdb9ad;border-radius:999px;font-size:15px">Lihat Layanan</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin:0 56px;height:420px;border-radius:4px;background:repeating-linear-gradient(135deg,#e4e0d4 0 12px,#ebe8de 12px 24px);display:flex;align-items:flex-end;padding:20px;box-sizing:border-box;font:12px 'IBM Plex Sans';color:#7d7b70">Foto lapangan — survei / IPAL / tim di lokasi proyek</div>
+  <div style="padding:104px 56px 40px;display:grid;grid-template-columns:320px 1fr;gap:64px">
+    <div style="font-family:'Newsreader',serif;font-size:36px;line-height:1.1">Fokus usaha</div>
+    <div>
+      <div style="display:grid;grid-template-columns:64px 1fr 1.3fr;gap:24px;padding:28px 0;border-top:1px solid #d0ccc0">
+        <span style="font-family:'Newsreader',serif;font-size:22px;color:#23862a">01</span><span style="font-size:20px;font-weight:500">Konsultasi lingkungan</span><span style="color:#50554e;line-height:1.55">Penyusunan dokumen, persetujuan teknis, pelaporan, audit, serta pendampingan kepatuhan.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:64px 1fr 1.3fr;gap:24px;padding:28px 0;border-top:1px solid #d0ccc0">
+        <span style="font-family:'Newsreader',serif;font-size:22px;color:#23862a">02</span><span style="font-size:20px;font-weight:500">Prasarana pengolahan limbah</span><span style="color:#50554e;line-height:1.55">Perencanaan dan konstruksi bangunan sipil untuk mendukung sistem pengolahan limbah.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:64px 1fr 1.3fr;gap:24px;padding:28px 0;border-top:1px solid #d0ccc0;border-bottom:1px solid #d0ccc0">
+        <span style="font-family:'Newsreader',serif;font-size:22px;color:#23862a">03</span><span style="font-size:20px;font-weight:500">Pengelolaan limbah non-B3</span><span style="color:#50554e;line-height:1.55">Pengumpulan, pengangkutan, pengolahan, dan pembuangan sesuai ruang lingkup izin usaha.</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin:64px 56px 0;padding:56px;background:#1d211c;color:#f6f4ee;border-radius:4px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:40px">
+      <div style="font-family:'Newsreader',serif;font-size:36px">Kerangka perizinan lingkungan</div>
+      <div style="font-size:14px;color:#a9ada6;max-width:420px;line-height:1.5">Persetujuan lingkungan menjadi prasyarat yang terhubung dengan perizinan berusaha.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:stretch">
+      <div style="border:1px solid #3d433b;padding:24px">
+        <div style="font-size:11px;letter-spacing:.16em;color:#7fc983;margin-bottom:14px">LANDASAN UTAMA</div>
+        <div style="font-family:'Newsreader',serif;font-size:22px;margin-bottom:6px">PP 22 Tahun 2021</div>
+        <div style="font-size:13px;color:#a9ada6;line-height:1.5;margin-bottom:16px">Penyelenggaraan Perlindungan dan Pengelolaan Lingkungan Hidup</div>
+        <div style="font-family:'Newsreader',serif;font-size:22px;margin-bottom:6px">Permen LHK 4 Tahun 2021</div>
+        <div style="font-size:13px;color:#a9ada6;line-height:1.5">Daftar kegiatan wajib AMDAL, UKL-UPL, atau SPPL menurut KBLI, skala, dan parameter kegiatan.</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;color:#7fc983">→</div>
+      <div style="border:1px solid #3d433b;padding:24px">
+        <div style="font-size:11px;letter-spacing:.16em;color:#7fc983;margin-bottom:14px">OBJEK PENAPISAN</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:15px">
+          <span>KBLI dan uraian kegiatan</span><span>Kapasitas produksi</span><span>Luas lahan atau bangunan</span><span>Lokasi dan sensitivitas kawasan</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;color:#7fc983">→</div>
+      <div style="border:1px solid #3d433b;padding:24px">
+        <div style="font-size:11px;letter-spacing:.16em;color:#7fc983;margin-bottom:14px">HASIL PENAPISAN</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="padding:8px 14px;border:1px solid #7fc983;border-radius:999px;font-size:14px">AMDAL</span><span style="padding:8px 14px;border:1px solid #7fc983;border-radius:999px;font-size:14px">UKL-UPL</span><span style="padding:8px 14px;border:1px solid #7fc983;border-radius:999px;font-size:14px">SPPL</span><span style="padding:8px 14px;border:1px solid #7fc983;border-radius:999px;font-size:14px">DELH</span><span style="padding:8px 14px;border:1px solid #7fc983;border-radius:999px;font-size:14px">DPLH</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:104px 56px 0">
+    <div style="font-family:'Newsreader',serif;font-size:36px;margin-bottom:40px">Metode pendampingan</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:2px solid #1d211c">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+        <div style="padding:24px 24px 0 0">
+          <div style="font-family:'Newsreader',serif;font-size:40px;color:#23862a;margin-bottom:16px">{{ s.n }}</div>
+          <div style="font-size:17px;font-weight:500;margin-bottom:8px">{{ s.t }}</div>
+          <div style="font-size:14px;color:#50554e;line-height:1.55">{{ s.d }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="margin:104px 56px 0;padding:64px 0;border-top:1px solid #d0ccc0;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-family:'Newsreader',serif;font-size:48px;line-height:1.1;max-width:640px">Mari diskusikan kebutuhan lingkungan perusahaan Anda</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:16px;text-align:right">
+      <span style="font-size:28px;font-family:'Newsreader',serif">0811-1360-999</span>
+      <span style="color:#50554e">info@envirors.id</span>
+      <span style="color:#50554e">Citraland CBD S6/01, Driyorejo, Gresik</span>
+    </div>
+  </div>
+  <div style="padding:24px 56px;background:#1d211c;color:#a9ada6;font-size:13px;display:flex;justify-content:space-between"><span>© 2026 PT Enviro Resources Indonesia</span><span>Solutions for a Greener Tomorrow</span></div>
+</div></div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Korporat — hijau tua, foto besar, kuat untuk tender</div>
+<div class="dv-card" style="width:1280px;background:#fff;font-family:'Plus Jakarta Sans',sans-serif;color:#0f1f15">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:#fff">
+    <img src="assets/logo.jpeg" alt="PT Enviro Resources Indonesia" style="height:48px"></img>
+    <div style="display:flex;gap:26px;font-size:14px;font-weight:500;color:#2b3a30">
+      <span style="color:#23862a">Beranda</span><span>Tentang Kami</span><span>Layanan</span><span>Portofolio</span><span>Legalitas</span><span>Tim Ahli</span><span>Artikel</span><span>Kontak</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;background:#eef3ef;border-radius:8px;padding:3px;font-size:12px;font-weight:700"><span style="padding:6px 10px;background:#fff;border-radius:6px">ID</span><span style="padding:6px 10px;color:#7a8a80">EN</span></div>
+      <span style="padding:12px 18px;background:#23862a;color:#fff;border-radius:8px;font-weight:600;font-size:14px">Minta Penawaran</span>
+    </div>
+  </div>
+  <div style="position:relative;height:620px;background:#0e2a1a;overflow:hidden">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#123421 0 14px,#0f2e1c 14px 28px)"></div>
+    <div style="position:absolute;right:48px;top:32px;font-size:12px;color:#5f8a6c">Foto hero — area industri / instalasi pengolahan air limbah</div>
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,30,18,.94) 0%,rgba(9,30,18,.7) 55%,rgba(9,30,18,.1) 100%)"></div>
+    <div style="position:relative;padding:120px 48px 0;max-width:720px;color:#fff">
+      <div style="display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;letter-spacing:.06em;color:#8fdc93;margin-bottom:24px"><span style="width:28px;height:2px;background:#4fc255"></span>KONSULTAN LINGKUNGAN · GRESIK, JAWA TIMUR</div>
+      <h1 style="font-size:60px;line-height:1.05;font-weight:800;letter-spacing:-.025em;margin:0 0 24px;text-wrap:pretty">Solutions for a Greener Tomorrow</h1>
+      <p style="font-size:18px;line-height:1.6;color:#c9d8ce;margin:0 0 36px;max-width:600px">Konsultasi lingkungan, pengurusan perizinan lingkungan, ANDALALIN, SIPA air tanah, perizinan kesehatan &amp; keamanan pangan, dan jasa konstruksi sistem pengolahan air.</p>
+      <div style="display:flex;gap:12px">
+        <span style="padding:16px 24px;background:#4fc255;color:#0e2a1a;border-radius:8px;font-weight:700">Konsultasikan Proyek Anda</span>
+        <span style="padding:16px 24px;border:1px solid rgba(255,255,255,.35);border-radius:8px;font-weight:600">Unduh Company Profile</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin:-64px 48px 0;position:relative;display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(14,42,26,.12)">
+    <div style="padding:32px;border-right:1px solid #e6ece8"><div style="font-size:13px;font-weight:700;color:#23862a;margin-bottom:10px">01</div><div style="font-size:19px;font-weight:700;margin-bottom:8px">Konsultasi lingkungan</div><div style="font-size:14px;line-height:1.55;color:#56675c">Penyusunan dokumen, persetujuan teknis, pelaporan, audit, serta pendampingan kepatuhan.</div></div>
+    <div style="padding:32px;border-right:1px solid #e6ece8"><div style="font-size:13px;font-weight:700;color:#23862a;margin-bottom:10px">02</div><div style="font-size:19px;font-weight:700;margin-bottom:8px">Prasarana pengolahan limbah</div><div style="font-size:14px;line-height:1.55;color:#56675c">Perencanaan dan konstruksi bangunan sipil untuk mendukung sistem pengolahan limbah.</div></div>
+    <div style="padding:32px"><div style="font-size:13px;font-weight:700;color:#23862a;margin-bottom:10px">03</div><div style="font-size:19px;font-weight:700;margin-bottom:8px">Pengelolaan limbah non-B3</div><div style="font-size:14px;line-height:1.55;color:#56675c">Pengumpulan, pengangkutan, pengolahan, dan pembuangan sesuai ruang lingkup izin usaha.</div></div>
+  </div>
+  <div style="padding:112px 48px 0">
+    <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:40px">
+      <div><div style="font-size:13px;font-weight:700;color:#23862a;letter-spacing:.06em;margin-bottom:12px">LAYANAN</div><h2 style="font-size:40px;font-weight:800;letter-spacing:-.02em;margin:0">Dokumen, persetujuan, dan pelaporan</h2></div>
+      <span style="font-weight:600;color:#23862a">Semua layanan →</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <sc-for list="{{ services }}" as="sv" hint-placeholder-count="12">
+        <div style="padding:24px;border:1px solid #e1e8e3;border-radius:10px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+          <div style="font-size:12px;font-weight:700;color:#8a9a90">{{ sv.cat }}</div>
+          <div style="font-size:17px;font-weight:700;line-height:1.3">{{ sv.t }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="padding:112px 48px 0">
+    <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:40px">
+      <div><div style="font-size:13px;font-weight:700;color:#23862a;letter-spacing:.06em;margin-bottom:12px">PORTOFOLIO</div><h2 style="font-size:40px;font-weight:800;letter-spacing:-.02em;margin:0">Proyek terpilih</h2></div>
+      <span style="font-weight:600;color:#23862a">Lihat portofolio →</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px">
+      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+        <div>
+          <div style="height:260px;border-radius:10px;background:repeating-linear-gradient(135deg,#eef3ef 0 12px,#f5f8f6 12px 24px);margin-bottom:16px;display:flex;align-items:flex-end;padding:14px;box-sizing:border-box;font-size:12px;color:#8a9a90">Foto proyek</div>
+          <div style="font-size:12px;font-weight:700;color:#23862a;margin-bottom:6px">{{ p.tag }}</div>
+          <div style="font-size:17px;font-weight:700">{{ p.t }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="margin:112px 48px 0;padding:56px;background:#f2f6f3;border-radius:14px;display:grid;grid-template-columns:1fr 2fr;gap:56px">
+    <div><div style="font-size:13px;font-weight:700;color:#23862a;letter-spacing:.06em;margin-bottom:12px">SEKTOR</div><h2 style="font-size:32px;font-weight:800;letter-spacing:-.02em;margin:0 0 16px">Sektor yang kami layani</h2><p style="font-size:14px;line-height:1.6;color:#56675c;margin:0">Lingkup penugasan ditetapkan setelah penapisan kegiatan, lokasi, skala, dan status perizinan.</p></div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0 32px">
+      <sc-for list="{{ sectors }}" as="s" hint-placeholder-count="8">
+        <div style="display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #d7e2da;font-size:16px;font-weight:600"><span style="color:#23862a;width:24px">{{ s.n }}</span>{{ s.t }}</div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="margin:112px 0 0;background:#0e2a1a;color:#fff;padding:72px 48px 32px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:56px;border-bottom:1px solid #26482f">
+      <h2 style="font-size:44px;font-weight:800;letter-spacing:-.02em;margin:0;max-width:620px;line-height:1.1">Mari diskusikan kebutuhan lingkungan perusahaan Anda</h2>
+      <span style="padding:18px 28px;background:#4fc255;color:#0e2a1a;border-radius:8px;font-weight:700">Hubungi via WhatsApp · 0811-1360-999</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;padding-top:40px;font-size:14px;color:#a9c2b0;line-height:1.8">
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">PT Enviro Resources Indonesia</div>Citraland CBD S6/01, Driyorejo,<br></br>Gresik, Jawa Timur</div>
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">Perusahaan</div>Tentang Kami<br></br>Tim Ahli<br></br>Legalitas</div>
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">Layanan</div>AMDAL &amp; UKL-UPL<br></br>Persetujuan Teknis<br></br>Pengolahan Limbah</div>
+      <div><div style="color:#fff;font-weight:700;margin-bottom:8px">Kontak</div>info@envirors.id<br></br>admin@envirors.id</div>
+    </div>
+  </div>
+</div></div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Teknis — grid rekayasa, data KBLI, alat penapisan interaktif</div>
+<div class="dv-card" style="width:1280px;background:#f3f4f1;font-family:'Space Grotesk',sans-serif;color:#141714;background-image:linear-gradient(#e3e5e0 1px,transparent 1px),linear-gradient(90deg,#e3e5e0 1px,transparent 1px);background-size:40px 40px">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:76px;background:#fff;border-bottom:1px solid #141714">
+    <img src="assets/logo.jpeg" alt="PT Enviro Resources Indonesia" style="height:42px"></img>
+    <div style="display:flex;height:100%;font-size:14px;font-weight:500">
+      <span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0">Tentang</span><span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0">Layanan</span><span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0">Portofolio</span><span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0">Legalitas</span><span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0">Tim Ahli</span><span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0">Artikel</span><span style="display:flex;align-items:center;padding:0 16px;border-left:1px solid #e3e5e0;border-right:1px solid #e3e5e0">Kontak</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px"><span>[ID] EN</span><span style="padding:12px 16px;background:#141714;color:#fff">KONSULTASI →</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 480px;gap:40px;padding:72px 40px">
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#23862a;margin-bottom:24px">// ENVIRONMENTAL CONSULTING SERVICES</div>
+      <h1 style="font-size:72px;line-height:.98;font-weight:600;letter-spacing:-.035em;margin:0 0 28px">Kajian teknis, perizinan, dan operasi dalam satu alur kerja.</h1>
+      <p style="font-size:18px;line-height:1.55;color:#454a45;max-width:560px;margin:0">Mendampingi pelaku usaha dan instansi dalam pemenuhan kewajiban lingkungan, kesehatan lingkungan, dan perencanaan sistem pengolahan limbah, serta pengelolaan limbah.</p>
+    </div>
+    <div style="background:#fff;border:1px solid #141714;box-shadow:8px 8px 0 #23862a">
+      <div style="padding:14px 20px;border-bottom:1px solid #141714;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;justify-content:space-between"><span>METODE PENDAMPINGAN</span><span style="color:#23862a">{{ stepLabel }}</span></div>
+      <div style="display:flex;border-bottom:1px solid #e3e5e0">
+        <sc-for list="{{ stepTabs }}" as="s" hint-placeholder-count="5">
+          <button onClick="{{ s.pick }}" style="flex:1;padding:14px 0;border:0;border-right:1px solid #e3e5e0;background:{{ s.bg }};color:{{ s.fg }};font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer">{{ s.n }}</button>
+        </sc-for>
+      </div>
+      <div style="padding:28px 24px;min-height:150px">
+        <div style="font-size:26px;font-weight:600;margin-bottom:12px">{{ cur.t }}</div>
+        <div style="font-size:15px;line-height:1.55;color:#454a45">{{ cur.d }}</div>
+      </div>
+      <div style="padding:14px 20px;border-top:1px solid #e3e5e0;font-size:12px;color:#6f756f">Setiap tahap mengikuti kelengkapan data dan jadwal instansi berwenang.</div>
+    </div>
+  </div>
+  <div style="margin:0 40px;background:#fff;border:1px solid #141714">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr)">
+      <div style="padding:32px;border-right:1px solid #141714"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#23862a;margin-bottom:40px">01 / KONSULTASI</div><div style="font-size:24px;font-weight:600;margin-bottom:10px">Konsultasi lingkungan</div><div style="font-size:14px;line-height:1.55;color:#454a45">Penyusunan dokumen, persetujuan teknis, pelaporan, audit, serta pendampingan kepatuhan.</div></div>
+      <div style="padding:32px;border-right:1px solid #141714"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#23862a;margin-bottom:40px">02 / PRASARANA</div><div style="font-size:24px;font-weight:600;margin-bottom:10px">Prasarana pengolahan limbah</div><div style="font-size:14px;line-height:1.55;color:#454a45">Perencanaan dan konstruksi bangunan sipil untuk mendukung sistem pengolahan limbah.</div></div>
+      <div style="padding:32px"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#23862a;margin-bottom:40px">03 / NON-B3</div><div style="font-size:24px;font-weight:600;margin-bottom:10px">Pengelolaan limbah non-B3</div><div style="font-size:14px;line-height:1.55;color:#454a45">Pengumpulan, pengangkutan, pengolahan, dan pembuangan sesuai ruang lingkup izin usaha.</div></div>
+    </div>
+  </div>
+  <div style="padding:96px 40px 0;display:grid;grid-template-columns:360px 1fr;gap:40px">
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#23862a;margin-bottom:16px">// LEGALITAS USAHA</div>
+      <h2 style="font-size:40px;font-weight:600;letter-spacing:-.02em;margin:0 0 16px;line-height:1.05">Ruang lingkup KBLI</h2>
+      <p style="font-size:15px;line-height:1.55;color:#454a45;margin:0">Bidang usaha terdaftar yang menjadi dasar setiap penugasan.</p>
+    </div>
+    <div style="background:#fff;border:1px solid #141714">
+      <sc-for list="{{ kbli }}" as="k" hint-placeholder-count="5">
+        <div style="display:grid;grid-template-columns:100px 1fr 1fr;gap:24px;padding:20px 24px;border-bottom:1px solid #e3e5e0">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#23862a">{{ k.c }}</span>
+          <span style="font-size:16px;font-weight:600;line-height:1.35">{{ k.t }}</span>
+          <span style="font-size:14px;color:#5a605a;line-height:1.5">{{ k.d }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="padding:96px 40px 0">
+    <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:28px">
+      <div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#23862a;margin-bottom:16px">// TENAGA AHLI</div><h2 style="font-size:40px;font-weight:600;letter-spacing:-.02em;margin:0">14 tenaga ahli lintas disiplin</h2></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px">LIHAT TIM →</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid #141714;border-left:1px solid #141714">
+      <sc-for list="{{ team }}" as="m" hint-placeholder-count="14">
+        <div style="background:#fff;border-right:1px solid #141714;border-bottom:1px solid #141714;padding:14px">
+          <div style="aspect-ratio:1;background:repeating-linear-gradient(135deg,#eceee9 0 8px,#f5f6f3 8px 16px);margin-bottom:12px"></div>
+          <div style="font-size:13px;font-weight:600;line-height:1.3">{{ m }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="margin:96px 40px 0;display:grid;grid-template-columns:1fr auto;background:#23862a;color:#fff;border:1px solid #141714">
+    <div style="padding:48px 40px"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:16px;color:#d4f0d6">// KONTAK</div><div style="font-size:44px;font-weight:600;letter-spacing:-.02em;line-height:1.05;max-width:640px">Mari diskusikan kebutuhan lingkungan perusahaan Anda</div></div>
+    <div style="padding:48px 40px;border-left:1px solid #141714;background:#141714;display:flex;flex-direction:column;justify-content:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:14px"><span style="font-size:22px">0811-1360-999</span><span>info@envirors.id</span><span style="color:#9aa29a">Citraland CBD S6/01, Gresik</span></div>
+  </div>
+  <div style="padding:28px 40px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#6f756f;display:flex;justify-content:space-between"><span>© 2026 PT ENVIRO RESOURCES INDONESIA</span><span>SOLUTIONS FOR A GREENER TOMORROW</span></div>
+</div></div>
+
+</div>
+<p class="dv-next">Coba: "pakai <a class="dv-oid" href="#1b">1b</a> tapi dengan diagram perizinan dari <a class="dv-oid" href="#1a">1a</a>" · "<a class="dv-oid" href="#1c">1c</a> dengan foto hero" · "lanjutkan <a class="dv-oid" href="#1a">1a</a> ke situs lengkap"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { step: 0 };
+  renderVals() {
+    const steps = [
+      { n: '01', t: 'Penapisan', d: 'Menentukan kewajiban, kewenangan, data, dan ruang lingkup.' },
+      { n: '02', t: 'Survei dan pengumpulan data', d: 'Memeriksa kondisi eksisting serta dokumen pendukung.' },
+      { n: '03', t: 'Penyusunan dan kajian teknis', d: 'Mengolah data menjadi dokumen dan rekomendasi.' },
+      { n: '04', t: 'Pembahasan dan perbaikan', d: 'Mendampingi verifikasi, rapat, serta revisi dokumen.' },
+      { n: '05', t: 'Persetujuan dan tindak lanjut', d: 'Menyerahkan keluaran dan rencana pemenuhan kewajiban.' }
+    ];
+    const D = 'DOKUMEN', T = 'TEKNIS & PELAPORAN';
+    const services = [
+      [D, 'AMDAL dan UKL-UPL'], [D, 'DELH dan DPLH'], [D, 'Persetujuan Lingkungan'], [D, 'Analisis Dampak Lalu Lintas (Andalalin)'],
+      [D, 'Rincian Teknis Limbah B3'], [D, 'SIPA (Surat Izin Pengusahaan Air Tanah)'], [T, 'Persetujuan Teknis Emisi'], [T, 'Persetujuan Teknis Air Limbah'],
+      [T, 'Surat Laik Operasi'], [T, 'Pelaporan RKL-RPL / UKL-UPL'], [T, 'Audit dan Monitoring Lingkungan'], [T, 'Pendampingan PROPER']
+    ].map(([cat, t]) => ({ cat, t }));
+    const sectors = ['Industri manufaktur', 'Pergudangan dan logistik', 'Fasilitas komersial', 'Rumah sakit dan layanan kesehatan', 'Perumahan dan kawasan', 'Hotel, restoran, dan usaha pangan', 'Fasilitas pengelolaan limbah', 'Usaha kecil dan menengah'].map((t, i) => ({ n: '0' + (i + 1), t }));
+    const projects = [
+      { tag: 'AMDAL · Placeholder', t: 'Nama proyek — menunggu data' },
+      { tag: 'IPAL · Placeholder', t: 'Nama proyek — menunggu data' },
+      { tag: 'UKL-UPL · Placeholder', t: 'Nama proyek — menunggu data' }
+    ];
+    const kbli = [
+      { c: '74999', t: 'Aktivitas profesional, ilmiah, dan teknis lainnya YTDL', d: 'Landasan aktivitas konsultasi profesional sesuai perizinan perusahaan.' },
+      { c: '71102', t: 'Aktivitas perancangan dan konsultasi teknis', d: 'Landasan aktivitas konsultasi profesional perancangan.' },
+      { c: '42203', t: 'Konstruksi bangunan sipil prasarana sistem pengolahan limbah', d: 'Pelaksanaan prasarana sipil yang mendukung sistem pengolahan limbah.' },
+      { c: '38219', t: 'Pengolahan dan pembuangan limbah atau sampah tidak berbahaya lainnya', d: 'Pengolahan limbah non-B3, termasuk pengolahan organik menjadi kompos atau proses non-bahaya lainnya.' },
+      { c: '38110', t: 'Pengumpulan limbah atau sampah tidak berbahaya', d: 'Pengumpulan limbah non-B3 untuk disalurkan ke fasilitas pengelolaan yang sesuai.' }
+    ];
+    const team = ['Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.ST', 'Denissa Rahma Abidiana, S.T', 'M. Rifky Bintar Rahmadani, S.ST', 'Ahmad Fikri Haikal, S.T', 'Rossa Anggraini Ayu Aranais, S.KL', 'Jiemmy Ardian, S.Ars', 'Mochammad Erfian Ramadhan, S.T', 'Febby Dwi Kaffi Hutomo, S.T', 'Kenny Bellardo, S.ST', 'Yofy Eko Saputro, A.Md', 'Ade Al Munawar, S.H', 'Putut Djatmiko, S.E', 'Nurul Wahidah, A.Md'];
+    const st = this.state.step;
+    const stepTabs = steps.map((s, i) => ({ n: s.n, bg: i === st ? '#141714' : '#fff', fg: i === st ? '#fff' : '#141714', pick: () => this.setState({ step: i }) }));
+    return { steps, services, sectors, projects, kbli, team, stepTabs, cur: steps[st], stepLabel: 'TAHAP ' + steps[st].n + ' / 05' };
+  }
+}
+</script>
+</body>
+</html>
