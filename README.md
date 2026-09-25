@@ -75,7 +75,8 @@ baru diperlukan mulai Fase 2.
 ## Roadmap
 
 - [x] **Fase 0 — Fondasi:** scaffold Next.js, design token 1b, i18n, rencana deploy.
-- [ ] **Fase 1 — Situs:** port 8 halaman dari mockup (data statis), deploy ke Hostinger.
+- [x] **Fase 1 — Situs:** port 8 halaman dari mockup (data statis dari `src/content/site.ts`).
+- [ ] **Fase 1b — Deploy:** hubungkan repo ke Hostinger Managed Node.js, tayangkan.
 - [ ] **Fase 2 — Directus:** CMS + Postgres di Lightsail, artikel/konten editable, revalidate.
 - [ ] **Fase 3 — Otomasi:** n8n + Claude, submit artikel via Telegram (dengan approval).
 - [ ] **Fase 4 — Polish:** SEO/JSON-LD, analytics, backup terjadwal, monitoring.
