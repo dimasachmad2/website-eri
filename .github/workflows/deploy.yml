@@ -1,0 +1,53 @@
+name: Deploy ke Hostinger (statis via FTP)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build (export statis)
+        run: npm run build
+        env:
+          BUILD_STATIC: '1'
+
+      - name: Root redirect (/ -> /id/)
+        run: node scripts/gen-root-redirect.mjs
+
+      - name: Deteksi secret FTP
+        id: ftp
+        run: |
+          if [ -n "${{ secrets.FTP_SERVER }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Secret FTP belum diisi — build sukses, upload dilewati. Tambahkan FTP_SERVER/FTP_USERNAME/FTP_PASSWORD/FTP_REMOTE_DIR di Settings > Secrets."
+          fi
+
+      - name: Upload ke Hostinger via FTP
+        if: steps.ftp.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./out/
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}

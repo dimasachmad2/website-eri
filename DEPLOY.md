@@ -1,40 +1,60 @@
-# Deploy ke Hostinger (Managed Node.js)
+# Deploy ke Hostinger
 
-Situs ini Next.js (App Router, `output: 'standalone'`). Hostinger Business plan
-mendukungnya lewat **Managed Node.js** dengan auto-build dari GitHub.
+Ada dua cara. **Cara A dipakai sekarang** (Fase 1, situs statis). Cara B untuk nanti
+(Fase 2, saat butuh server untuk Directus/ISR).
 
-## Yang harus diisi di hPanel
+---
 
-| Field                | Nilai        |
-| -------------------- | ------------ |
-| Application type     | `next`       |
-| Build script         | `build`      |
-| Output directory     | `.next`      |
-| Entry file           | (diabaikan untuk Next.js) |
-| Node version         | 20 atau lebih (repo pin 22 via `.nvmrc`) |
+## Cara A — GitHub Actions + FTP (statis, repo tetap PRIVATE) ✅ aktif
 
-Tidak ada environment variable yang wajib untuk versi saat ini (Fase 1).
-`DIRECTUS_*` & `REVALIDATE_SECRET` baru diperlukan mulai Fase 2 — lihat `.env.example`.
+Alur: setiap `git push` ke `main` → GitHub Actions build export statis → upload
+folder `out/` ke Hostinger via **FTPS**. Tidak butuh koneksi GitHub App Hostinger,
+repo tetap privat. Workflow: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 
-## Langkah
+### Yang perlu kamu isi: 4 GitHub Secret
 
-1. **hPanel → Websites → Add Website → Deploy Web App.**
-2. **Import Git Repository** → **Authorize** Hostinger di GitHub (repo `website-eri`
-   privat, jadi wajib authorize; paste-URL publik tidak berlaku).
-3. Pilih repo **`dimasachmad2/website-eri`**, branch `main`.
-4. Framework terdeteksi **Next.js**. Pastikan: type `next`, build `build`, output `.next`.
-5. Klik **Deploy**. Build pertama ~beberapa menit; muncul screenshot preview bila sukses.
-6. Uji `…/id` dan `…/en`, cek toggle bahasa, WhatsApp float, menu mobile.
-7. **Domain:** kalau `envirors.id` sudah dimiliki, hubungkan di pengaturan situs
-   (Add domain / arahkan DNS). Kalau belum, pakai subdomain sementara dari Hostinger dulu.
+Di GitHub: **repo `website-eri` → Settings → Secrets and variables → Actions → New repository secret.** Buat 4 ini:
 
-## Auto-deploy
+| Nama secret       | Isi                                                                 |
+| ----------------- | ------------------------------------------------------------------- |
+| `FTP_SERVER`      | Host FTP dari hPanel (mis. `ftp.envirors.id` atau IP server)        |
+| `FTP_USERNAME`    | Username FTP                                                         |
+| `FTP_PASSWORD`    | Password FTP                                                         |
+| `FTP_REMOTE_DIR`  | Folder web root, biasanya `/public_html/` (domain utama)            |
 
-Setelah terhubung, setiap `git push` ke `main` memicu build ulang otomatis di Hostinger.
+**Ambil kredensial FTP:** hPanel → **Files → FTP Accounts** (lihat/atur host, username, password).
 
-## Catatan
+### Menjalankan
 
-- Config Next **harus** mengekspor objek (bukan function) — sudah dipastikan
-  (`next.config.mjs` → objek, `output: standalone`).
-- ISR & on-demand revalidation jalan otomatis (dipakai nanti di Fase 2).
-- Kalau build gagal, salin **log build Hostinger** dan kirim untuk didiagnosis.
+- Otomatis tiap `git push` ke `main`, atau
+- Manual: tab **Actions → "Deploy ke Hostinger (statis via FTP)" → Run workflow**.
+
+Sebelum secret diisi, run tetap sukses (build) tapi upload dilewati (ada warning).
+
+### Catatan
+
+- Kalau file mendarat di folder salah, sesuaikan `FTP_REMOTE_DIR` (mis. domain add-on
+  pakai path lain seperti `/domains/namadomain/public_html/`).
+- Kalau FTPS gagal handshake, ganti `protocol: ftps` → `ftp` di workflow (kurang aman).
+- Root `/` diarahkan ke `/id/` lewat `out/index.html` (dibuat `scripts/gen-root-redirect.mjs`).
+
+---
+
+## Cara B — Managed Node.js (untuk Fase 2)
+
+Saat Fase 2 (Directus/ISR butuh server Node), pindah ke sini. Build default sudah
+`output: 'standalone'`.
+
+| Field            | Nilai        |
+| ---------------- | ------------ |
+| Application type | `next`       |
+| Build script     | `build`      |
+| Output directory | `.next`      |
+| Node version     | 20+          |
+
+Langkah: hPanel → **Add Website → Deploy Web App → Import Git Repository** → pilih
+`dimasachmad2/website-eri` → Deploy. (Butuh koneksi GitHub App Hostinger; kalau repo
+tak muncul di daftar, disconnect–reconnect GitHub dari sisi hPanel.)
+
+`next.config.mjs` sudah dukung dua mode: default `standalone`, dan `BUILD_STATIC=1`
+untuk export statis (dipakai Cara A).
