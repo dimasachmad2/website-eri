@@ -1,59 +1,202 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
+import { Container } from '@/components/Container';
+import { Icon } from '@/components/Icon';
+import { CtaBand } from '@/components/CtaBand';
+import { MethodStepper } from '@/components/home/MethodStepper';
+import { Testimonials } from '@/components/home/Testimonials';
+import { Faq } from '@/components/home/Faq';
+import { getSite, ROUTES, type Locale } from '@/content/site';
 
-export default async function HomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations('home');
+  const site = getSite(locale as Locale);
+  const { t, allServices, methodSteps, homeProjects, heroPhoto, stageWord } = site;
 
   return (
-    <main className="min-h-screen">
-      {/* Hero — verifikasi token 1b Korporat (dark forest + aksen hijau) */}
-      <section className="relative overflow-hidden bg-forest text-white">
+    <>
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="relative flex min-h-[600px] items-center overflow-hidden bg-forest">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={heroPhoto.img} alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(135deg,#123421 0 14px,#0f2e1c 14px 28px)',
-          }}
-        />
-        <div
-          className="absolute inset-0"
+          className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'linear-gradient(90deg,rgba(9,30,18,.94) 0%,rgba(9,30,18,.7) 55%,rgba(9,30,18,.1) 100%)',
+              'linear-gradient(90deg,rgba(14,42,26,.95) 0%,rgba(14,42,26,.75) 50%,rgba(14,42,26,.15) 100%)',
           }}
         />
-        <div className="relative mx-auto max-w-5xl px-6 py-28 md:py-36">
-          <div className="mb-6 inline-flex items-center gap-2.5 text-sm font-semibold tracking-wide text-brand-light">
-            <span className="h-0.5 w-7 bg-brand-bright" />
-            {t('eyebrow')}
+        <Container className="relative py-24">
+          <div className="max-w-[700px] text-white">
+            <div className="mb-6 text-sm font-bold uppercase tracking-wide text-soft">
+              {t.hero.eyebrow}
+            </div>
+            <h1 className="m-0 mb-6 text-[clamp(40px,5.4vw,64px)] font-extrabold leading-[1.04] tracking-tight">
+              Solutions for a Greener Tomorrow
+            </h1>
+            <p className="m-0 mb-9 max-w-[600px] text-lg leading-relaxed text-ondark">{t.hero.sub}</p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={ROUTES.contact}
+                className="rounded-lg bg-brand-bright px-6 py-4 font-bold text-forest hover:text-forest"
+              >
+                {t.hero.b1}
+              </Link>
+              <a
+                href="/company-profile.pdf"
+                download
+                className="rounded-lg border border-white/40 px-6 py-4 font-semibold text-white hover:bg-white/10 hover:text-white"
+              >
+                {t.hero.b2}
+              </a>
+            </div>
           </div>
-          <h1 className="max-w-3xl text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl">
-            {t('title')}
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-ondark">{t('subtitle')}</p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <span className="rounded-lg bg-brand-bright px-6 py-4 font-bold text-forest">
-              {t('cta')}
-            </span>
-            <span className="rounded-lg border border-white/35 px-6 py-4 font-semibold">
-              {t('cta2')}
-            </span>
-          </div>
-        </div>
+        </Container>
       </section>
 
-      {/* Penanda status fondasi */}
-      <section className="mx-auto max-w-5xl px-6 py-16">
-        <p className="text-sm font-semibold tracking-wide text-brand">FASE 0 · FONDASI</p>
-        <h2 className="mt-2 text-2xl font-extrabold">{t('status_title')}</h2>
-        <p className="mt-3 max-w-2xl text-muted">{t('status_body')}</p>
-        <p className="mt-4 font-mono text-sm text-faint">locale: {locale}</p>
-      </section>
-    </main>
+      {/* ── Kartu fokus ──────────────────────────────────────── */}
+      <Container className="mt-12">
+        <div className="grid grid-cols-1 overflow-hidden rounded-xl bg-white shadow-[0_20px_50px_rgba(14,42,26,0.12)] md:grid-cols-3">
+          {t.focus.map((f: { n: string; t: string; d: string; iconPaths: string }) => (
+            <div key={f.n} className="border-b border-line p-8 md:border-b-0 md:border-r md:last:border-r-0">
+              <div className="mb-[18px] flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-badge text-brand">
+                <Icon paths={f.iconPaths} className="h-[26px] w-[26px]" />
+              </div>
+              <div className="mb-2 text-[19px] font-bold">{f.t}</div>
+              <div className="text-sm leading-relaxed text-muted">{f.d}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+
+      {/* ── Klien ────────────────────────────────────────────── */}
+      <Container className="pt-24">
+        <div className="flex flex-wrap items-center gap-8">
+          <div className="flex-none text-sm font-bold uppercase tracking-wide text-faint">
+            {t.clients.label}
+          </div>
+          <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-[72px] rounded-[10px] border border-line" />
+            ))}
+          </div>
+        </div>
+      </Container>
+
+      {/* ── Preview layanan ──────────────────────────────────── */}
+      <Container className="pt-28">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="mb-3 text-sm font-bold uppercase tracking-wide text-brand">
+              {t.home.svcEyebrow}
+            </div>
+            <h2 className="m-0 text-3xl font-extrabold tracking-tight md:text-4xl">{t.home.svcTitle}</h2>
+          </div>
+          <Link href={ROUTES.services} className="font-bold">
+            {t.home.svcAll} →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {allServices.map((sv, i) => (
+            <Link
+              key={i}
+              href={ROUTES.services}
+              className="flex min-h-[128px] flex-col justify-between gap-4 rounded-[10px] border border-line p-6 text-ink transition-colors hover:border-brand hover:text-ink"
+            >
+              <div className="text-xs font-bold uppercase tracking-wide text-faint">{sv.cat}</div>
+              <div className="text-[17px] font-bold leading-snug">{sv.t}</div>
+            </Link>
+          ))}
+        </div>
+      </Container>
+
+      {/* ── Metode ───────────────────────────────────────────── */}
+      <Container className="pt-28">
+        <MethodStepper
+          steps={methodSteps}
+          eyebrow={t.method.eyebrow}
+          title={t.method.title}
+          note={t.method.note}
+          stageWord={stageWord}
+        />
+      </Container>
+
+      {/* ── Preview portofolio ───────────────────────────────── */}
+      <Container className="pt-28">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="mb-3 text-sm font-bold uppercase tracking-wide text-brand">
+              {t.home.pfEyebrow}
+            </div>
+            <h2 className="m-0 text-3xl font-extrabold tracking-tight md:text-4xl">{t.home.pfTitle}</h2>
+          </div>
+          <Link href={ROUTES.portfolio} className="font-bold">
+            {t.home.pfAll} →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {homeProjects.map((p) => (
+            <div key={p.key}>
+              <div className="mb-4 h-[260px] overflow-hidden rounded-[10px]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p.img} alt="" className="h-full w-full object-cover" />
+              </div>
+              <div className="mb-1.5 text-xs font-bold text-brand">{p.tag}</div>
+              <div className="mb-1 text-[17px] font-bold">{p.t}</div>
+              <div className="text-sm text-faint">{p.loc}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+
+      {/* ── Testimoni ────────────────────────────────────────── */}
+      <Testimonials
+        eyebrow={t.testi.eyebrow}
+        title={t.testi.title}
+        status={t.testi.status}
+        list={t.testi.list}
+      />
+
+      {/* ── Sektor ───────────────────────────────────────────── */}
+      <Container className="pt-28">
+        <div className="mb-10 flex flex-col gap-4">
+          <div>
+            <div className="mb-3 text-sm font-bold uppercase tracking-wide text-brand">
+              {t.sectors.eyebrow}
+            </div>
+            <h2 className="m-0 text-3xl font-extrabold tracking-tight md:text-4xl">{t.sectors.title}</h2>
+          </div>
+          <p className="m-0 max-w-[560px] text-[15px] leading-relaxed text-muted">{t.sectors.note}</p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {t.sectors.list.map((s: { n: string; t: string; img: string }) => (
+            <div key={s.n} className="relative h-[220px] overflow-hidden rounded-xl bg-forest">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={s.img} alt="" className="h-full w-full object-cover" />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to top,rgba(14,42,26,.92) 0%,rgba(14,42,26,.35) 55%,rgba(14,42,26,.05) 100%)',
+                }}
+              />
+              <div className="absolute bottom-[18px] left-5 right-5 text-white">
+                <div className="mb-1.5 text-xs font-bold uppercase tracking-wide text-soft">{s.n}</div>
+                <div className="text-lg font-bold leading-snug">{s.t}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+
+      {/* ── FAQ ──────────────────────────────────────────────── */}
+      <Container className="pt-28">
+        <Faq title={t.faq.title} sub={t.faq.sub} cta={t.faq.cta} list={t.faq.list} />
+      </Container>
+
+      {/* ── CTA band ─────────────────────────────────────────── */}
+      <CtaBand locale={locale as Locale} />
+    </>
   );
 }

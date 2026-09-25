@@ -4,6 +4,10 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import { routing } from '@/i18n/routing';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { WhatsAppFloat } from '@/components/WhatsAppFloat';
+import { getSite, type Locale } from '@/content/site';
 import '../globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -46,11 +50,20 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const { nav, t } = getSite(locale as Locale);
+  const aboutOverview = locale === 'en' ? 'Company Overview' : 'Sekilas Perusahaan';
 
   return (
     <html lang={locale} className={`${jakarta.variable} ${jetbrains.variable}`}>
       <body>
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
+          <div className="flex min-h-screen flex-col">
+            <Header nav={nav} cta={t.cta} aboutOverview={aboutOverview} />
+            <main className="flex-1">{children}</main>
+            <Footer locale={locale as Locale} />
+          </div>
+          <WhatsAppFloat locale={locale as Locale} />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
