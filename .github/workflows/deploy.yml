@@ -3,7 +3,12 @@ name: Deploy ke Hostinger (statis via FTP)
 on:
   push:
     branches: [main]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      clean:
+        description: 'Bersihkan folder tujuan dulu (upload ulang penuh)'
+        type: boolean
+        default: false
 
 concurrency:
   group: deploy-hostinger
@@ -61,3 +66,5 @@ jobs:
           local-dir: ./out/
           # Docroot domain enviroresources.co.id (relatif ke home FTP u161175783).
           server-dir: domains/enviroresources.co.id/public_html/
+          # Saat dijalankan manual dengan clean=true: hapus isi folder tujuan dulu.
+          dangerous-clean-slate: ${{ inputs.clean == true }}
