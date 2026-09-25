@@ -40,14 +40,27 @@ jobs:
             echo "::warning::Secret FTP belum diisi — build sukses, upload dilewati. Tambahkan FTP_SERVER/FTP_USERNAME/FTP_PASSWORD/FTP_REMOTE_DIR di Settings > Secrets."
           fi
 
+      - name: Normalisasi FTP (buang ftp://, pastikan dir diakhiri /)
+        id: norm
+        if: steps.ftp.outputs.ready == 'true'
+        env:
+          RAW_SERVER: ${{ secrets.FTP_SERVER }}
+          RAW_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+        run: |
+          s="${RAW_SERVER#ftp://}"; s="${s#ftps://}"; s="${s%/}"
+          d="${RAW_DIR:-public_html}"
+          case "$d" in */) ;; *) d="$d/";; esac
+          echo "server=$s" >> "$GITHUB_OUTPUT"
+          echo "dir=$d" >> "$GITHUB_OUTPUT"
+
       - name: Upload ke Hostinger via FTP
         if: steps.ftp.outputs.ready == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ steps.norm.outputs.server }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
           local-dir: ./out/
-          server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+          server-dir: ${{ steps.norm.outputs.dir }}
