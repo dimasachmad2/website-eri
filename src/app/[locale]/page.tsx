@@ -39,7 +39,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="flex flex-wrap gap-3">
               <Link
                 href={ROUTES.contact}
-                className="rounded-lg bg-brand-bright px-6 py-4 font-bold text-forest hover:text-forest"
+                className="rounded-lg bg-brand-bright px-6 py-4 font-bold text-white hover:text-white"
               >
                 {t.hero.b1}
               </Link>
