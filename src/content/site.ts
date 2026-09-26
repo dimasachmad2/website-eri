@@ -332,6 +332,18 @@ export const cities = [
   delay: (i * 0.17).toFixed(2),
 }));
 
+// Logo klien (di public/clients/). File .webp.
+export const CLIENTS = [
+  { name: 'PT Santos Jaya Abadi', logo: '/clients/santos-jaya-abadi.webp' },
+  { name: 'Indoprima', logo: '/clients/indoprima.webp' },
+  { name: 'Anindya', logo: '/clients/anindya.webp' },
+  { name: 'Auto2000', logo: '/clients/auto2000.webp' },
+  { name: 'Klien', logo: '/clients/group-26.webp' },
+  { name: 'Klien', logo: '/clients/group-27.webp' },
+  { name: 'Klien', logo: '/clients/group-28.webp' },
+  { name: 'Klien', logo: '/clients/group-29.webp' },
+];
+
 export const WHATSAPP = 'https://wa.me/628111360999';
 export const PHONE_DISPLAY = '0811-1360-999';
 

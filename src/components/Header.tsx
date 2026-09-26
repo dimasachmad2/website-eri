@@ -52,17 +52,18 @@ export function Header({
             {nav.home}
           </Link>
 
-          {/* About group */}
+          {/* About group — parent hanya pemicu dropdown, tidak menavigasi */}
           <div className="group relative">
-            <Link
-              href={ROUTES.about}
-              className={`flex items-center gap-1.5 ${linkClass(aboutActive)}`}
+            <button
+              type="button"
+              aria-haspopup="true"
+              className={`flex cursor-default items-center gap-1.5 ${linkClass(aboutActive)}`}
             >
               {nav.about}
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <path d="M2 3.5l3 3 3-3" />
               </svg>
-            </Link>
+            </button>
             <div className="invisible absolute left-0 top-full min-w-[230px] pt-2 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
               <div className="flex flex-col gap-1 rounded-xl border border-line bg-white p-1.5 shadow-[0_16px_40px_rgba(14,42,26,0.14)]">
                 {ABOUT_GROUP.map((k) => (

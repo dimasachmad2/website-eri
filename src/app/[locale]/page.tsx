@@ -6,7 +6,7 @@ import { CtaBand } from '@/components/CtaBand';
 import { MethodStepper } from '@/components/home/MethodStepper';
 import { Testimonials } from '@/components/home/Testimonials';
 import { Faq } from '@/components/home/Faq';
-import { getSite, ROUTES, type Locale } from '@/content/site';
+import { getSite, ROUTES, CLIENTS, type Locale } from '@/content/site';
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -76,9 +76,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="flex-none text-sm font-bold uppercase tracking-wide text-faint">
             {t.clients.label}
           </div>
-          <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-[72px] rounded-[10px] border border-line" />
+          <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
+            {CLIENTS.map((c) => (
+              <div
+                key={c.logo}
+                className="flex h-[72px] items-center justify-center rounded-[10px] border border-line bg-white p-3 opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.logo} alt={c.name} className="max-h-full max-w-full object-contain" />
+              </div>
             ))}
           </div>
         </div>
@@ -154,7 +160,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Testimonials
         eyebrow={t.testi.eyebrow}
         title={t.testi.title}
-        status={t.testi.status}
         list={t.testi.list}
       />
 

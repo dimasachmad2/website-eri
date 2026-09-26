@@ -3,12 +3,10 @@ type Q = { text: string; name: string; role: string };
 export function Testimonials({
   eyebrow,
   title,
-  status,
   list,
 }: {
   eyebrow: string;
   title: string;
-  status: string;
   list: Q[];
 }) {
   const loop = [...list, ...list];
@@ -19,14 +17,9 @@ export function Testimonials({
         <div className="mb-10 flex flex-col items-center gap-4 text-center">
           <div className="flex flex-col items-center">
             <div className="mb-3 flex items-center gap-2.5 text-sm font-bold uppercase tracking-wide text-brand">
-              <span className="h-0.5 w-7 bg-brand" />
               {eyebrow}
-              <span className="h-0.5 w-7 bg-brand" />
             </div>
             <h2 className="m-0 text-3xl font-extrabold tracking-tight md:text-4xl">{title}</h2>
-          </div>
-          <div className="rounded-full border border-line bg-white px-2.5 py-1.5 text-xs font-bold text-muted">
-            {status}
           </div>
         </div>
       </div>

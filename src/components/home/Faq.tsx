@@ -22,9 +22,7 @@ export function Faq({
     <div className="mx-auto flex max-w-[920px] flex-col gap-12">
       <div className="flex flex-col items-center text-center">
         <div className="mb-3 flex items-center gap-2.5 text-sm font-bold uppercase tracking-wide text-brand">
-          <span className="h-0.5 w-7 bg-brand" />
           FAQ
-          <span className="h-0.5 w-7 bg-brand" />
         </div>
         <h2 className="m-0 mb-4 text-3xl font-extrabold leading-tight tracking-tight md:text-4xl">
           {title}
