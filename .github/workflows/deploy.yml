@@ -54,8 +54,12 @@ jobs:
           s="${RAW_SERVER#ftp://}"; s="${s#ftps://}"; s="${s%/}"
           echo "server=$s" >> "$GITHUB_OUTPUT"
 
-      - name: Upload ke Hostinger via FTP
+      # FTP u161175783 mendarat DI DALAM public_html, jadi naik 1 level (../)
+      # untuk mencapai docroot asli domain: <home>/domains/enviroresources.co.id/public_html/
+      - name: Upload ke Hostinger via FTP (percobaan 1)
+        id: ftp1
         if: steps.ftp.outputs.ready == 'true'
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ steps.norm.outputs.server }}
@@ -63,9 +67,22 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           port: 21
+          timeout: 120000
           local-dir: ./out/
-          # FTP u161175783 mendarat DI DALAM public_html, jadi naik 1 level (../)
-          # untuk mencapai docroot asli domain: <home>/domains/enviroresources.co.id/public_html/
+          server-dir: ../domains/enviroresources.co.id/public_html/
+
+      # Hostinger FTP kadang timeout (control socket) — ulangi sekali otomatis.
+      - name: Upload ke Hostinger via FTP (retry)
+        if: steps.ftp.outputs.ready == 'true' && steps.ftp1.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ steps.norm.outputs.server }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          timeout: 120000
+          local-dir: ./out/
           server-dir: ../domains/enviroresources.co.id/public_html/
           # Saat dijalankan manual dengan clean=true: hapus isi folder tujuan dulu.
           dangerous-clean-slate: ${{ inputs.clean == true }}
