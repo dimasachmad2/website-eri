@@ -171,17 +171,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {t.sectors.list.map((s: { n: string; t: string; img: string }) => (
-            <div key={s.n} className="relative h-[220px] overflow-hidden rounded-xl bg-forest">
+            <div
+              key={s.n}
+              className="group relative h-[220px] overflow-hidden rounded-xl bg-forest transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(14,42,26,0.28)]"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.img} alt="" className="h-full w-full object-cover" />
+              <img
+                src={s.img}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-110"
+              />
               <div
-                className="pointer-events-none absolute inset-0"
+                className="pointer-events-none absolute inset-0 transition-opacity duration-300 group-hover:opacity-90"
                 style={{
                   background:
                     'linear-gradient(to top,rgba(14,42,26,.92) 0%,rgba(14,42,26,.35) 55%,rgba(14,42,26,.05) 100%)',
                 }}
               />
-              <div className="absolute bottom-[18px] left-5 right-5 text-white">
+              <div className="absolute bottom-[18px] left-5 right-5 text-white transition-transform duration-300 group-hover:-translate-y-1">
                 <div className="mb-1.5 text-xs font-bold uppercase tracking-wide text-soft">{s.n}</div>
                 <div className="text-lg font-bold leading-snug">{s.t}</div>
               </div>
