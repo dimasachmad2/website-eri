@@ -1,10 +1,8 @@
-import { Link } from '@/i18n/navigation';
 import { Container } from './Container';
 import { pageHero, type Locale, type PageKey } from '@/content/site';
 
 export function PageHero({ locale, page }: { locale: Locale; page: PageKey }) {
   const { title, sub, crumbs, photo } = pageHero(locale, page);
-  const homeLabel = locale === 'en' ? 'Home' : 'Beranda';
 
   return (
     <section className="relative overflow-hidden bg-forest text-white">
@@ -40,12 +38,13 @@ export function PageHero({ locale, page }: { locale: Locale; page: PageKey }) {
 
       <Container className="relative flex min-h-[420px] flex-col justify-center py-24">
         <div className="mb-7 flex flex-wrap items-center gap-2 text-sm font-semibold">
-          <Link href="/" className="text-ondark hover:text-white">{homeLabel}</Link>
           {crumbs.map((c, i) => (
             <span key={i} className="flex items-center gap-2">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#8fdc93" strokeWidth="1.6" aria-hidden="true">
-                <path d="M4.5 2.5L8 6l-3.5 3.5" />
-              </svg>
+              {i > 0 && (
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#8fdc93" strokeWidth="1.6" aria-hidden="true">
+                  <path d="M4.5 2.5L8 6l-3.5 3.5" />
+                </svg>
+              )}
               <span className={i === crumbs.length - 1 ? 'text-soft' : 'text-ondark'}>{c}</span>
             </span>
           ))}
