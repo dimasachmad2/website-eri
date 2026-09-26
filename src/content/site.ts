@@ -404,5 +404,14 @@ export type ProjectItem = {
 
 export function pageHero(locale: Locale, page: PageKey) {
   const t = loc(content.pages[page as keyof typeof content.pages], locale) as { title: string; sub: string };
-  return { ...t, crumb: (loc(content.nav[page], locale) as string), photo: pageHeroPhoto[page] };
+  const nav = loc(content.nav, locale) as Record<PageKey, string>;
+  const aboutOverview = locale === 'en' ? 'Company Overview' : 'Sekilas Perusahaan';
+
+  // Halaman di grup "Tentang Kami" → breadcrumb bertingkat.
+  let crumbs: string[];
+  if (page === 'about') crumbs = [nav.about, aboutOverview];
+  else if (page === 'legal' || page === 'team') crumbs = [nav.about, nav[page]];
+  else crumbs = [nav[page]];
+
+  return { ...t, crumbs, photo: pageHeroPhoto[page] };
 }
