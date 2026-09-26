@@ -2,7 +2,10 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { CtaBand } from '@/components/CtaBand';
-import { getSite, metaFor, type Locale } from '@/content/site';
+import { Icon } from '@/components/Icon';
+import { getSite, metaFor, ISO_CERTS, type Locale } from '@/content/site';
+
+const AWARD = '<circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-3 5 3-1.5-8.5"/>';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -37,18 +40,45 @@ export default async function LegalPage({ params }: { params: Promise<{ locale: 
         </div>
       </Container>
 
-      {/* Dokumen legal */}
+      {/* Sertifikasi ISO */}
+      <Container className="pt-24">
+        <div className="mb-3 text-sm font-bold uppercase tracking-wide text-brand">
+          {locale === 'en' ? 'ISO CERTIFICATIONS' : 'SERTIFIKASI ISO'}
+        </div>
+        <h2 className="m-0 mb-9 text-3xl font-extrabold tracking-tight md:text-4xl">
+          {locale === 'en' ? 'Certified management systems' : 'Sistem manajemen tersertifikasi'}
+        </h2>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {ISO_CERTS.map((c) => (
+            <a
+              key={c.code}
+              href={c.file}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col rounded-xl border border-line p-7 text-ink transition-all hover:-translate-y-1 hover:border-brand hover:text-ink hover:shadow-[0_16px_40px_rgba(14,42,26,0.1)]"
+            >
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-badge text-brand">
+                <Icon paths={AWARD} className="h-6 w-6" />
+              </div>
+              <div className="text-xl font-extrabold">{c.code}</div>
+              <div className="mb-8 text-sm text-muted">{locale === 'en' ? c.en : c.id}</div>
+              <div className="mt-auto text-sm font-bold text-brand">
+                {locale === 'en' ? 'View certificate' : 'Lihat sertifikat'} →
+              </div>
+            </a>
+          ))}
+        </div>
+      </Container>
+
+      {/* Dokumen legal (daftar) */}
       <Container className="pt-24">
         <div className="mb-3 text-sm font-bold uppercase tracking-wide text-brand">{legal.docL}</div>
-        <h2 className="m-0 mb-9 text-3xl font-extrabold tracking-tight md:text-4xl">{legal.docT}</h2>
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        <h2 className="m-0 mb-6 text-3xl font-extrabold tracking-tight md:text-4xl">{legal.docT}</h2>
+        <div className="flex flex-wrap gap-3">
           {(legal.docs as string[]).map((d) => (
-            <div key={d}>
-              <div className="mb-3.5 flex aspect-[3/4] items-end overflow-hidden rounded-[10px] border border-line bg-tint p-3 text-xs text-faint">
-                {locale === 'en' ? 'Document scan' : 'Scan dokumen'}
-              </div>
-              <div className="text-base font-bold">{d}</div>
-            </div>
+            <span key={d} className="rounded-full border border-line bg-tint px-5 py-3 text-sm font-bold">
+              {d}
+            </span>
           ))}
         </div>
       </Container>

@@ -43,10 +43,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               </div>
             </div>
           </div>
-          <div className="mt-10 flex h-[280px] items-end rounded-xl bg-tint p-4 text-xs text-faint">
-            {locale === 'en'
-              ? 'Google Maps embed: Citraland CBD, Driyorejo'
-              : 'Embed Google Maps: Citraland CBD, Driyorejo'}
+          <div className="mt-10 h-[280px] overflow-hidden rounded-xl border border-line">
+            <iframe
+              src="https://maps.google.com/maps?q=-7.3411734,112.6311973&z=16&output=embed"
+              title="Lokasi kantor PT Enviro Resources Indonesia"
+              className="h-full w-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </div>
 

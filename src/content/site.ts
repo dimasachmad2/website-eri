@@ -350,6 +350,13 @@ export const CLIENTS = [
   { name: 'Klien', logo: '/clients/group-29.webp' },
 ];
 
+// Sertifikat ISO (PDF di public/legal/).
+export const ISO_CERTS = [
+  { code: 'ISO 9001', id: 'Manajemen Mutu', en: 'Quality Management', file: '/legal/iso-9001.pdf' },
+  { code: 'ISO 14001', id: 'Manajemen Lingkungan', en: 'Environmental Management', file: '/legal/iso-14001.pdf' },
+  { code: 'ISO 45001', id: 'Kesehatan & Keselamatan Kerja (K3)', en: 'Occupational Health & Safety', file: '/legal/iso-45001.pdf' },
+];
+
 export const WHATSAPP = 'https://wa.me/628111360999';
 export const PHONE_DISPLAY = '0811-1360-999';
 

@@ -21,7 +21,10 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
         <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
           {team.map((name) => (
             <div key={name}>
-              <div className="mb-3.5 aspect-[4/5] overflow-hidden rounded-[10px] bg-tint" />
+              <div className="mb-3.5 aspect-[4/5] overflow-hidden rounded-[10px] bg-tint">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/team-placeholder.svg" alt="" className="h-full w-full object-cover" />
+              </div>
               <div className="text-base font-bold leading-snug">{name}</div>
             </div>
           ))}

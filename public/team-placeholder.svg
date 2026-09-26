@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" role="img" aria-label="Foto menyusul">
+  <rect width="200" height="250" fill="#eef6ef"/>
+  <circle cx="100" cy="96" r="40" fill="#bcd3c1"/>
+  <path d="M28 250c0-40 32-68 72-68s72 28 72 68z" fill="#bcd3c1"/>
+</svg>
