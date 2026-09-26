@@ -319,8 +319,8 @@ const teamNames = [
   'Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.ST', 'Denissa Rahma Abidiana, S.T',
   'M. Rifky Bintar Rahmadani, S.ST', 'Ahmad Fikri Haikal, S.T', 'Rossa Anggraini Ayu Aranais, S.KL',
   'Jiemmy Ardian, S.Ars', 'Mochammad Erfian Ramadhan, S.T', 'Febby Dwi Kaffi Hutomo, S.T',
-  'Kenny Bellardo, S.ST', 'Yofy Eko Saputro, A.Md', 'Ade Al Munawar, S.H',
-  'Putut Djatmiko, S.E', 'Nurul Wahidah, A.Md',
+  'Yofy Eko Saputro, A.Md', 'Ade Al Munawar, S.H',
+  'Putut Djatmiko, S.E',
 ];
 
 // Titik kota untuk peta CTA band (x%, y%, tampilkan label?)
