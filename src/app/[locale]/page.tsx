@@ -72,20 +72,25 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* ── Klien ────────────────────────────────────────────── */}
       <Container className="pt-24">
-        <div className="flex flex-wrap items-center gap-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-8">
           <div className="flex-none text-sm font-bold uppercase tracking-wide text-faint">
             {t.clients.label}
           </div>
-          <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4">
-            {CLIENTS.map((c) => (
-              <div
-                key={c.logo}
-                className="flex h-[72px] items-center justify-center rounded-[10px] border border-line bg-white p-3 opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.logo} alt={c.name} className="max-h-full max-w-full object-contain" />
-              </div>
-            ))}
+          <div className="relative flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_5%,#000_95%,transparent)]">
+            <div
+              className="flex w-max items-center gap-4 hover:[animation-play-state:paused]"
+              style={{ animation: 'tMarquee 35s linear infinite' }}
+            >
+              {[...CLIENTS, ...CLIENTS].map((c, i) => (
+                <div
+                  key={i}
+                  className="flex h-[72px] w-[160px] flex-none items-center justify-center rounded-[10px] border border-line bg-white p-3 opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={c.logo} alt={c.name} className="max-h-full max-w-full object-contain" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Container>
