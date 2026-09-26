@@ -37,10 +37,14 @@ export function PortfolioGrid({
 
       <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((p) => (
-          <div key={p.key}>
+          <div key={p.key} className="group">
             <div className="mb-4 h-[240px] overflow-hidden rounded-[10px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.img} alt="" className="h-full w-full object-cover" />
+              <img
+                src={p.img}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105"
+              />
             </div>
             <div className="mb-1.5 text-xs font-bold text-brand">{p.tag}</div>
             <div className="mb-1 text-lg font-bold">{p.t}</div>

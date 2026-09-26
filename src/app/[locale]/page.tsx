@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Container } from '@/components/Container';
@@ -6,7 +7,12 @@ import { CtaBand } from '@/components/CtaBand';
 import { MethodStepper } from '@/components/home/MethodStepper';
 import { Testimonials } from '@/components/home/Testimonials';
 import { Faq } from '@/components/home/Faq';
-import { getSite, ROUTES, CLIENTS, type Locale } from '@/content/site';
+import { getSite, ROUTES, CLIENTS, metaFor, type Locale } from '@/content/site';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  return metaFor(locale as Locale, 'home');
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -148,10 +154,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {homeProjects.map((p) => (
-            <div key={p.key}>
+            <div key={p.key} className="group">
               <div className="mb-4 h-[260px] overflow-hidden rounded-[10px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.img} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={p.img}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105"
+                />
               </div>
               <div className="mb-1.5 text-xs font-bold text-brand">{p.tag}</div>
               <div className="mb-1 text-[17px] font-bold">{p.t}</div>

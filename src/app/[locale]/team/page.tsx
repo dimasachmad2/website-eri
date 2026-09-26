@@ -2,7 +2,12 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { CtaBand } from '@/components/CtaBand';
-import { getSite, type Locale } from '@/content/site';
+import { getSite, metaFor, type Locale } from '@/content/site';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return metaFor(locale as Locale, 'team');
+}
 
 export default async function TeamPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

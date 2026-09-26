@@ -7,7 +7,7 @@ import { routing } from '@/i18n/routing';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
-import { getSite, type Locale } from '@/content/site';
+import { getSite, SITE_URL, COMPANY, type Locale } from '@/content/site';
 import '../globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -23,12 +23,20 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'PT Enviro Resources Indonesia',
-    template: '%s · PT Enviro Resources Indonesia',
+    default: COMPANY,
+    template: `%s · ${COMPANY}`,
   },
   description:
     'Konsultan lingkungan — pendampingan perizinan, dokumen lingkungan, dan prasarana pengolahan limbah. Solutions for a Greener Tomorrow.',
+  openGraph: {
+    type: 'website',
+    siteName: COMPANY,
+    images: ['/photos/1774789599304-cca1e1ffbb95.jpg'],
+  },
+  twitter: { card: 'summary_large_image' },
+  robots: { index: true, follow: true },
 };
 
 export function generateStaticParams() {

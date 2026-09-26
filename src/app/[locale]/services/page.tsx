@@ -2,9 +2,14 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { CtaBand } from '@/components/CtaBand';
-import { getSite, type Locale } from '@/content/site';
+import { getSite, metaFor, type Locale } from '@/content/site';
 
 const PILLS = ['AMDAL', 'UKL-UPL', 'SPPL', 'DELH', 'DPLH'];
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return metaFor(locale as Locale, 'services');
+}
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

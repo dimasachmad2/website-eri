@@ -2,7 +2,12 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { ContactForm } from '@/components/ContactForm';
-import { getSite, WHATSAPP, PHONE_DISPLAY, type Locale } from '@/content/site';
+import { getSite, WHATSAPP, PHONE_DISPLAY, metaFor, type Locale } from '@/content/site';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return metaFor(locale as Locale, 'contact');
+}
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

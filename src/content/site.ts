@@ -4,7 +4,13 @@
 // bentuk `getSite(locale)` dipertahankan agar komponen tidak berubah.
 // ─────────────────────────────────────────────────────────────────────────
 
+import type { Metadata } from 'next';
+
 export type Locale = 'id' | 'en';
+
+export const SITE_URL = 'https://enviroresources.co.id';
+export const COMPANY = 'PT Enviro Resources Indonesia';
+const OG_IMAGE = '/photos/1774789599304-cca1e1ffbb95.jpg';
 
 type L = { id: string; en: string };
 const B = (id: string, en: string): L => ({ id, en });
@@ -426,4 +432,39 @@ export function pageHero(locale: Locale, page: PageKey) {
   else crumbs = [nav[page]];
 
   return { ...t, crumbs, photo: pageHeroPhoto[page] };
+}
+
+/** Metadata SEO per halaman (title, description, OpenGraph). */
+export function metaFor(locale: Locale, page: PageKey): Metadata {
+  const nav = loc(content.nav, locale) as Record<PageKey, string>;
+
+  let title: Metadata['title'];
+  let ogTitle: string;
+  let description: string;
+
+  if (page === 'home') {
+    ogTitle = `${COMPANY} — Solutions for a Greener Tomorrow`;
+    title = { absolute: ogTitle };
+    description = loc(content.hero.sub, locale) as string;
+  } else {
+    const p = loc(content.pages[page as keyof typeof content.pages], locale) as { title: string; sub: string };
+    title = nav[page];
+    ogTitle = `${nav[page]} · ${COMPANY}`;
+    description = p.sub;
+  }
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}${ROUTES[page] === '/' ? '' : ROUTES[page]}/` },
+    openGraph: {
+      title: ogTitle,
+      description,
+      type: 'website',
+      siteName: COMPANY,
+      locale: locale === 'en' ? 'en_US' : 'id_ID',
+      url: `${SITE_URL}/${locale}${ROUTES[page] === '/' ? '' : ROUTES[page]}/`,
+      images: [OG_IMAGE],
+    },
+  };
 }

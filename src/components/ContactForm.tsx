@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { WHATSAPP } from '@/content/site';
 
 type Labels = {
   name: string;
@@ -32,6 +33,25 @@ export function ContactForm({
   const field = 'rounded-lg border border-[#cfdad2] bg-white p-3.5 text-[15px] outline-none focus:border-brand';
   const label = 'flex flex-col gap-1.5 text-[13px] font-bold';
 
+  // Kirim isi form ke WhatsApp ERI (tanpa backend).
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const text = [
+      `Halo ERI, saya ingin konsultasi:`,
+      ``,
+      `Nama: ${fd.get('name') || '-'}`,
+      `Perusahaan/Instansi: ${fd.get('company') || '-'}`,
+      `Email: ${fd.get('email') || '-'}`,
+      `Telepon: ${fd.get('phone') || '-'}`,
+      `Layanan: ${fd.get('service') || '-'}`,
+      ``,
+      `${fd.get('message') || ''}`,
+    ].join('\n');
+    window.open(`${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+    setSent(true);
+  };
+
   if (sent) {
     return (
       <div className="py-10">
@@ -48,30 +68,30 @@ export function ContactForm({
     <>
       <h2 className="m-0 mb-2 text-[28px] font-extrabold tracking-tight">{formT}</h2>
       <p className="m-0 mb-7 text-[15px] leading-relaxed text-muted">{formSub}</p>
-      <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className={label}>
             {labels.name}
-            <input required className={field} />
+            <input name="name" required className={field} />
           </label>
           <label className={label}>
             {labels.company}
-            <input className={field} />
+            <input name="company" className={field} />
           </label>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className={label}>
             Email
-            <input type="email" required className={field} />
+            <input name="email" type="email" required className={field} />
           </label>
           <label className={label}>
             {labels.phone}
-            <input className={field} />
+            <input name="phone" className={field} />
           </label>
         </div>
         <label className={label}>
           {labels.service}
-          <select className={field}>
+          <select name="service" className={field}>
             {services.map((s) => (
               <option key={s}>{s}</option>
             ))}
@@ -80,7 +100,7 @@ export function ContactForm({
         </label>
         <label className={label}>
           {labels.msg}
-          <textarea rows={5} className={`${field} resize-y`} />
+          <textarea name="message" rows={5} className={`${field} resize-y`} />
         </label>
         <button
           type="submit"
