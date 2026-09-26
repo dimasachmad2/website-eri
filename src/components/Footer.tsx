@@ -43,8 +43,7 @@ export function Footer({ locale }: { locale: Locale }) {
             <div className="mb-2 font-bold text-white">{nav.contact}</div>
             <div className="flex flex-col">
               <a href={WHATSAPP} className="text-ondark hover:text-white">{PHONE_DISPLAY}</a>
-              <a href="mailto:info@envirors.id" className="text-ondark hover:text-white">info@envirors.id</a>
-              <a href="mailto:admin@envirors.id" className="text-ondark hover:text-white">admin@envirors.id</a>
+              <a href="mailto:info@enviroresources.co.id" className="text-ondark hover:text-white">info@enviroresources.co.id</a>
             </div>
           </div>
         </div>

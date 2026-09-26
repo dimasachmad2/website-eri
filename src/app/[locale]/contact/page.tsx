@@ -34,8 +34,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <div>
               <div className="mb-2 text-sm font-bold uppercase tracking-wide text-brand">EMAIL</div>
               <div className="flex flex-col gap-1 text-lg font-semibold">
-                <a href="mailto:info@envirors.id" className="text-ink hover:text-brand">info@envirors.id</a>
-                <a href="mailto:admin@envirors.id" className="text-ink hover:text-brand">admin@envirors.id</a>
+                <a href="mailto:info@enviroresources.co.id" className="text-ink hover:text-brand">info@enviroresources.co.id</a>
               </div>
             </div>
           </div>
