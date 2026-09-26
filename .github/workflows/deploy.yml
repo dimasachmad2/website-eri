@@ -9,6 +9,9 @@ on:
         description: 'Bersihkan folder tujuan dulu (upload ulang penuh)'
         type: boolean
         default: false
+  # Dipicu Directus Flow saat artikel disimpan/publish → rebuild situs.
+  repository_dispatch:
+    types: [directus-publish]
 
 concurrency:
   group: deploy-hostinger
@@ -26,6 +29,13 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Tarik artikel published dari Directus (dilewati bila secret belum ada).
+      - name: Sinkron artikel dari Directus
+        run: node scripts/sync-articles.mjs
+        env:
+          DIRECTUS_URL: ${{ secrets.DIRECTUS_URL }}
+          DIRECTUS_TOKEN: ${{ secrets.DIRECTUS_TOKEN }}
 
       - name: Build (export statis)
         run: npm run build

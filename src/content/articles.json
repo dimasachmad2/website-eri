@@ -1,0 +1,78 @@
+[
+  {
+    "id": "sample-1",
+    "slug": "penapisan-amdal-ukl-upl-sppl",
+    "category": "Regulasi",
+    "published_at": "2026-09-01T00:00:00.000Z",
+    "title": {
+      "id": "Memahami penapisan AMDAL, UKL-UPL, dan SPPL menurut Permen LHK 4 Tahun 2021",
+      "en": "Understanding AMDAL, UKL-UPL, and SPPL screening under Ministerial Regulation 4/2021"
+    },
+    "excerpt": {
+      "id": "Jenis dokumen lingkungan yang wajib dipenuhi ditentukan lewat penapisan berdasarkan KBLI, skala, dan lokasi kegiatan.",
+      "en": "The required environmental document is determined through screening based on KBLI, scale, and location."
+    },
+    "body": {
+      "id": "<p>Contoh artikel. Isi lengkap akan tersedia setelah CMS aktif.</p>",
+      "en": "<p>Sample article. Full content will be available once the CMS is live.</p>"
+    },
+    "cover": "/photos/1622322977875-e2d580e129ba.jpg"
+  },
+  {
+    "id": "sample-2",
+    "slug": "kapan-butuh-persetujuan-teknis-air-limbah",
+    "category": "Persetujuan Teknis",
+    "published_at": "2026-08-15T00:00:00.000Z",
+    "title": {
+      "id": "Kapan usaha Anda membutuhkan Persetujuan Teknis Air Limbah?",
+      "en": "When does your business need a Wastewater Technical Approval?"
+    },
+    "excerpt": {
+      "id": "Pertek air limbah menjadi bagian dari persetujuan lingkungan bagi kegiatan yang membuang air limbah ke badan air.",
+      "en": "A wastewater technical approval is part of the environmental approval for activities discharging wastewater."
+    },
+    "body": {
+      "id": "<p>Contoh artikel. Isi lengkap akan tersedia setelah CMS aktif.</p>",
+      "en": "<p>Sample article. Full content will be available once the CMS is live.</p>"
+    },
+    "cover": "/photos/1532094349884-543bc11b234d.jpg"
+  },
+  {
+    "id": "sample-3",
+    "slug": "laporan-rkl-rpl-ukl-upl-berkala",
+    "category": "Pelaporan",
+    "published_at": "2026-08-01T00:00:00.000Z",
+    "title": {
+      "id": "Menyiapkan laporan RKL-RPL dan UKL-UPL secara berkala",
+      "en": "Preparing periodic RKL-RPL and UKL-UPL reports"
+    },
+    "excerpt": {
+      "id": "Pelaporan berkala adalah kewajiban pemegang persetujuan lingkungan; berikut kerangka penyusunannya.",
+      "en": "Periodic reporting is an obligation for environmental approval holders; here is the framework."
+    },
+    "body": {
+      "id": "<p>Contoh artikel. Isi lengkap akan tersedia setelah CMS aktif.</p>",
+      "en": "<p>Sample article. Full content will be available once the CMS is live.</p>"
+    },
+    "cover": "/photos/1542744095-fcf48d80b0fd.jpg"
+  },
+  {
+    "id": "sample-4",
+    "slug": "bukti-pemenuhan-penilaian-proper",
+    "category": "PROPER",
+    "published_at": "2026-07-15T00:00:00.000Z",
+    "title": {
+      "id": "Memetakan bukti pemenuhan untuk penilaian PROPER",
+      "en": "Mapping compliance evidence for PROPER assessment"
+    },
+    "excerpt": {
+      "id": "Kesiapan PROPER dimulai dari pemetaan bukti pemenuhan tiap kriteria penilaian.",
+      "en": "PROPER readiness starts with mapping evidence for each assessment criterion."
+    },
+    "body": {
+      "id": "<p>Contoh artikel. Isi lengkap akan tersedia setelah CMS aktif.</p>",
+      "en": "<p>Sample article. Full content will be available once the CMS is live.</p>"
+    },
+    "cover": "/photos/1705147219565-fe9f6f369d03.jpg"
+  }
+]

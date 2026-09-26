@@ -19,6 +19,9 @@ npm-debug.log*
 .env.local
 .env*.local
 
+# gambar sampul artikel yang diunduh dari CMS saat build (CI)
+/public/articles/
+
 # typescript
 next-env.d.ts
 *.tsbuildinfo

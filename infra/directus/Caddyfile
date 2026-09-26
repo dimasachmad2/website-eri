@@ -1,0 +1,4 @@
+cms.enviroresources.co.id {
+    encode gzip
+    reverse_proxy directus:8055
+}

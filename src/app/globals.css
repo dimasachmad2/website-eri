@@ -50,6 +50,24 @@
   }
 }
 
+/* ── Isi artikel (HTML dari editor CMS) ──────────────────────────────── */
+@layer components {
+  .article-body { font-size: 1.0625rem; line-height: 1.8; color: var(--color-ink); }
+  .article-body h2 { margin: 2.25rem 0 0.75rem; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.25; }
+  .article-body h3 { margin: 1.75rem 0 0.5rem; font-size: 1.2rem; font-weight: 700; }
+  .article-body p { margin: 0 0 1.1rem; }
+  .article-body ul, .article-body ol { margin: 0 0 1.1rem 1.4rem; }
+  .article-body ul { list-style: disc; }
+  .article-body ol { list-style: decimal; }
+  .article-body li { margin: 0.3rem 0; }
+  .article-body a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-body img { max-width: 100%; height: auto; margin: 1.5rem 0; border-radius: 0.75rem; }
+  .article-body blockquote { margin: 1.5rem 0; padding: 0.25rem 0 0.25rem 1.25rem; border-left: 3px solid var(--color-brand); color: var(--color-muted); }
+  .article-body strong { font-weight: 700; }
+  .article-body table { width: 100%; margin: 1.5rem 0; border-collapse: collapse; font-size: 0.95rem; }
+  .article-body th, .article-body td { padding: 0.6rem 0.75rem; border: 1px solid var(--color-line); text-align: left; }
+}
+
 /* ── Animasi ─────────────────────────────────────────────────────────── */
 @keyframes tMarquee {
   from { transform: translateX(0); }
