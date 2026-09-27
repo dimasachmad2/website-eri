@@ -9,17 +9,22 @@ import { getArticle, getArticleSlugs } from '@/lib/articles';
 
 type Params = { locale: string; slug: string };
 
+// `output: 'export'` menolak generateStaticParams yang kosong. Saat CMS belum
+// punya artikel, render satu halaman placeholder (noindex, tidak di sitemap).
+const PLACEHOLDER = '_';
+
 // Semua slug dirender statis saat build; slug tak dikenal → 404.
 export const dynamicParams = false;
 export function generateStaticParams() {
-  return getArticleSlugs().map((slug) => ({ slug }));
+  const slugs = getArticleSlugs();
+  return (slugs.length ? slugs : [PLACEHOLDER]).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const l = locale as Locale;
   const a = getArticle(slug, l);
-  if (!a) return {};
+  if (!a) return { robots: { index: false, follow: false } };
   const url = `${SITE_URL}/${l}${ROUTES.articles}/${slug}/`;
   return {
     title: a.title,
@@ -43,6 +48,16 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
   setRequestLocale(locale);
   const l = locale as Locale;
   const a = getArticle(slug, l);
+  if (!a && slug === PLACEHOLDER) {
+    return (
+      <Container className="pt-16">
+        <p className="text-muted">{l === 'en' ? 'No articles yet.' : 'Belum ada artikel.'}</p>
+        <Link href={ROUTES.articles} className="mt-4 inline-block text-sm font-bold">
+          ← {l === 'en' ? 'All insights' : 'Semua artikel'}
+        </Link>
+      </Container>
+    );
+  }
   if (!a) notFound();
 
   return (
