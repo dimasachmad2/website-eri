@@ -409,9 +409,9 @@ const heroPhoto = photo('1774789599304-cca1e1ffbb95', 'Subhash Chand', 'hsubhash
 const aboutPhoto = photo('1517048676732-d65bc937f952', 'Dylan Gillis', 'mainermedia');
 
 const teamNames = [
-  'Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.ST', 'Denissa Rahma Abidiana, S.T',
-  'M. Rifky Bintar Rahmadani, S.ST', 'Achmad Fatich Falahudin Alfarel, S.T', 'Rossa Anggraini Ayu Aranais, S.KL',
-  'Jiemmy Ardian, S.Ars', 'Fikri Haikal, S.T', 'Ade Al Munawar, S.H',
+  'Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.Tr.T', 'Denissa Rahma Abidiana, S.T',
+  'Rossa Anggraini Ayu Aranais S.Tr Kes', 'Neli Anissah, S.K.M., M.KL', 'Achmad Fatich Falahudin Alfarel, S.T',
+  'M. Rifky Bintar Rahmadani, S.Tr.T', 'Jiemmy Ardian S.Ars', 'Ade Al Munawar, S.H',
   'Putut Djatmiko, S.E',
 ];
 
