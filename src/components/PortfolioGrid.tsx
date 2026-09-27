@@ -42,7 +42,8 @@ export function PortfolioGrid({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={p.img}
-                alt=""
+                alt={p.t}
+                style={{ objectPosition: p.pos ?? 'center' }}
                 className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105"
               />
             </div>

@@ -270,26 +270,41 @@ const content = {
     { key: 'infra', label: B('Prasarana Limbah', 'Waste Infrastructure') },
     { key: 'waste', label: B('Limbah Non-B3', 'Non-hazardous Waste') },
   ],
+  // Proyek portofolio. Urutan = urutan tampil (3 pertama muncul di Beranda).
+  // `pos` = object-position gambar (mis. 'top' untuk sampul dokumen potret).
   projects: [
-    { key: 'p1', cat: 'doc', tag: B('AMDAL', 'AMDAL') },
-    { key: 'p2', cat: 'infra', tag: B('IPAL', 'WWTP') },
-    { key: 'p3', cat: 'doc', tag: B('UKL-UPL', 'UKL-UPL') },
-    { key: 'p4', cat: 'tech', tag: B('Pertek Air Limbah', 'Wastewater Approval') },
-    { key: 'p5', cat: 'doc', tag: B('Andalalin', 'Andalalin') },
-    { key: 'p6', cat: 'waste', tag: B('Limbah Non-B3', 'Non-hazardous Waste') },
-  ].map((p, i) => ({
-    ...p,
+    {
+      key: 'sampoerna-tegal-pertek',
+      cat: 'tech',
+      tag: B('Pertek Air Limbah', 'Wastewater Technical Approval'),
+      t: B(
+        'Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah',
+        'Technical Approval for Wastewater Land Application',
+      ),
+      loc: B(
+        'PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026',
+        'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026',
+      ),
+      img: '/portfolio/sampoerna-tegal-pertek.png',
+      credit: '',
+      href: '',
+      pos: 'top',
+    },
+    // ── Placeholder, diganti saat data proyek berikutnya masuk ──
     ...[
-      photo('1783393208952-5cf06f930c42', 'Heming paper', 'hemingpaper'),
-      photo('1622322977767-2c71d1787205', 'Patrick Federi', 'federi'),
-      photo('1760921678729-9658c8b792bb', 'Soo hong Lee', 'leesoohong'),
-      photo('1617155093730-a8bf47be792d', 'RephiLe water', 'revolution_in_filtration'),
-      photo('1711304548487-4950020f4d62', 'Dmitry Korkhau', 'korkhau'),
-      photo('1622322977879-af6982dcba00', 'Patrick Federi', 'federi'),
-    ][i],
-    t: B('Nama proyek (menunggu data)', 'Project name (awaiting data)'),
-    loc: B('Klien · Lokasi · Tahun', 'Client · Location · Year'),
-  })),
+      { key: 'p2', cat: 'infra', tag: B('IPAL', 'WWTP'), ph: photo('1622322977767-2c71d1787205', 'Patrick Federi', 'federi') },
+      { key: 'p3', cat: 'doc', tag: B('UKL-UPL', 'UKL-UPL'), ph: photo('1760921678729-9658c8b792bb', 'Soo hong Lee', 'leesoohong') },
+      { key: 'p4', cat: 'doc', tag: B('AMDAL', 'AMDAL'), ph: photo('1783393208952-5cf06f930c42', 'Heming paper', 'hemingpaper') },
+      { key: 'p5', cat: 'doc', tag: B('Andalalin', 'Andalalin'), ph: photo('1711304548487-4950020f4d62', 'Dmitry Korkhau', 'korkhau') },
+      { key: 'p6', cat: 'waste', tag: B('Limbah Non-B3', 'Non-hazardous Waste'), ph: photo('1622322977879-af6982dcba00', 'Patrick Federi', 'federi') },
+    ].map(({ ph, ...p }) => ({
+      ...p,
+      ...ph,
+      pos: 'center',
+      t: B('Nama proyek (menunggu data)', 'Project name (awaiting data)'),
+      loc: B('Klien · Lokasi · Tahun', 'Client · Location · Year'),
+    })),
+  ],
 };
 
 // Foto hero untuk tiap halaman non-home.
@@ -429,6 +444,7 @@ export function getSite(locale: Locale) {
 
 export type ProjectItem = {
   key: string; cat: string; tag: string; img: string; credit: string; href: string; t: string; loc: string;
+  pos?: string;
 };
 
 export function pageHero(locale: Locale, page: PageKey) {
