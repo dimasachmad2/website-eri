@@ -30,3 +30,6 @@ next-env.d.ts
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# workflow n8n hasil generate (berisi alamat webhook rahasia)
+/infra/n8n/out/

@@ -2,3 +2,8 @@ cms.enviroresources.co.id {
     encode gzip
     reverse_proxy directus:8055
 }
+
+n8n.enviroresources.co.id {
+    encode gzip
+    reverse_proxy n8n:5678
+}
