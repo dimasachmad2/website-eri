@@ -270,40 +270,118 @@ const content = {
     { key: 'infra', label: B('Prasarana Limbah', 'Waste Infrastructure') },
     { key: 'waste', label: B('Limbah Non-B3', 'Non-hazardous Waste') },
   ],
-  // Proyek portofolio. Urutan = urutan tampil (3 pertama muncul di Beranda).
-  // `pos` = object-position gambar (mis. 'top' untuk sampul dokumen potret).
+  // Proyek portofolio (status Closed). Urutan = urutan tampil (3 pertama muncul di Beranda).
+  // Sumber: tabel referensi proyek & dokumen di PPT perusahaan.
+  // docs → kartu mockup dokumen; tanpa docs → kartu tipografis.
   projects: [
     {
-      key: 'sampoerna-tegal-pertek',
-      cat: 'tech',
-      tag: B('Pertek Air Limbah', 'Wastewater Technical Approval'),
-      t: B(
-        'Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah',
-        'Technical Approval for Wastewater Land Application',
-      ),
-      loc: B(
-        'PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026',
-        'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026',
-      ),
-      img: '/portfolio/sampoerna-tegal-pertek.png',
-      credit: '',
-      href: '',
-      pos: 'top',
+      key: 'sampoerna-pertek', cat: 'tech', client: 'PT HM Sampoerna Tbk',
+      tag: B('Pertek BMAL · SLO', 'Wastewater Approval · SLO'),
+      t: B('Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah & SLO IPAL 140 m³/hari',
+        'Technical Approval for Wastewater Land Application & WWTP Operational Certificate (140 m³/day)'),
+      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026'),
+      docs: ['/portfolio/sampoerna-pertek-cover.webp', '/portfolio/sampoerna-pertek-surat.webp'],
     },
-    // ── Placeholder, diganti saat data proyek berikutnya masuk ──
-    ...[
-      { key: 'p2', cat: 'infra', tag: B('IPAL', 'WWTP'), ph: photo('1622322977767-2c71d1787205', 'Patrick Federi', 'federi') },
-      { key: 'p3', cat: 'doc', tag: B('UKL-UPL', 'UKL-UPL'), ph: photo('1760921678729-9658c8b792bb', 'Soo hong Lee', 'leesoohong') },
-      { key: 'p4', cat: 'doc', tag: B('AMDAL', 'AMDAL'), ph: photo('1783393208952-5cf06f930c42', 'Heming paper', 'hemingpaper') },
-      { key: 'p5', cat: 'doc', tag: B('Andalalin', 'Andalalin'), ph: photo('1711304548487-4950020f4d62', 'Dmitry Korkhau', 'korkhau') },
-      { key: 'p6', cat: 'waste', tag: B('Limbah Non-B3', 'Non-hazardous Waste'), ph: photo('1622322977879-af6982dcba00', 'Patrick Federi', 'federi') },
-    ].map(({ ph, ...p }) => ({
-      ...p,
-      ...ph,
-      pos: 'center',
-      t: B('Nama proyek (menunggu data)', 'Project name (awaiting data)'),
-      loc: B('Klien · Lokasi · Tahun', 'Client · Location · Year'),
-    })),
+    {
+      key: 'sampoerna-andalalin', cat: 'doc', client: 'PT HM Sampoerna Tbk',
+      tag: B('Andalalin', 'Traffic Impact Analysis'),
+      t: B('Analisis Dampak Lalu Lintas Pembangunan Industri Sigaret Kretek Tangan',
+        'Traffic Impact Analysis for a Hand-Rolled Cigarette Plant'),
+      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2024', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2024'),
+      docs: ['/portfolio/sampoerna-andalalin-cover.webp', '/portfolio/sampoerna-andalalin-sk.webp'],
+    },
+    {
+      key: 'bhirawa-pertek', cat: 'tech', client: 'PT Bhirawa Steel',
+      tag: B('Pertek BMAL · SLO', 'Wastewater Approval · SLO'),
+      t: B('Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah & SLO IPAL',
+        'Technical Approval for Wastewater Land Application & WWTP Operational Certificate'),
+      loc: B('PT Bhirawa Steel · Surabaya, Jawa Timur · 2023', 'PT Bhirawa Steel · Surabaya, East Java · 2023'),
+      docs: ['/portfolio/bhirawa-pertek-cover.webp', '/portfolio/bhirawa-pertek-ba.webp'],
+    },
+    {
+      key: 'sampoerna-rintek-lb3', cat: 'doc', client: 'PT HM Sampoerna Tbk',
+      tag: B('Rintek LB3', 'B3 Waste Technical Details'),
+      t: B('Rincian Teknis Penyimpanan Limbah B3', 'Hazardous (B3) Waste Storage Technical Details'),
+      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026'),
+      docs: ['/portfolio/sampoerna-rintek-lb3.webp'],
+    },
+    {
+      key: 'sampoerna-ukl-upl', cat: 'doc', client: 'PT HM Sampoerna Tbk',
+      tag: B('UKL-UPL', 'UKL-UPL'),
+      t: B('UKL-UPL Industri Sigaret Kretek Tangan', 'UKL-UPL for a Hand-Rolled Cigarette Plant'),
+      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2024', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2024'),
+      docs: ['/portfolio/sampoerna-ukl-upl.webp'],
+    },
+    {
+      key: 'gilang-pertek', cat: 'tech', client: 'PT Gilang Jayaraya',
+      tag: B('Pertek BMAL', 'Wastewater Approval'),
+      t: B('Persetujuan Teknis Pemenuhan Baku Mutu Air Limbah ke Badan Air Permukaan',
+        'Technical Approval for Wastewater Discharge to Surface Water'),
+      loc: B('PT Gilang Jayaraya · Taman, Sidoarjo · 2021', 'PT Gilang Jayaraya · Taman, Sidoarjo · 2021'),
+      docs: ['/portfolio/gilang-pertek.webp'],
+    },
+    {
+      key: 'gilang-rintek-lb3', cat: 'doc', client: 'PT Gilang Jayaraya',
+      tag: B('Rintek LB3', 'B3 Waste Technical Details'),
+      t: B('Rincian Teknis Penyimpanan Limbah B3', 'Hazardous (B3) Waste Storage Technical Details'),
+      loc: B('PT Gilang Jayaraya · Taman, Sidoarjo · 2022', 'PT Gilang Jayaraya · Taman, Sidoarjo · 2022'),
+      docs: ['/portfolio/gilang-rintek-lb3.webp'],
+    },
+    {
+      key: 'gilang-pkkpr', cat: 'doc', client: 'PT Gilang Jayaraya',
+      tag: B('PKKPR', 'PKKPR'),
+      t: B('Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR)', 'Spatial Use Conformity Approval (PKKPR)'),
+      loc: B('PT Gilang Jayaraya · Taman, Sidoarjo', 'PT Gilang Jayaraya · Taman, Sidoarjo'),
+      docs: ['/portfolio/gilang-pkkpr.webp'],
+    },
+    {
+      key: 'anekabox-pertek', cat: 'tech', client: 'PT Anugerah Anekabox',
+      tag: B('Pertek BMAL · SLO', 'Wastewater Approval · SLO'),
+      t: B('Persetujuan Teknis Baku Mutu Air Limbah & SLO IPAL', 'Wastewater Technical Approval & WWTP Operational Certificate'),
+      loc: B('PT Anugerah Anekabox · Gresik, Jawa Timur', 'PT Anugerah Anekabox · Gresik, East Java'),
+    },
+    {
+      key: 'toyota-asri-rintek-lb3', cat: 'doc', client: 'Toyota Asri Motor Surabaya',
+      tag: B('Rintek LB3', 'B3 Waste Technical Details'),
+      t: B('Rincian Teknis Limbah B3', 'Hazardous (B3) Waste Technical Details'),
+      loc: B('Toyota Asri Motor · Surabaya, Jawa Timur', 'Toyota Asri Motor · Surabaya, East Java'),
+    },
+    {
+      key: 'dua-ikan-laut-pertek', cat: 'tech', client: 'CV Dua Ikan Laut',
+      tag: B('Pertek BMAL', 'Wastewater Approval'),
+      t: B('Persetujuan Teknis Pemenuhan Baku Mutu Air Limbah untuk Air Permukaan',
+        'Technical Approval for Wastewater Discharge to Surface Water'),
+      loc: B('CV Dua Ikan Laut · Gedangan, Sidoarjo', 'CV Dua Ikan Laut · Gedangan, Sidoarjo'),
+      docs: ['/portfolio/dua-ikan-laut-pertek.webp'],
+    },
+    {
+      key: 'susanawati-izin-lingkungan', cat: 'doc', client: 'Tempat Usaha & Toko Susanawati Tedjo',
+      tag: B('Izin Lingkungan', 'Environmental Permit'),
+      t: B('Izin Lingkungan Workshop & Showroom Mobil', 'Environmental Permit for a Car Workshop & Showroom'),
+      loc: B('Susanawati Tedjo · Gubeng, Surabaya · 2020', 'Susanawati Tedjo · Gubeng, Surabaya · 2020'),
+      docs: ['/portfolio/susanawati-izin-lingkungan.webp'],
+    },
+    {
+      key: 'bawen-ukl-upl', cat: 'doc', client: 'PT Bawen Marga Rahayu',
+      tag: B('UKL-UPL', 'UKL-UPL'),
+      t: B('UKL-UPL Rest Area Tol Semarang–Solo KM 439', 'UKL-UPL for the Semarang–Solo Toll Road Rest Area (KM 439)'),
+      loc: B('PT Bawen Marga Rahayu · Bawen, Kab. Semarang · 2019', 'PT Bawen Marga Rahayu · Bawen, Semarang Regency · 2019'),
+      docs: ['/portfolio/bawen-ukl-upl.webp'],
+    },
+    {
+      key: 'asri-mitra-ukl-upl', cat: 'doc', client: 'PT Asri Mitra Jaya',
+      tag: B('UKL-UPL', 'UKL-UPL'),
+      t: B('UKL-UPL Pembangunan Showroom Kendaraan & Service', 'UKL-UPL for a Vehicle Showroom & Service Centre'),
+      loc: B('PT Asri Mitra Jaya · Taman, Sidoarjo · 2011', 'PT Asri Mitra Jaya · Taman, Sidoarjo · 2011'),
+      docs: ['/portfolio/asri-mitra-ukl-upl.webp'],
+    },
+    {
+      key: 'mamami-ukl-upl', cat: 'doc', client: 'RSU Mamami',
+      tag: B('UKL-UPL', 'UKL-UPL'),
+      t: B('UKL-UPL Rumah Sakit Umum', 'UKL-UPL for a General Hospital'),
+      loc: B('RSU Mamami · Kupang, NTT · 2010', 'RSU Mamami · Kupang, East Nusa Tenggara · 2010'),
+      docs: ['/portfolio/mamami-ukl-upl.webp'],
+    },
   ],
 };
 
@@ -443,8 +521,11 @@ export function getSite(locale: Locale) {
 }
 
 export type ProjectItem = {
-  key: string; cat: string; tag: string; img: string; credit: string; href: string; t: string; loc: string;
-  pos?: string;
+  key: string; cat: string; tag: string; t: string; loc: string;
+  img?: string;    // foto lapangan asli (prioritas utama)
+  docs?: string[]; // dokumen (sampul, surat) → mockup; maks 2 ditampilkan
+  pos?: string;    // object-position untuk img
+  client?: string; // nama klien (dipakai kartu tipografis)
 };
 
 export function pageHero(locale: Locale, page: PageKey) {

@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Container } from '@/components/Container';
 import { Icon } from '@/components/Icon';
+import { ProjectCover } from '@/components/ProjectCover';
 import { CtaBand } from '@/components/CtaBand';
 import { MethodStepper } from '@/components/home/MethodStepper';
 import { Testimonials } from '@/components/home/Testimonials';
@@ -156,13 +157,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           {homeProjects.map((p) => (
             <div key={p.key} className="group">
               <div className="mb-4 h-[260px] overflow-hidden rounded-[10px]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.img}
-                  alt={p.t}
-                  style={{ objectPosition: p.pos ?? 'center' }}
-                  className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-105"
-                />
+                <ProjectCover p={p} />
               </div>
               <div className="mb-1.5 text-xs font-bold text-brand">{p.tag}</div>
               <div className="mb-1 text-[17px] font-bold">{p.t}</div>
