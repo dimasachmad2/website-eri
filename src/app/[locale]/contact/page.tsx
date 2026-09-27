@@ -4,7 +4,7 @@ import { PageHero } from '@/components/PageHero';
 import { ContactForm } from '@/components/ContactForm';
 import {
   getSite, WHATSAPP, PHONE_DISPLAY, LANDLINE_DISPLAY, LANDLINE_TEL,
-  ADDRESS_LINE1, ADDRESS_LINE2, metaFor, type Locale,
+  ADDRESS_LINE1, ADDRESS_LINE2, EMAIL, MAPS_QUERY, metaFor, type Locale,
 } from '@/content/site';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -48,13 +48,13 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <div>
               <div className="mb-2 text-sm font-bold uppercase tracking-wide text-brand">EMAIL</div>
               <div className="flex flex-col gap-1 text-lg font-semibold">
-                <a href="mailto:info@enviroresources.co.id" className="text-ink hover:text-brand">info@enviroresources.co.id</a>
+                <a href={`mailto:${EMAIL}`} className="text-ink hover:text-brand">{EMAIL}</a>
               </div>
             </div>
           </div>
           <div className="mt-10 h-[280px] overflow-hidden rounded-xl border border-line">
             <iframe
-              src="https://maps.google.com/maps?q=Jl.+Tropodo+Indah+J-19,+Waru,+Sidoarjo&z=16&output=embed"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(MAPS_QUERY)}&z=16&output=embed`}
               title="Lokasi kantor PT Enviro Resources Indonesia"
               className="h-full w-full border-0"
               loading="lazy"

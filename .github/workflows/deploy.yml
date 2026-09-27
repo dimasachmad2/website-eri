@@ -30,9 +30,9 @@ jobs:
 
       - run: npm ci
 
-      # Tarik artikel published dari Directus (dilewati bila secret belum ada).
-      - name: Sinkron artikel dari Directus
-        run: node scripts/sync-articles.mjs
+      # Tarik artikel, portofolio, tim & teks dari Directus (dilewati bila secret belum ada).
+      - name: Sinkron konten dari Directus
+        run: node scripts/sync-cms.mjs
         env:
           DIRECTUS_URL: ${{ secrets.DIRECTUS_URL }}
           DIRECTUS_TOKEN: ${{ secrets.DIRECTUS_TOKEN }}

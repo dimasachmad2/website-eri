@@ -1,10 +1,20 @@
 // ─────────────────────────────────────────────────────────────────────────
 // Konten situs PT Enviro Resources Indonesia (bilingual ID/EN).
-// Di-port dari mockup design-reference/. Di Fase 2, sumber ini diganti Directus;
-// bentuk `getSite(locale)` dipertahankan agar komponen tidak berubah.
+// Teks bawaan ada di file ini; portofolio & tim di projects.json / team.json.
+// Saat build, scripts/sync-cms.mjs menimpa data itu dengan isi Directus
+// (koleksi projects, team, site_texts). Tanpa CMS, nilai bawaan yang dipakai.
 // ─────────────────────────────────────────────────────────────────────────
 
 import type { Metadata } from 'next';
+import projectsData from './projects.json';
+import teamData from './team.json';
+import overridesData from './overrides.json';
+
+// Teks yang diubah lewat CMS (koleksi `site_texts`). Kunci = jalur di `content`
+// (mis. "hero.sub", "faq.list.0.q") atau "contact.*".
+type Override = { id?: string | null; en?: string | null };
+const overrides = overridesData as Record<string, Override>;
+const ov = (key: string, fallback: string) => overrides[key]?.id?.trim() || fallback;
 
 export type Locale = 'id' | 'en';
 
@@ -92,7 +102,7 @@ const content = {
   },
   clients: { label: B('DIPERCAYA OLEH', 'TRUSTED BY') },
   testi: {
-    eyebrow: B('TESTIMONI', 'TESTIMONIALS'), title: B('Apa kata klien kami', 'What our clients say'), status: B('Contoh isi, menunggu data klien', 'Sample content, awaiting client data'),
+    eyebrow: B('TESTIMONI', 'TESTIMONIALS'), title: B('Apa kata klien kami', 'What our clients say'),
     list: [
       { text: B('Tim ERI membantu kami memetakan kewajiban lingkungan sejak awal, sehingga proses persetujuan berjalan lebih terarah.', 'The ERI team helped us map our environmental obligations early, so the approval process ran in a clearer direction.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
       { text: B('Pendampingan saat pembahasan dokumen sangat membantu. Revisi dari instansi ditindaklanjuti dengan cepat.', 'Support during document review was very helpful. Revisions from the authority were followed up quickly.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
@@ -242,20 +252,6 @@ const content = {
     docL: B('DOKUMEN LEGAL', 'LEGAL DOCUMENTS'), docT: B('Sertifikat dan dokumen perusahaan', 'Company certificates and documents'),
     docs: [B('Akta Pendirian Perusahaan', 'Deed of Establishment'), B('Nomor Induk Berusaha (NIB)', 'Business Identification Number (NIB)'), B('NPWP Perusahaan', 'Company Tax ID (NPWP)'), B('Sertifikat Badan Usaha (SBU)', 'Business Entity Certificate (SBU)')],
   },
-  articles: [
-    { cat: B('Regulasi', 'Regulation'), status: B('Contoh judul', 'Sample title'), t: B('Memahami penapisan AMDAL, UKL-UPL, dan SPPL menurut Permen LHK 4 Tahun 2021', 'Understanding AMDAL, UKL-UPL, and SPPL screening under Ministerial Regulation 4/2021') },
-    { cat: B('Persetujuan Teknis', 'Technical Approval'), status: B('Contoh judul', 'Sample title'), t: B('Kapan usaha Anda membutuhkan Persetujuan Teknis Air Limbah?', 'When does your business need a Wastewater Technical Approval?') },
-    { cat: B('Pelaporan', 'Reporting'), status: B('Contoh judul', 'Sample title'), t: B('Menyiapkan laporan RKL-RPL dan UKL-UPL secara berkala', 'Preparing periodic RKL-RPL and UKL-UPL reports') },
-    { cat: B('PROPER', 'PROPER'), status: B('Contoh judul', 'Sample title'), t: B('Memetakan bukti pemenuhan untuk penilaian PROPER', 'Mapping compliance evidence for PROPER assessment') },
-  ].map((a, i) => ({
-    ...a,
-    ...[
-      photo('1622322977875-e2d580e129ba', 'Patrick Federi', 'federi'),
-      photo('1532094349884-543bc11b234d', 'Hans Reniers', 'hansreniers'),
-      photo('1542744095-fcf48d80b0fd', 'Campaign Creators', 'campaign_creators'),
-      photo('1705147219565-fe9f6f369d03', 'Declan Sun', 'declansun'),
-    ][i],
-  })),
   contact: {
     officeL: B('KANTOR PUSAT', 'HEAD OFFICE'), phoneL: B('TELEPON', 'PHONE'), waL: B('WHATSAPP', 'WHATSAPP'),
     formT: B('Minta penawaran', 'Request a quote'), formSub: B('Isi formulir berikut, tim kami akan menghubungi Anda.', 'Fill in the form and our team will contact you.'),
@@ -269,119 +265,6 @@ const content = {
     { key: 'tech', label: B('Persetujuan Teknis', 'Technical Approvals') },
     { key: 'infra', label: B('Prasarana Limbah', 'Waste Infrastructure') },
     { key: 'waste', label: B('Limbah Non-B3', 'Non-hazardous Waste') },
-  ],
-  // Proyek portofolio (status Closed). Urutan = urutan tampil (3 pertama muncul di Beranda).
-  // Sumber: tabel referensi proyek & dokumen di PPT perusahaan.
-  // docs → kartu mockup dokumen; tanpa docs → kartu tipografis.
-  projects: [
-    {
-      key: 'sampoerna-pertek', cat: 'tech', client: 'PT HM Sampoerna Tbk',
-      tag: B('Pertek BMAL · SLO', 'Wastewater Approval · SLO'),
-      t: B('Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah & SLO IPAL 140 m³/hari',
-        'Technical Approval for Wastewater Land Application & WWTP Operational Certificate (140 m³/day)'),
-      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026'),
-      docs: ['/portfolio/sampoerna-pertek-cover.webp', '/portfolio/sampoerna-pertek-surat.webp'],
-    },
-    {
-      key: 'sampoerna-andalalin', cat: 'doc', client: 'PT HM Sampoerna Tbk',
-      tag: B('Andalalin', 'Traffic Impact Analysis'),
-      t: B('Analisis Dampak Lalu Lintas Pembangunan Industri Sigaret Kretek Tangan',
-        'Traffic Impact Analysis for a Hand-Rolled Cigarette Plant'),
-      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2024', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2024'),
-      docs: ['/portfolio/sampoerna-andalalin-cover.webp', '/portfolio/sampoerna-andalalin-sk.webp'],
-    },
-    {
-      key: 'bhirawa-pertek', cat: 'tech', client: 'PT Bhirawa Steel',
-      tag: B('Pertek BMAL · SLO', 'Wastewater Approval · SLO'),
-      t: B('Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah & SLO IPAL',
-        'Technical Approval for Wastewater Land Application & WWTP Operational Certificate'),
-      loc: B('PT Bhirawa Steel · Surabaya, Jawa Timur · 2023', 'PT Bhirawa Steel · Surabaya, East Java · 2023'),
-      docs: ['/portfolio/bhirawa-pertek-cover.webp', '/portfolio/bhirawa-pertek-ba.webp'],
-    },
-    {
-      key: 'sampoerna-rintek-lb3', cat: 'doc', client: 'PT HM Sampoerna Tbk',
-      tag: B('Rintek LB3', 'B3 Waste Technical Details'),
-      t: B('Rincian Teknis Penyimpanan Limbah B3', 'Hazardous (B3) Waste Storage Technical Details'),
-      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026'),
-      docs: ['/portfolio/sampoerna-rintek-lb3.webp'],
-    },
-    {
-      key: 'sampoerna-ukl-upl', cat: 'doc', client: 'PT HM Sampoerna Tbk',
-      tag: B('UKL-UPL', 'UKL-UPL'),
-      t: B('UKL-UPL Industri Sigaret Kretek Tangan', 'UKL-UPL for a Hand-Rolled Cigarette Plant'),
-      loc: B('PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2024', 'PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2024'),
-      docs: ['/portfolio/sampoerna-ukl-upl.webp'],
-    },
-    {
-      key: 'gilang-pertek', cat: 'tech', client: 'PT Gilang Jayaraya',
-      tag: B('Pertek BMAL', 'Wastewater Approval'),
-      t: B('Persetujuan Teknis Pemenuhan Baku Mutu Air Limbah ke Badan Air Permukaan',
-        'Technical Approval for Wastewater Discharge to Surface Water'),
-      loc: B('PT Gilang Jayaraya · Taman, Sidoarjo · 2021', 'PT Gilang Jayaraya · Taman, Sidoarjo · 2021'),
-      docs: ['/portfolio/gilang-pertek.webp'],
-    },
-    {
-      key: 'gilang-rintek-lb3', cat: 'doc', client: 'PT Gilang Jayaraya',
-      tag: B('Rintek LB3', 'B3 Waste Technical Details'),
-      t: B('Rincian Teknis Penyimpanan Limbah B3', 'Hazardous (B3) Waste Storage Technical Details'),
-      loc: B('PT Gilang Jayaraya · Taman, Sidoarjo · 2022', 'PT Gilang Jayaraya · Taman, Sidoarjo · 2022'),
-      docs: ['/portfolio/gilang-rintek-lb3.webp'],
-    },
-    {
-      key: 'gilang-pkkpr', cat: 'doc', client: 'PT Gilang Jayaraya',
-      tag: B('PKKPR', 'PKKPR'),
-      t: B('Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR)', 'Spatial Use Conformity Approval (PKKPR)'),
-      loc: B('PT Gilang Jayaraya · Taman, Sidoarjo', 'PT Gilang Jayaraya · Taman, Sidoarjo'),
-      docs: ['/portfolio/gilang-pkkpr.webp'],
-    },
-    {
-      key: 'anekabox-pertek', cat: 'tech', client: 'PT Anugerah Anekabox',
-      tag: B('Pertek BMAL · SLO', 'Wastewater Approval · SLO'),
-      t: B('Persetujuan Teknis Baku Mutu Air Limbah & SLO IPAL', 'Wastewater Technical Approval & WWTP Operational Certificate'),
-      loc: B('PT Anugerah Anekabox · Gresik, Jawa Timur', 'PT Anugerah Anekabox · Gresik, East Java'),
-    },
-    {
-      key: 'toyota-asri-rintek-lb3', cat: 'doc', client: 'Toyota Asri Motor Surabaya',
-      tag: B('Rintek LB3', 'B3 Waste Technical Details'),
-      t: B('Rincian Teknis Limbah B3', 'Hazardous (B3) Waste Technical Details'),
-      loc: B('Toyota Asri Motor · Surabaya, Jawa Timur', 'Toyota Asri Motor · Surabaya, East Java'),
-    },
-    {
-      key: 'dua-ikan-laut-pertek', cat: 'tech', client: 'CV Dua Ikan Laut',
-      tag: B('Pertek BMAL', 'Wastewater Approval'),
-      t: B('Persetujuan Teknis Pemenuhan Baku Mutu Air Limbah untuk Air Permukaan',
-        'Technical Approval for Wastewater Discharge to Surface Water'),
-      loc: B('CV Dua Ikan Laut · Gedangan, Sidoarjo', 'CV Dua Ikan Laut · Gedangan, Sidoarjo'),
-      docs: ['/portfolio/dua-ikan-laut-pertek.webp'],
-    },
-    {
-      key: 'susanawati-izin-lingkungan', cat: 'doc', client: 'Tempat Usaha & Toko Susanawati Tedjo',
-      tag: B('Izin Lingkungan', 'Environmental Permit'),
-      t: B('Izin Lingkungan Workshop & Showroom Mobil', 'Environmental Permit for a Car Workshop & Showroom'),
-      loc: B('Susanawati Tedjo · Gubeng, Surabaya · 2020', 'Susanawati Tedjo · Gubeng, Surabaya · 2020'),
-      docs: ['/portfolio/susanawati-izin-lingkungan.webp'],
-    },
-    {
-      key: 'bawen-ukl-upl', cat: 'doc', client: 'PT Bawen Marga Rahayu',
-      tag: B('UKL-UPL', 'UKL-UPL'),
-      t: B('UKL-UPL Rest Area Tol Semarang–Solo KM 439', 'UKL-UPL for the Semarang–Solo Toll Road Rest Area (KM 439)'),
-      loc: B('PT Bawen Marga Rahayu · Bawen, Kab. Semarang · 2019', 'PT Bawen Marga Rahayu · Bawen, Semarang Regency · 2019'),
-      docs: ['/portfolio/bawen-ukl-upl.webp'],
-    },
-    {
-      key: 'asri-mitra-ukl-upl', cat: 'doc', client: 'PT Asri Mitra Jaya',
-      tag: B('UKL-UPL', 'UKL-UPL'),
-      t: B('UKL-UPL Pembangunan Showroom Kendaraan & Service', 'UKL-UPL for a Vehicle Showroom & Service Centre'),
-      loc: B('PT Asri Mitra Jaya · Taman, Sidoarjo · 2011', 'PT Asri Mitra Jaya · Taman, Sidoarjo · 2011'),
-      docs: ['/portfolio/asri-mitra-ukl-upl.webp'],
-    },
-    {
-      key: 'mamami-ukl-upl', cat: 'doc', client: 'RSU Mamami',
-      tag: B('UKL-UPL', 'UKL-UPL'),
-      t: B('UKL-UPL Rumah Sakit Umum', 'UKL-UPL for a General Hospital'),
-      loc: B('RSU Mamami · Kupang, NTT · 2010', 'RSU Mamami · Kupang, East Nusa Tenggara · 2010'),
-      docs: ['/portfolio/mamami-ukl-upl.webp'],
-    },
   ],
 };
 
@@ -407,13 +290,6 @@ const methodPhotos: Photo[] = [
 
 const heroPhoto = photo('1774789599304-cca1e1ffbb95', 'Subhash Chand', 'hsubhash');
 const aboutPhoto = photo('1517048676732-d65bc937f952', 'Dylan Gillis', 'mainermedia');
-
-const teamNames = [
-  'Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.Tr.T', 'Denissa Rahma Abidiana, S.T',
-  'Rossa Anggraini Ayu Aranais S.Tr Kes', 'Neli Anissah, S.K.M., M.KL', 'Achmad Fatich Falahudin Alfarel, S.T',
-  'M. Rifky Bintar Rahmadani, S.Tr.T', 'Jiemmy Ardian S.Ars', 'Ade Al Munawar, S.H',
-  'Putut Djatmiko, S.E',
-];
 
 // Titik kota untuk peta CTA band (x%, y%, tampilkan label?)
 export const cities = [
@@ -449,13 +325,20 @@ export const ISO_CERTS = [
   { code: 'ISO 45001', id: 'Kesehatan & Keselamatan Kerja (K3)', en: 'Occupational Health & Safety', file: '/legal/iso-45001.pdf' },
 ];
 
-// Kontak resmi
-export const ADDRESS_LINE1 = 'Jl. Tropodo Indah J-19, Waru,';
-export const ADDRESS_LINE2 = 'Sidoarjo, Jawa Timur';
-export const WHATSAPP = 'https://wa.me/6285156969503';
-export const PHONE_DISPLAY = '0851-5696-9503'; // nomor WhatsApp (tampilan)
-export const LANDLINE_DISPLAY = '031-30000404';
-export const LANDLINE_TEL = 'tel:+623130000404';
+// Kontak resmi — bisa diubah lewat CMS (site_texts "contact.*").
+// Nomor ditulis format lokal (0851-…); tautan wa.me / tel: diturunkan otomatis.
+const intl = (s: string) => {
+  const d = s.replace(/\D/g, '');
+  return d.startsWith('0') ? `62${d.slice(1)}` : d;
+};
+export const ADDRESS_LINE1 = ov('contact.address1', 'Jl. Tropodo Indah J-19, Waru,');
+export const ADDRESS_LINE2 = ov('contact.address2', 'Sidoarjo, Jawa Timur');
+export const PHONE_DISPLAY = ov('contact.whatsapp', '0851-5696-9503'); // nomor WhatsApp
+export const LANDLINE_DISPLAY = ov('contact.phone', '031-30000404');
+export const EMAIL = ov('contact.email', 'info@enviroresources.co.id');
+export const MAPS_QUERY = ov('contact.maps', 'Jl. Tropodo Indah J-19, Waru, Sidoarjo');
+export const WHATSAPP = `https://wa.me/${intl(PHONE_DISPLAY)}`;
+export const LANDLINE_TEL = `tel:+${intl(LANDLINE_DISPLAY)}`;
 
 // Nav order & mana yang masuk dropdown "Tentang Kami".
 export const NAV_KEYS = ['home', 'about', 'services', 'portfolio', 'legal', 'team', 'articles', 'contact'] as const;
@@ -468,18 +351,41 @@ export const ROUTES: Record<PageKey, string> = {
 };
 
 // ── Resolver locale ─────────────────────────────────────────────────────────
-function loc(node: unknown, l: Locale): unknown {
-  if (Array.isArray(node)) return node.map((x) => loc(x, l));
+const join = (path: string, key: string | number) => (path ? `${path}.${key}` : String(key));
+const isL = (node: object): node is L => {
+  const k = Object.keys(node);
+  return k.length === 2 && 'id' in node && 'en' in node;
+};
+
+// `path` = jalur node di pohon konten; dipakai mencari teks pengganti dari CMS.
+function loc(node: unknown, l: Locale, path: string): unknown {
+  if (Array.isArray(node)) return node.map((x, i) => loc(x, l, join(path, i)));
   if (node && typeof node === 'object') {
-    const keys = Object.keys(node as object);
-    if (keys.length === 2 && 'id' in (node as object) && 'en' in (node as object)) {
-      return (node as Record<Locale, string>)[l];
-    }
+    if (isL(node)) return overrides[path]?.[l]?.trim() || node[l];
     const o: Record<string, unknown> = {};
-    for (const k of keys) o[k] = loc((node as Record<string, unknown>)[k], l);
+    for (const k of Object.keys(node)) o[k] = loc((node as Record<string, unknown>)[k], l, join(path, k));
     return o;
   }
   return node;
+}
+
+/** Semua teks bawaan beserta kuncinya — dipakai untuk mengisi koleksi `site_texts`. */
+export function defaultTexts(): Record<string, L> {
+  const out: Record<string, L> = {};
+  const walk = (node: unknown, path: string) => {
+    if (Array.isArray(node)) node.forEach((x, i) => walk(x, join(path, i)));
+    else if (node && typeof node === 'object') {
+      if (isL(node)) out[path] = node;
+      else for (const k of Object.keys(node)) walk((node as Record<string, unknown>)[k], join(path, k));
+    }
+  };
+  walk(content, '');
+  const contact: Record<string, string> = {
+    address1: ADDRESS_LINE1, address2: ADDRESS_LINE2, whatsapp: PHONE_DISPLAY,
+    phone: LANDLINE_DISPLAY, email: EMAIL, maps: MAPS_QUERY,
+  };
+  for (const [k, v] of Object.entries(contact)) out[`contact.${k}`] = { id: v, en: '' };
+  return out;
 }
 
 /**
@@ -488,7 +394,8 @@ function loc(node: unknown, l: Locale): unknown {
  */
 export function getSite(locale: Locale) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const t = loc(content, locale) as any;
+  const t = loc(content, locale, '') as any;
+  const projects = loc(projectsData, locale, 'projects') as ProjectItem[];
 
   const allServices = [
     ...t.svc.docs.map((d: { t: string }) => ({ cat: locale === 'id' ? 'DOKUMEN' : 'DOCUMENTS', t: d.t })),
@@ -508,9 +415,9 @@ export function getSite(locale: Locale) {
     t,
     nav: t.nav as Record<PageKey, string>,
     allServices,
-    projects: t.projects as ProjectItem[],
-    homeProjects: (t.projects as ProjectItem[]).slice(0, 3),
-    team: teamNames,
+    projects,
+    homeProjects: projects.slice(0, 3),
+    team: teamData as TeamMember[],
     methodSteps,
     stageWord,
     heroPhoto,
@@ -519,6 +426,8 @@ export function getSite(locale: Locale) {
     cities,
   };
 }
+
+export type TeamMember = { name: string; photo: string | null };
 
 export type ProjectItem = {
   key: string; cat: string; tag: string; t: string; loc: string;
@@ -529,8 +438,8 @@ export type ProjectItem = {
 };
 
 export function pageHero(locale: Locale, page: PageKey) {
-  const t = loc(content.pages[page as keyof typeof content.pages], locale) as { title: string; sub: string };
-  const nav = loc(content.nav, locale) as Record<PageKey, string>;
+  const t = loc(content.pages[page as keyof typeof content.pages], locale, `pages.${page}`) as { title: string; sub: string };
+  const nav = loc(content.nav, locale, 'nav') as Record<PageKey, string>;
   const aboutOverview = locale === 'en' ? 'Company Overview' : 'Sekilas Perusahaan';
 
   // Halaman di grup "Tentang Kami" → breadcrumb bertingkat.
@@ -544,7 +453,7 @@ export function pageHero(locale: Locale, page: PageKey) {
 
 /** Metadata SEO per halaman (title, description, OpenGraph). */
 export function metaFor(locale: Locale, page: PageKey): Metadata {
-  const nav = loc(content.nav, locale) as Record<PageKey, string>;
+  const nav = loc(content.nav, locale, 'nav') as Record<PageKey, string>;
 
   let title: Metadata['title'];
   let ogTitle: string;
@@ -553,9 +462,9 @@ export function metaFor(locale: Locale, page: PageKey): Metadata {
   if (page === 'home') {
     ogTitle = `${COMPANY} — Solutions for a Greener Tomorrow`;
     title = { absolute: ogTitle };
-    description = loc(content.hero.sub, locale) as string;
+    description = loc(content.hero.sub, locale, 'hero.sub') as string;
   } else {
-    const p = loc(content.pages[page as keyof typeof content.pages], locale) as { title: string; sub: string };
+    const p = loc(content.pages[page as keyof typeof content.pages], locale, `pages.${page}`) as { title: string; sub: string };
     title = nav[page];
     ogTitle = `${nav[page]} · ${COMPANY}`;
     description = p.sub;

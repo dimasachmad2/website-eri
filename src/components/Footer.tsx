@@ -2,7 +2,7 @@ import { Link } from '@/i18n/navigation';
 import { Container } from './Container';
 import {
   getSite, ROUTES, WHATSAPP, PHONE_DISPLAY, LANDLINE_DISPLAY, LANDLINE_TEL,
-  ADDRESS_LINE1, ADDRESS_LINE2, type Locale,
+  ADDRESS_LINE1, ADDRESS_LINE2, EMAIL, type Locale,
 } from '@/content/site';
 
 export function Footer({ locale }: { locale: Locale }) {
@@ -47,7 +47,7 @@ export function Footer({ locale }: { locale: Locale }) {
             <div className="flex flex-col">
               <a href={LANDLINE_TEL} className="text-ondark hover:text-white">{LANDLINE_DISPLAY}</a>
               <a href={WHATSAPP} className="text-ondark hover:text-white">WA {PHONE_DISPLAY}</a>
-              <a href="mailto:info@enviroresources.co.id" className="text-ondark hover:text-white">info@enviroresources.co.id</a>
+              <a href={`mailto:${EMAIL}`} className="text-ondark hover:text-white">{EMAIL}</a>
             </div>
           </div>
         </div>

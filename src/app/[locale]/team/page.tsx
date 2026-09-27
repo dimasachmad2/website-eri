@@ -32,23 +32,30 @@ export default async function TeamPage({ params }: { params: Promise<{ locale: s
       <PageHero locale={locale as Locale} page="team" />
       <Container className="pt-20">
         <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
-          {team.map((name, i) => (
+          {team.map(({ name, photo }, i) => (
             <div key={name} className="group">
-              {/* Avatar inisial — placeholder sementara foto asli menyusul */}
+              {/* Foto bila ada; kalau belum, avatar inisial */}
               <div
                 className="relative mb-3.5 flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[10px] transition-transform duration-300 group-hover:-translate-y-1"
                 style={{ background: GRADIENTS[i % GRADIENTS.length] }}
               >
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    backgroundImage: 'radial-gradient(rgba(143,220,147,.22) 1px,transparent 1px)',
-                    backgroundSize: '18px 18px',
-                  }}
-                />
-                <span className="relative text-4xl font-extrabold tracking-tight text-white/95">
-                  {initials(name)}
-                </span>
+                {photo ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={photo} alt={name} className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <>
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: 'radial-gradient(rgba(143,220,147,.22) 1px,transparent 1px)',
+                        backgroundSize: '18px 18px',
+                      }}
+                    />
+                    <span className="relative text-4xl font-extrabold tracking-tight text-white/95">
+                      {initials(name)}
+                    </span>
+                  </>
+                )}
               </div>
               <div className="text-base font-bold leading-snug">{name}</div>
             </div>

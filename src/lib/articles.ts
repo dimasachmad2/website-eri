@@ -1,4 +1,4 @@
-// Artikel dari src/content/articles.json (diisi oleh scripts/sync-articles.mjs
+// Artikel dari src/content/articles.json (diisi oleh scripts/sync-cms.mjs
 // dari Directus saat build; fallback: contoh yang ter-commit).
 import data from '@/content/articles.json';
 import type { Locale } from '@/content/site';

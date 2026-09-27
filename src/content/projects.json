@@ -1,0 +1,299 @@
+[
+  {
+    "key": "sampoerna-pertek",
+    "cat": "tech",
+    "client": "PT HM Sampoerna Tbk",
+    "tag": {
+      "id": "Pertek BMAL · SLO",
+      "en": "Wastewater Approval · SLO"
+    },
+    "t": {
+      "id": "Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah & SLO IPAL 140 m³/hari",
+      "en": "Technical Approval for Wastewater Land Application & WWTP Operational Certificate (140 m³/day)"
+    },
+    "loc": {
+      "id": "PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026",
+      "en": "PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026"
+    },
+    "docs": [
+      "/portfolio/sampoerna-pertek-cover.webp",
+      "/portfolio/sampoerna-pertek-surat.webp"
+    ]
+  },
+  {
+    "key": "sampoerna-andalalin",
+    "cat": "doc",
+    "client": "PT HM Sampoerna Tbk",
+    "tag": {
+      "id": "Andalalin",
+      "en": "Traffic Impact Analysis"
+    },
+    "t": {
+      "id": "Analisis Dampak Lalu Lintas Pembangunan Industri Sigaret Kretek Tangan",
+      "en": "Traffic Impact Analysis for a Hand-Rolled Cigarette Plant"
+    },
+    "loc": {
+      "id": "PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2024",
+      "en": "PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2024"
+    },
+    "docs": [
+      "/portfolio/sampoerna-andalalin-cover.webp",
+      "/portfolio/sampoerna-andalalin-sk.webp"
+    ]
+  },
+  {
+    "key": "bhirawa-pertek",
+    "cat": "tech",
+    "client": "PT Bhirawa Steel",
+    "tag": {
+      "id": "Pertek BMAL · SLO",
+      "en": "Wastewater Approval · SLO"
+    },
+    "t": {
+      "id": "Persetujuan Teknis Pemanfaatan Air Limbah untuk Aplikasi ke Tanah & SLO IPAL",
+      "en": "Technical Approval for Wastewater Land Application & WWTP Operational Certificate"
+    },
+    "loc": {
+      "id": "PT Bhirawa Steel · Surabaya, Jawa Timur · 2023",
+      "en": "PT Bhirawa Steel · Surabaya, East Java · 2023"
+    },
+    "docs": [
+      "/portfolio/bhirawa-pertek-cover.webp",
+      "/portfolio/bhirawa-pertek-ba.webp"
+    ]
+  },
+  {
+    "key": "sampoerna-rintek-lb3",
+    "cat": "doc",
+    "client": "PT HM Sampoerna Tbk",
+    "tag": {
+      "id": "Rintek LB3",
+      "en": "B3 Waste Technical Details"
+    },
+    "t": {
+      "id": "Rincian Teknis Penyimpanan Limbah B3",
+      "en": "Hazardous (B3) Waste Storage Technical Details"
+    },
+    "loc": {
+      "id": "PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2026",
+      "en": "PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2026"
+    },
+    "docs": [
+      "/portfolio/sampoerna-rintek-lb3.webp"
+    ]
+  },
+  {
+    "key": "sampoerna-ukl-upl",
+    "cat": "doc",
+    "client": "PT HM Sampoerna Tbk",
+    "tag": {
+      "id": "UKL-UPL",
+      "en": "UKL-UPL"
+    },
+    "t": {
+      "id": "UKL-UPL Industri Sigaret Kretek Tangan",
+      "en": "UKL-UPL for a Hand-Rolled Cigarette Plant"
+    },
+    "loc": {
+      "id": "PT HM Sampoerna Tbk · Plant Tegal, Jawa Tengah · 2024",
+      "en": "PT HM Sampoerna Tbk · Tegal Plant, Central Java · 2024"
+    },
+    "docs": [
+      "/portfolio/sampoerna-ukl-upl.webp"
+    ]
+  },
+  {
+    "key": "gilang-pertek",
+    "cat": "tech",
+    "client": "PT Gilang Jayaraya",
+    "tag": {
+      "id": "Pertek BMAL",
+      "en": "Wastewater Approval"
+    },
+    "t": {
+      "id": "Persetujuan Teknis Pemenuhan Baku Mutu Air Limbah ke Badan Air Permukaan",
+      "en": "Technical Approval for Wastewater Discharge to Surface Water"
+    },
+    "loc": {
+      "id": "PT Gilang Jayaraya · Taman, Sidoarjo · 2021",
+      "en": "PT Gilang Jayaraya · Taman, Sidoarjo · 2021"
+    },
+    "docs": [
+      "/portfolio/gilang-pertek.webp"
+    ]
+  },
+  {
+    "key": "gilang-rintek-lb3",
+    "cat": "doc",
+    "client": "PT Gilang Jayaraya",
+    "tag": {
+      "id": "Rintek LB3",
+      "en": "B3 Waste Technical Details"
+    },
+    "t": {
+      "id": "Rincian Teknis Penyimpanan Limbah B3",
+      "en": "Hazardous (B3) Waste Storage Technical Details"
+    },
+    "loc": {
+      "id": "PT Gilang Jayaraya · Taman, Sidoarjo · 2022",
+      "en": "PT Gilang Jayaraya · Taman, Sidoarjo · 2022"
+    },
+    "docs": [
+      "/portfolio/gilang-rintek-lb3.webp"
+    ]
+  },
+  {
+    "key": "gilang-pkkpr",
+    "cat": "doc",
+    "client": "PT Gilang Jayaraya",
+    "tag": {
+      "id": "PKKPR",
+      "en": "PKKPR"
+    },
+    "t": {
+      "id": "Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR)",
+      "en": "Spatial Use Conformity Approval (PKKPR)"
+    },
+    "loc": {
+      "id": "PT Gilang Jayaraya · Taman, Sidoarjo",
+      "en": "PT Gilang Jayaraya · Taman, Sidoarjo"
+    },
+    "docs": [
+      "/portfolio/gilang-pkkpr.webp"
+    ]
+  },
+  {
+    "key": "anekabox-pertek",
+    "cat": "tech",
+    "client": "PT Anugerah Anekabox",
+    "tag": {
+      "id": "Pertek BMAL · SLO",
+      "en": "Wastewater Approval · SLO"
+    },
+    "t": {
+      "id": "Persetujuan Teknis Baku Mutu Air Limbah & SLO IPAL",
+      "en": "Wastewater Technical Approval & WWTP Operational Certificate"
+    },
+    "loc": {
+      "id": "PT Anugerah Anekabox · Gresik, Jawa Timur",
+      "en": "PT Anugerah Anekabox · Gresik, East Java"
+    }
+  },
+  {
+    "key": "toyota-asri-rintek-lb3",
+    "cat": "doc",
+    "client": "Toyota Asri Motor Surabaya",
+    "tag": {
+      "id": "Rintek LB3",
+      "en": "B3 Waste Technical Details"
+    },
+    "t": {
+      "id": "Rincian Teknis Limbah B3",
+      "en": "Hazardous (B3) Waste Technical Details"
+    },
+    "loc": {
+      "id": "Toyota Asri Motor · Surabaya, Jawa Timur",
+      "en": "Toyota Asri Motor · Surabaya, East Java"
+    }
+  },
+  {
+    "key": "dua-ikan-laut-pertek",
+    "cat": "tech",
+    "client": "CV Dua Ikan Laut",
+    "tag": {
+      "id": "Pertek BMAL",
+      "en": "Wastewater Approval"
+    },
+    "t": {
+      "id": "Persetujuan Teknis Pemenuhan Baku Mutu Air Limbah untuk Air Permukaan",
+      "en": "Technical Approval for Wastewater Discharge to Surface Water"
+    },
+    "loc": {
+      "id": "CV Dua Ikan Laut · Gedangan, Sidoarjo",
+      "en": "CV Dua Ikan Laut · Gedangan, Sidoarjo"
+    },
+    "docs": [
+      "/portfolio/dua-ikan-laut-pertek.webp"
+    ]
+  },
+  {
+    "key": "susanawati-izin-lingkungan",
+    "cat": "doc",
+    "client": "Tempat Usaha & Toko Susanawati Tedjo",
+    "tag": {
+      "id": "Izin Lingkungan",
+      "en": "Environmental Permit"
+    },
+    "t": {
+      "id": "Izin Lingkungan Workshop & Showroom Mobil",
+      "en": "Environmental Permit for a Car Workshop & Showroom"
+    },
+    "loc": {
+      "id": "Susanawati Tedjo · Gubeng, Surabaya · 2020",
+      "en": "Susanawati Tedjo · Gubeng, Surabaya · 2020"
+    },
+    "docs": [
+      "/portfolio/susanawati-izin-lingkungan.webp"
+    ]
+  },
+  {
+    "key": "bawen-ukl-upl",
+    "cat": "doc",
+    "client": "PT Bawen Marga Rahayu",
+    "tag": {
+      "id": "UKL-UPL",
+      "en": "UKL-UPL"
+    },
+    "t": {
+      "id": "UKL-UPL Rest Area Tol Semarang–Solo KM 439",
+      "en": "UKL-UPL for the Semarang–Solo Toll Road Rest Area (KM 439)"
+    },
+    "loc": {
+      "id": "PT Bawen Marga Rahayu · Bawen, Kab. Semarang · 2019",
+      "en": "PT Bawen Marga Rahayu · Bawen, Semarang Regency · 2019"
+    },
+    "docs": [
+      "/portfolio/bawen-ukl-upl.webp"
+    ]
+  },
+  {
+    "key": "asri-mitra-ukl-upl",
+    "cat": "doc",
+    "client": "PT Asri Mitra Jaya",
+    "tag": {
+      "id": "UKL-UPL",
+      "en": "UKL-UPL"
+    },
+    "t": {
+      "id": "UKL-UPL Pembangunan Showroom Kendaraan & Service",
+      "en": "UKL-UPL for a Vehicle Showroom & Service Centre"
+    },
+    "loc": {
+      "id": "PT Asri Mitra Jaya · Taman, Sidoarjo · 2011",
+      "en": "PT Asri Mitra Jaya · Taman, Sidoarjo · 2011"
+    },
+    "docs": [
+      "/portfolio/asri-mitra-ukl-upl.webp"
+    ]
+  },
+  {
+    "key": "mamami-ukl-upl",
+    "cat": "doc",
+    "client": "RSU Mamami",
+    "tag": {
+      "id": "UKL-UPL",
+      "en": "UKL-UPL"
+    },
+    "t": {
+      "id": "UKL-UPL Rumah Sakit Umum",
+      "en": "UKL-UPL for a General Hospital"
+    },
+    "loc": {
+      "id": "RSU Mamami · Kupang, NTT · 2010",
+      "en": "RSU Mamami · Kupang, East Nusa Tenggara · 2010"
+    },
+    "docs": [
+      "/portfolio/mamami-ukl-upl.webp"
+    ]
+  }
+]
