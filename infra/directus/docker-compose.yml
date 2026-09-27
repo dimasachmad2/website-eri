@@ -44,7 +44,7 @@ services:
       - directus_uploads:/directus/uploads
       - directus_extensions:/directus/extensions
 
-  # Fase 3 — n8n: bot Telegram → Claude → Directus (lihat infra/n8n/SETUP.md)
+  # Fase 3 — n8n: bot Telegram → AI → Directus (lihat infra/n8n/SETUP.md)
   n8n:
     image: n8nio/n8n:latest
     restart: unless-stopped
@@ -62,7 +62,10 @@ services:
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_PERSONALIZATION_ENABLED: "false"
       NODE_OPTIONS: --max-old-space-size=512
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      # Endpoint OpenAI-compatible; LLM_BASE_URL termasuk versinya (…/v1)
+      LLM_BASE_URL: ${LLM_BASE_URL}
+      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_MODEL: ${LLM_MODEL}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       DIRECTUS_URL: http://directus:8055
       DIRECTUS_WRITER_TOKEN: ${DIRECTUS_WRITER_TOKEN}

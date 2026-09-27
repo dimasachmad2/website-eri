@@ -5,7 +5,7 @@
 // Output: infra/n8n/out/eri-telegram-articles.json (di-gitignore karena berisi
 // alamat webhook acak — alamat itu yang menjadi "kunci" webhook).
 //
-// Alur: Telegram → n8n → Claude (draft ID+EN) → Directus (draft) → pratinjau
+// Alur: Telegram → n8n → AI via endpoint OpenAI-compatible (draft ID+EN) → Directus (draft) → pratinjau
 // Telegram dengan tombol Publish / Revisi / Batal → Directus (published) → rebuild.
 // Kunci API dibaca dari env container n8n lewat ekspresi {{ $env.X }}.
 import { randomBytes, randomUUID } from 'node:crypto';
@@ -19,7 +19,7 @@ const WEBHOOK_PATH = `tg-${randomBytes(16).toString('hex')}`;
 
 const CMS_PUBLIC = 'https://cms.enviroresources.co.id';
 const SITE = 'https://enviroresources.co.id';
-const MODEL = 'claude-opus-5';
+const FIELDS = ['title_id', 'title_en', 'excerpt_id', 'excerpt_en', 'body_id', 'body_en', 'slug', 'category'];
 const CATEGORIES = ['Regulasi', 'Persetujuan Teknis', 'Pelaporan', 'PROPER', 'Prasarana Limbah', 'Lainnya'];
 
 const SYSTEM = `Kamu adalah penulis konten untuk PT Enviro Resources Indonesia (ERI), konsultan lingkungan di Sidoarjo, Jawa Timur. Layanan ERI: AMDAL, UKL-UPL, SPPL, DELH/DPLH, Persetujuan Teknis air limbah dan emisi, SLO, Rincian Teknis Limbah B3, Andalalin, SIPA, pelaporan RKL-RPL/UKL-UPL, audit lingkungan, pendampingan PROPER, prasarana pengolahan limbah (IPAL), dan pengelolaan limbah non-B3.
@@ -34,23 +34,9 @@ Isi artikel (body_id dan body_en): HTML sederhana, sekitar 600–1000 kata per b
 
 Ringkasan (excerpt_id dan excerpt_en): 1–2 kalimat, maksimal 200 karakter.
 Slug: dari judul Bahasa Indonesia, huruf kecil, kata dipisah tanda hubung, tanpa tanda baca, maksimal 70 karakter.
-Kategori: pilih satu yang paling sesuai.`;
+Kategori: pilih satu yang paling sesuai dari: ${CATEGORIES.join(', ')}.
 
-const SCHEMA = {
-  type: 'object',
-  properties: {
-    title_id: { type: 'string' },
-    title_en: { type: 'string' },
-    excerpt_id: { type: 'string' },
-    excerpt_en: { type: 'string' },
-    body_id: { type: 'string' },
-    body_en: { type: 'string' },
-    slug: { type: 'string' },
-    category: { type: 'string', enum: CATEGORIES },
-  },
-  required: ['title_id', 'title_en', 'excerpt_id', 'excerpt_en', 'body_id', 'body_en', 'slug', 'category'],
-  additionalProperties: false,
-};
+Format jawaban: HANYA satu objek JSON yang valid, tanpa kalimat pembuka, tanpa penutup, tanpa pagar kode. Objek itu punya tepat delapan kunci bertipe string: ${FIELDS.join(', ')}.`;
 
 // ── Builder ───────────────────────────────────────────────────────────────
 const nodes = [];
@@ -72,8 +58,8 @@ const body = (fn) => {
 const fill = (code, vars) => Object.entries(vars).reduce((c, [k, v]) => c.split(k).join(v), code);
 const VARS = {
   __SYSTEM__: JSON.stringify(SYSTEM),
-  __SCHEMA__: JSON.stringify(SCHEMA),
-  __MODEL__: JSON.stringify(MODEL),
+  __FIELDS__: JSON.stringify(FIELDS),
+  __CATEGORIES__: JSON.stringify(CATEGORIES),
   __CMS__: JSON.stringify(CMS_PUBLIC),
   __SITE__: JSON.stringify(SITE),
   __ALLOWED__: JSON.stringify(allowed),
@@ -108,17 +94,14 @@ const dx = (name, method, path, { json, query } = {}, pos, continueOnError = fal
     pos,
     continueOnError,
   );
-const claude = (name, pos) =>
+// Endpoint OpenAI-compatible (chat completions). LLM_BASE_URL sudah termasuk
+// versinya, mis. https://penyedia.example/v1
+const llm = (name, pos) =>
   http(
     name,
     {
-      url: 'https://api.anthropic.com/v1/messages',
-      headers: [
-        { name: 'x-api-key', value: '={{ $env.ANTHROPIC_API_KEY }}' },
-        { name: 'anthropic-version', value: '2023-06-01' },
-        // fallbacks: "default" — permintaan yang ditolak diulang server-side di model cadangan
-        { name: 'anthropic-beta', value: 'server-side-fallback-2026-07-01' },
-      ],
+      url: "={{ String($env.LLM_BASE_URL).replace(/\\/+$/, '') }}/chat/completions",
+      headers: [{ name: 'Authorization', value: '=Bearer {{ $env.LLM_API_KEY }}' }],
       json: '={{ JSON.stringify($json.request) }}',
       timeout: 300000,
     },
@@ -191,19 +174,19 @@ branch('▶ Balasan', ['reply'], [480, 1400]);
 tg('Telegram: balas', 'sendMessage', '={{ JSON.stringify({ chat_id: $json.chatId, text: $json.text }) }}', [720, 1400]);
 link('▶ Balasan', 'Telegram: balas');
 
-// Bagian bersama: menyiapkan request Claude & mengolah hasilnya.
+// Bagian bersama: menyiapkan request AI & mengolah hasilnya.
 function prepareDraft() {
   const x = $input.first().json;
   const ctx = $('▶ Draft baru').first().json;
   return [{
     json: {
       request: {
-        model: __MODEL__,
+        model: $env.LLM_MODEL,
         max_tokens: 16000,
-        fallbacks: 'default',
-        system: __SYSTEM__,
-        output_config: { effort: 'high', format: { type: 'json_schema', schema: __SCHEMA__ } },
-        messages: [{ role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}` }],
+        messages: [
+          { role: 'system', content: __SYSTEM__ },
+          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}` },
+        ],
       },
     },
   }];
@@ -218,37 +201,46 @@ function prepareRevision() {
   return [{
     json: {
       request: {
-        model: __MODEL__,
+        model: $env.LLM_MODEL,
         max_tokens: 16000,
-        fallbacks: 'default',
-        system: __SYSTEM__,
-        output_config: { effort: 'high', format: { type: 'json_schema', schema: __SCHEMA__ } },
-        messages: [{
-          role: 'user',
-          content:
-            `Draft artikel saat ini (JSON):\n${JSON.stringify(current)}\n\n` +
-            `Catatan revisi dari tim ERI:\n${ctx.feedback}\n\n` +
-            'Revisi artikel sesuai catatan dan kembalikan artikel LENGKAP dalam format yang sama. ' +
-            'Pertahankan slug kecuali catatan meminta perubahan.',
-        }],
+        messages: [
+          { role: 'system', content: __SYSTEM__ },
+          {
+            role: 'user',
+            content:
+              `Draft artikel saat ini (JSON):\n${JSON.stringify(current)}\n\n` +
+              `Catatan revisi dari tim ERI:\n${ctx.feedback}\n\n` +
+              'Revisi artikel sesuai catatan dan kembalikan artikel LENGKAP dalam format yang sama. ' +
+              'Pertahankan slug kecuali catatan meminta perubahan.',
+          },
+        ],
       },
     },
   }];
 }
-function parseClaude() {
+function parseLlm() {
   const r = $input.first().json;
   const fail = (error) => [{ json: { ok: false, error } }];
   if (r.error) {
     const msg = r.error.message || r.error.description || JSON.stringify(r.error);
-    return fail('Gagal memanggil Claude: ' + String(msg).slice(0, 300));
+    return fail('Gagal memanggil AI: ' + String(msg).slice(0, 300));
   }
-  if (r.stop_reason === 'refusal') {
-    return fail(`Claude menolak menyusun artikel ini (kategori: ${r.stop_details?.category ?? '-'}). Coba ubah catatannya.`);
-  }
-  if (r.stop_reason === 'max_tokens') return fail('Artikel terlalu panjang sehingga terpotong. Coba persempit topiknya.');
-  const text = (r.content || []).find((b) => b.type === 'text')?.text;
+  const choice = (r.choices || [])[0];
+  if (!choice) return fail('Jawaban AI kosong. Cek LLM_BASE_URL, LLM_API_KEY, dan LLM_MODEL di server.');
+  if (choice.finish_reason === 'content_filter') return fail('AI menolak menyusun artikel ini. Coba ubah catatannya.');
+  if (choice.finish_reason === 'length') return fail('Artikel terlalu panjang sehingga terpotong. Coba persempit topiknya.');
+  // Isi bisa berupa string atau daftar bagian; JSON bisa terbungkus ```json atau kalimat pengantar.
+  const c = choice.message?.content;
+  const text = Array.isArray(c) ? c.map((p) => p.text || '').join('') : String(c || '');
+  const from = text.indexOf('{');
+  const to = text.lastIndexOf('}');
   let a;
-  try { a = JSON.parse(text); } catch (e) { return fail('Format hasil dari Claude tidak valid.'); }
+  try { a = JSON.parse(text.slice(from, to + 1)); } catch (e) { return fail('Format hasil dari AI tidak valid. Coba kirim ulang.'); }
+  const FIELDS = __FIELDS__;
+  const missing = FIELDS.filter((k) => typeof a[k] !== 'string' || !a[k].trim());
+  if (missing.length) return fail('Hasil AI tidak lengkap (' + missing.join(', ') + '). Coba kirim ulang.');
+  a = Object.fromEntries(FIELDS.map((k) => [k, a[k]]));
+  if (!__CATEGORIES__.includes(a.category)) a.category = 'Lainnya';
   a.slug = String(a.slug || a.title_id || 'artikel')
     .toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-')
@@ -303,8 +295,8 @@ tg('Telegram: sedang menyusun', 'sendMessage',
   `={{ JSON.stringify({ chat_id: $json.chatId, text: '⏳ Menyusun draft artikel (Indonesia + English)… biasanya 1–2 menit.' }) }}`,
   [720, 0], true);
 code('Siapkan prompt draft', prepareDraft, [960, 0]);
-claude('Claude: tulis draft', [1200, 0]);
-code('Olah hasil draft', parseClaude, [1440, 0]);
+llm('AI: tulis draft', [1200, 0]);
+code('Olah hasil draft', parseLlm, [1440, 0]);
 filterNode('✓ Draft valid', 'i.json.ok', [1680, 0]);
 filterNode('✗ Draft gagal', '!i.json.ok', [1680, 200]);
 tg('Telegram: gagal draft', 'sendMessage', errorBody('▶ Draft baru'), [1920, 200]);
@@ -329,7 +321,7 @@ node('Susun pratinjau draft', 'n8n-nodes-base.code', 2, {
   jsCode: fill(body(previewMessage), { ...VARS, __CTX__: 'Tentukan slug unik', __ROUTE__: '▶ Draft baru', __LABEL__: 'Draft siap ditinjau' }),
 }, [2640, 0]);
 tg('Telegram: kirim pratinjau', 'sendMessage', sendBody, [2880, 0]);
-link('▶ Draft baru', 'Telegram: sedang menyusun', 'Siapkan prompt draft', 'Claude: tulis draft', 'Olah hasil draft');
+link('▶ Draft baru', 'Telegram: sedang menyusun', 'Siapkan prompt draft', 'AI: tulis draft', 'Olah hasil draft');
 link('Olah hasil draft', '✓ Draft valid', 'Directus: cek slug', 'Tentukan slug unik', 'Directus: simpan draft',
   'Susun pratinjau draft', 'Telegram: kirim pratinjau');
 link('Olah hasil draft', '✗ Draft gagal', 'Telegram: gagal draft');
@@ -340,7 +332,7 @@ tg('Telegram: sedang merevisi', 'sendMessage',
   `={{ JSON.stringify({ chat_id: $json.chatId, text: '⏳ Merevisi draft… biasanya 1–2 menit.' }) }}`, [720, 450], true);
 dx('Directus: ambil draft', 'GET', `/items/articles/{{ $('▶ Revisi').first().json.draftId }}`, {}, [960, 450], true);
 code('Siapkan prompt revisi', prepareRevision, [1200, 450]);
-claude('Claude: revisi', [1440, 450]);
+llm('AI: revisi', [1440, 450]);
 code('Olah hasil revisi', function () {
   // Slug dipertahankan agar tautan tidak berubah.
   const parsed = __PARSE__;
@@ -359,7 +351,7 @@ node('Susun pratinjau revisi', 'n8n-nodes-base.code', 2, {
   jsCode: fill(body(previewMessage), { ...VARS, __CTX__: '✓ Revisi valid', __ROUTE__: '▶ Revisi', __LABEL__: 'Draft sudah direvisi' }),
 }, [2400, 450]);
 tg('Telegram: kirim pratinjau revisi', 'sendMessage', sendBody, [2640, 450]);
-link('▶ Revisi', 'Telegram: sedang merevisi', 'Directus: ambil draft', 'Siapkan prompt revisi', 'Claude: revisi', 'Olah hasil revisi');
+link('▶ Revisi', 'Telegram: sedang merevisi', 'Directus: ambil draft', 'Siapkan prompt revisi', 'AI: revisi', 'Olah hasil revisi');
 link('Olah hasil revisi', '✓ Revisi valid', 'Directus: perbarui draft', 'Susun pratinjau revisi', 'Telegram: kirim pratinjau revisi');
 link('Olah hasil revisi', '✗ Revisi gagal', 'Telegram: gagal revisi');
 
@@ -403,7 +395,7 @@ link('▶ Batal', 'Telegram: jawab tombol batal', 'Telegram: hapus tombol (batal
 const rev = nodes.find((n) => n.name === 'Olah hasil revisi');
 rev.parameters.jsCode = rev.parameters.jsCode.replace(
   'const parsed = __PARSE__;',
-  `const parsed = (() => {\n${body(parseClaude)}})();`,
+  `const parsed = (() => {\n${fill(body(parseLlm), VARS)}})();`,
 );
 
 // ── Tulis file ────────────────────────────────────────────────────────────

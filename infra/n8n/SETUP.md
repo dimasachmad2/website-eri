@@ -1,6 +1,6 @@
 # Setup n8n: artikel via Telegram (Fase 3)
 
-Alur: kirim ide ke bot Telegram → n8n → **Claude API** menyusun draft (ID + EN) →
+Alur: kirim ide ke bot Telegram → n8n → **AI (endpoint OpenAI-compatible)** menyusun draft (ID + EN) →
 tersimpan sebagai **draft** di Directus → pratinjau di Telegram dengan tombol
 **Publish / Revisi / Batal** → Publish → Directus memicu rebuild → tayang ±3 menit.
 
@@ -14,8 +14,9 @@ Lightsail di folder `~/directus`; **[laptop]** di terminal VS Code (PowerShell, 
 
 1. **Bot Telegram** — chat ke **@BotFather** → `/newbot` → beri nama (mis. `ERI Artikel`)
    dan username (harus diakhiri `bot`, mis. `eri_artikel_bot`). Salin **token** (`123456:ABC…`).
-2. **API key Anthropic** — https://console.anthropic.com → API Keys → Create Key. Salin (`sk-ant-…`).
-   Isi saldo/credit secukupnya (satu artikel ±Rp 3–6 ribu).
+2. **Akses AI (endpoint OpenAI-compatible)** — dari penyedia pilihanmu, siapkan tiga hal:
+   **base URL** (termasuk versinya, mis. `https://penyedia.example/v1`), **API key**, dan
+   **nama model** persis seperti di dokumentasi penyedia. Endpoint yang dipakai: `/chat/completions`.
 3. **Token tulis Directus** **[laptop]** — buat user "Telegram Bot" (hanya boleh kelola artikel):
    ```powershell
    $env:DIRECTUS_URL='https://cms.enviroresources.co.id'
@@ -39,10 +40,12 @@ cd ~/directus
 cat >> .env <<EOF
 N8N_ENCRYPTION_KEY=$(openssl rand -hex 32)
 TELEGRAM_BOT_TOKEN='TOKEN_BOTFATHER'
-ANTHROPIC_API_KEY='sk-ant-...'
+LLM_BASE_URL='https://penyedia.example/v1'
+LLM_API_KEY='KEY_PENYEDIA'
+LLM_MODEL='nama-model'
 DIRECTUS_WRITER_TOKEN='TOKEN_DARI_LANGKAH_A3'
 EOF
-nano .env   # cek 4 baris terakhir, isi nilainya, Ctrl+O Enter Ctrl+X
+nano .env   # cek 6 baris terakhir, isi nilainya, Ctrl+O Enter Ctrl+X
 ```
 
 Perbarui `docker-compose.yml` dan `Caddyfile` dengan versi terbaru dari repo
@@ -90,5 +93,6 @@ Jalankan perintah `setWebhook` yang dicetak langkah D (di `~/directus`). Balasan
   berstatus *draft* (bisa dibuka di cms.enviroresources.co.id).
 - Mengganti bot/API key: ubah `.env` → `docker compose up -d n8n`.
 - Log: `docker compose logs -f n8n`. Riwayat eksekusi: n8n → Executions.
-- Model: `claude-opus-5`, keluaran JSON terstruktur (`output_config.format`), fallback
-  server-side aktif (`fallbacks: "default"`) bila permintaan ditolak pengaman.
+- Model ditentukan `LLM_MODEL` di `.env`; ganti model/penyedia cukup ubah `.env` lalu
+  `docker compose up -d n8n` (workflow tidak perlu diimpor ulang). Format JSON diminta lewat
+  prompt lalu divalidasi di node "Olah hasil …" (8 kolom wajib, kategori tak dikenal → Lainnya).
