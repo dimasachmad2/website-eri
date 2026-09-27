@@ -72,19 +72,25 @@ if (!role) {
 } else console.log('• Role Reader sudah ada');
 
 // ── E3. User "Build Bot" + token ──────────────────────────────────────────
+// Directus menyamarkan token yang sudah ada ("**********") di respons API,
+// jadi token baru hanya dibuat/disimpan bila Build Bot belum punya token.
 let bot = await first(`/users?filter[first_name][_eq]=${q('Build Bot')}&fields=id,token&limit=1`);
-const token = bot?.token || randomBytes(32).toString('hex');
+let token = null; // hanya terisi bila token BARU dibuat pada run ini
 if (!bot) {
+  token = randomBytes(32).toString('hex');
   bot = await api('POST', '/users', { first_name: 'Build Bot', role: role.id, status: 'active', token });
   console.log('✓ User Build Bot dibuat');
 } else if (!bot.token) {
+  token = randomBytes(32).toString('hex');
   await api('PATCH', `/users/${bot.id}`, { token });
   console.log('✓ Token Build Bot dibuat');
-} else console.log('• User Build Bot sudah punya token');
+} else console.log('• User Build Bot sudah punya token — secret GitHub tidak diubah');
 
-// Uji token: harus bisa baca artikel.
-await api('GET', '/items/articles?limit=1', null, token);
-console.log('  ✓ Token Build Bot bisa membaca articles');
+if (token) {
+  // Uji token: harus bisa baca artikel.
+  await api('GET', '/items/articles?limit=1', null, token);
+  console.log('  ✓ Token Build Bot bisa membaca articles');
+}
 
 // ── Izin Public: baca file (gambar di isi artikel) ────────────────────────
 const pub = await first(`/policies?filter[name][_eq]=${q('$t:public_label')}&limit=1`);
@@ -94,9 +100,11 @@ if (pub) {
 } else console.warn('! Policy Public tidak ditemukan — set manual: Settings → Access Policies → Public → Files → Read');
 
 // ── E4. Simpan token ke GitHub secret (via stdin; tidak tampil di layar) ───
-const gh = spawnSync('gh', ['secret', 'set', 'DIRECTUS_TOKEN', '--repo', REPO], { input: token, encoding: 'utf8' });
-if (gh.status === 0) console.log('✓ GitHub secret DIRECTUS_TOKEN tersimpan');
-else console.warn(`! Gagal set secret via gh (${(gh.stderr || gh.error?.message || '').trim()}). Set manual di GitHub.`);
+if (token) {
+  const gh = spawnSync('gh', ['secret', 'set', 'DIRECTUS_TOKEN', '--repo', REPO], { input: token, encoding: 'utf8' });
+  if (gh.status === 0) console.log('✓ GitHub secret DIRECTUS_TOKEN tersimpan');
+  else console.warn(`! Gagal set secret via gh (${(gh.stderr || gh.error?.message || '').trim()}). Set manual di GitHub.`);
+}
 
 // ── F. Flow "Rebuild website" (opsional) ──────────────────────────────────
 if (!ghPat) {
