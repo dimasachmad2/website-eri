@@ -61,7 +61,7 @@ const content = {
   cta: B('Minta Penawaran', 'Request a Quote'),
   ctaBand: B('Mari diskusikan kebutuhan lingkungan perusahaan Anda', "Let's discuss your company's environmental needs"),
   hero: {
-    eyebrow: B('KONSULTAN LINGKUNGAN · GRESIK, JAWA TIMUR', 'ENVIRONMENTAL CONSULTANTS · GRESIK, EAST JAVA'),
+    eyebrow: B('KONSULTAN LINGKUNGAN · SIDOARJO, JAWA TIMUR', 'ENVIRONMENTAL CONSULTANTS · SIDOARJO, EAST JAVA'),
     sub: B(
       'Konsultasi lingkungan, pengurusan perizinan lingkungan, ANDALALIN, SIPA air tanah, perizinan kesehatan & keamanan pangan, dan jasa konstruksi sistem pengolahan air.',
       'Environmental consulting, environmental permitting, traffic impact analysis (ANDALALIN), groundwater permits (SIPA), health & food safety permits, and water treatment system construction.',
@@ -257,7 +257,7 @@ const content = {
     ][i],
   })),
   contact: {
-    officeL: B('KANTOR PUSAT', 'HEAD OFFICE'), phoneL: B('TELEPON / WHATSAPP', 'PHONE / WHATSAPP'),
+    officeL: B('KANTOR PUSAT', 'HEAD OFFICE'), phoneL: B('TELEPON', 'PHONE'), waL: B('WHATSAPP', 'WHATSAPP'),
     formT: B('Minta penawaran', 'Request a quote'), formSub: B('Isi formulir berikut, tim kami akan menghubungi Anda.', 'Fill in the form and our team will contact you.'),
     f: { name: B('Nama', 'Name'), company: B('Perusahaan / Instansi', 'Company / Institution'), phone: B('Telepon', 'Phone'), service: B('Layanan yang dibutuhkan', 'Service needed'), other: B('Lainnya / belum tahu', 'Other / not sure'), msg: B('Rencana kegiatan & status perizinan', 'Planned activity & permit status'), send: B('Kirim Permintaan', 'Send Request') },
     thanksT: B('Terima kasih', 'Thank you'), thanks: B('Permintaan Anda sudah kami terima. Tim kami akan menghubungi Anda melalui email atau telepon.', 'We have received your request. Our team will contact you by email or phone.'),
@@ -317,9 +317,8 @@ const aboutPhoto = photo('1517048676732-d65bc937f952', 'Dylan Gillis', 'mainerme
 
 const teamNames = [
   'Dian Retno Hapsari, S.T', 'Jesicca Fatma Dewi, S.ST', 'Denissa Rahma Abidiana, S.T',
-  'M. Rifky Bintar Rahmadani, S.ST', 'Ahmad Fikri Haikal, S.T', 'Rossa Anggraini Ayu Aranais, S.KL',
-  'Jiemmy Ardian, S.Ars', 'Mochammad Erfian Ramadhan, S.T', 'Febby Dwi Kaffi Hutomo, S.T',
-  'Yofy Eko Saputro, A.Md', 'Ade Al Munawar, S.H',
+  'M. Rifky Bintar Rahmadani, S.ST', 'Achmad Fatich Falahudin Alfarel, S.T', 'Rossa Anggraini Ayu Aranais, S.KL',
+  'Jiemmy Ardian, S.Ars', 'Fikri Haikal, S.T', 'Ade Al Munawar, S.H',
   'Putut Djatmiko, S.E',
 ];
 
@@ -357,8 +356,13 @@ export const ISO_CERTS = [
   { code: 'ISO 45001', id: 'Kesehatan & Keselamatan Kerja (K3)', en: 'Occupational Health & Safety', file: '/legal/iso-45001.pdf' },
 ];
 
-export const WHATSAPP = 'https://wa.me/628111360999';
-export const PHONE_DISPLAY = '0811-1360-999';
+// Kontak resmi
+export const ADDRESS_LINE1 = 'Jl. Tropodo Indah J-19, Waru,';
+export const ADDRESS_LINE2 = 'Sidoarjo, Jawa Timur';
+export const WHATSAPP = 'https://wa.me/6285156969503';
+export const PHONE_DISPLAY = '0851-5696-9503'; // nomor WhatsApp (tampilan)
+export const LANDLINE_DISPLAY = '031-30000404';
+export const LANDLINE_TEL = 'tel:+623130000404';
 
 // Nav order & mana yang masuk dropdown "Tentang Kami".
 export const NAV_KEYS = ['home', 'about', 'services', 'portfolio', 'legal', 'team', 'articles', 'contact'] as const;

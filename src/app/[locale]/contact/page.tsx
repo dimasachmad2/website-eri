@@ -2,7 +2,10 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { ContactForm } from '@/components/ContactForm';
-import { getSite, WHATSAPP, PHONE_DISPLAY, metaFor, type Locale } from '@/content/site';
+import {
+  getSite, WHATSAPP, PHONE_DISPLAY, LANDLINE_DISPLAY, LANDLINE_TEL,
+  ADDRESS_LINE1, ADDRESS_LINE2, metaFor, type Locale,
+} from '@/content/site';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -25,13 +28,19 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             <div>
               <div className="mb-2 text-sm font-bold uppercase tracking-wide text-brand">{c.officeL}</div>
               <div className="text-lg font-semibold leading-snug">
-                Citraland CBD S6/01, Driyorejo,
+                {ADDRESS_LINE1}
                 <br />
-                Gresik, Jawa Timur
+                {ADDRESS_LINE2}
               </div>
             </div>
             <div>
               <div className="mb-2 text-sm font-bold uppercase tracking-wide text-brand">{c.phoneL}</div>
+              <a href={LANDLINE_TEL} className="text-2xl font-extrabold text-ink hover:text-brand">
+                {LANDLINE_DISPLAY}
+              </a>
+            </div>
+            <div>
+              <div className="mb-2 text-sm font-bold uppercase tracking-wide text-brand">{c.waL}</div>
               <a href={WHATSAPP} className="text-2xl font-extrabold text-ink hover:text-brand">
                 {PHONE_DISPLAY}
               </a>
@@ -45,7 +54,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           </div>
           <div className="mt-10 h-[280px] overflow-hidden rounded-xl border border-line">
             <iframe
-              src="https://maps.google.com/maps?q=-7.3411734,112.6311973&z=16&output=embed"
+              src="https://maps.google.com/maps?q=Jl.+Tropodo+Indah+J-19,+Waru,+Sidoarjo&z=16&output=embed"
               title="Lokasi kantor PT Enviro Resources Indonesia"
               className="h-full w-full border-0"
               loading="lazy"
