@@ -3,12 +3,12 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Container } from '@/components/Container';
 import { Icon } from '@/components/Icon';
-import { ProjectCover } from '@/components/ProjectCover';
+import { PortfolioCard } from '@/components/PortfolioCard';
 import { CtaBand } from '@/components/CtaBand';
 import { MethodStepper } from '@/components/home/MethodStepper';
 import { Testimonials } from '@/components/home/Testimonials';
 import { Faq } from '@/components/home/Faq';
-import { getSite, ROUTES, CLIENTS, metaFor, type Locale } from '@/content/site';
+import { getSite, getPortfolio, ROUTES, CLIENTS, metaFor, type Locale } from '@/content/site';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -19,7 +19,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
   const site = getSite(locale as Locale);
-  const { t, allServices, methodSteps, homeProjects, heroPhoto, stageWord } = site;
+  const { t, allServices, methodSteps, heroPhoto, stageWord } = site;
+  const { featured, ui: pfUi } = getPortfolio(locale as Locale);
 
   return (
     <>
@@ -153,16 +154,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {t.home.pfAll} →
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {homeProjects.map((p) => (
-            <div key={p.key} className="group">
-              <div className="mb-4 h-[260px] overflow-hidden rounded-[10px]">
-                <ProjectCover p={p} />
-              </div>
-              <div className="mb-1.5 text-xs font-bold text-brand">{p.tag}</div>
-              <div className="mb-1 text-[17px] font-bold">{p.t}</div>
-              <div className="text-sm text-faint">{p.loc}</div>
-            </div>
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((c) => (
+            <PortfolioCard key={c.n} c={c} ui={pfUi} />
           ))}
         </div>
       </Container>

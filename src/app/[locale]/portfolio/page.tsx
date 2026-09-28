@@ -2,8 +2,8 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { CtaBand } from '@/components/CtaBand';
-import { PortfolioGrid } from '@/components/PortfolioGrid';
-import { getSite, metaFor, type Locale } from '@/content/site';
+import { PortfolioBoard } from '@/components/PortfolioBoard';
+import { getPortfolio, metaFor, type Locale } from '@/content/site';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -13,13 +13,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function PortfolioPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { t, projects } = getSite(locale as Locale);
+  const { clients, stats, ui } = getPortfolio(locale as Locale);
 
   return (
     <>
       <PageHero locale={locale as Locale} page="portfolio" />
       <Container className="pt-16">
-        <PortfolioGrid filters={t.filters} projects={projects} />
+        <PortfolioBoard clients={clients} stats={stats} ui={ui} />
       </Container>
       <CtaBand locale={locale as Locale} />
     </>

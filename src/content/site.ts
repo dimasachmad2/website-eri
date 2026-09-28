@@ -7,6 +7,7 @@
 
 import type { Metadata } from 'next';
 import projectsData from './projects.json';
+import portfolioData from './portfolio.json';
 import teamData from './team.json';
 import overridesData from './overrides.json';
 
@@ -428,6 +429,79 @@ export function getSite(locale: Locale) {
 }
 
 export type TeamMember = { name: string; photo: string | null };
+
+// ── Portofolio (rekam jejak, tanpa gambar sampul) ──────────────────────────
+// Data klien di src/content/portfolio.json (dikelola di kode, mudah diedit).
+// Jenis dokumen memakai istilah regulasi (label sama di ID/EN), nama lengkap
+// dwibahasa dipakai sebagai tooltip.
+const DOC: Record<string, { short: string; full: L }> = {
+  pertek: { short: 'Pertek BMAL', full: B('Persetujuan Teknis Baku Mutu Air Limbah', 'Technical Approval for Wastewater Quality (BMAL)') },
+  slo: { short: 'SLO IPAL', full: B('Surat Laik Operasi IPAL', 'Operational Feasibility Certificate for the WWTP (IPAL)') },
+  rintek: { short: 'Rintek LB3', full: B('Rincian Teknis Limbah B3', 'Technical Details for Hazardous (B3) Waste') },
+  ukl: { short: 'UKL-UPL', full: B('Upaya Pengelolaan & Pemantauan Lingkungan', 'Environmental Management & Monitoring Effort') },
+  amdal: { short: 'AMDAL', full: B('Analisis Mengenai Dampak Lingkungan', 'Environmental Impact Assessment') },
+  andalalin: { short: 'Andalalin', full: B('Analisis Dampak Lalu Lintas', 'Traffic Impact Analysis') },
+  pkkpr: { short: 'PKKPR', full: B('Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang', 'Spatial Use Conformity Approval') },
+};
+
+function monogram(name: string): string {
+  const STOP = new Set(['PT', 'CV', 'TBK', 'RSU', 'RS', 'UD', 'PD']);
+  const w = name.replace(/[.,]/g, '').split(/\s+/).filter((x) => !STOP.has(x.toUpperCase()));
+  if (!w.length) return name.slice(0, 2).toUpperCase();
+  if (w.length === 1) return w[0].slice(0, 2).toUpperCase();
+  return (w[0][0] + w[1][0]).toUpperCase();
+}
+
+export type PortfolioDoc = { short: string; full: string; done: boolean };
+export type PortfolioStatus = 'done' | 'prog' | 'mix';
+export type PortfolioClient = { n: number; client: string; loc: string; mono: string; status: PortfolioStatus; docs: PortfolioDoc[] };
+export type PortfolioUI = {
+  all: string; done: string; prog: string;
+  statusDone: string; statusProg: string; statusMix: string;
+  docWord: string; docWord1: string;
+  viewCard: string; viewList: string;
+  groupDone: string; groupProg: string;
+  legendDone: string; legendProg: string;
+  stats: { clients: string; docs: string; cities: string; closed: string };
+};
+
+type RawClient = { client: string; loc: string; done: string[]; progress: string[] };
+
+export function getPortfolio(locale: Locale) {
+  const clients: PortfolioClient[] = (portfolioData as RawClient[]).map((c, i) => {
+    const docs: PortfolioDoc[] = [
+      ...c.done.map((k) => ({ k, done: true })),
+      ...c.progress.map((k) => ({ k, done: false })),
+    ].map(({ k, done }) => ({ short: DOC[k]?.short ?? k, full: DOC[k]?.full[locale] ?? k, done }));
+    const status: PortfolioStatus = c.progress.length === 0 ? 'done' : c.done.length === 0 ? 'prog' : 'mix';
+    return { n: i + 1, client: c.client, loc: c.loc, mono: monogram(c.client), status, docs };
+  });
+  const featured = [...clients].sort((a, b) => b.docs.length - a.docs.length).slice(0, 3);
+  const T = (id: string, en: string) => (locale === 'en' ? en : id);
+  const ui: PortfolioUI = {
+    all: T('Semua', 'All'), done: T('Selesai', 'Completed'), prog: T('Sedang berjalan', 'In progress'),
+    statusDone: T('Selesai', 'Completed'), statusProg: T('Berjalan', 'In progress'), statusMix: T('Sebagian berjalan', 'Partly ongoing'),
+    docWord: T('dokumen', 'documents'), docWord1: T('dokumen', 'document'),
+    viewCard: T('Kartu', 'Cards'), viewList: T('Daftar', 'List'),
+    groupDone: T('Selesai', 'Completed'), groupProg: T('Sedang berjalan', 'In progress'),
+    legendDone: T('Selesai', 'Completed'), legendProg: T('Sedang berjalan', 'In progress'),
+    stats: {
+      clients: T('klien terlayani', 'clients served'), docs: T('penugasan dokumen', 'document engagements'),
+      cities: T('kota', 'cities'), closed: T('klien tuntas', 'clients completed'),
+    },
+  };
+  return {
+    clients,
+    featured,
+    stats: {
+      clients: clients.length,
+      docs: clients.reduce((s, c) => s + c.docs.length, 0),
+      cities: new Set(clients.map((c) => c.loc)).size,
+      closed: clients.filter((c) => c.status === 'done').length,
+    },
+    ui,
+  };
+}
 
 export type ProjectItem = {
   key: string; cat: string; tag: string; t: string; loc: string;

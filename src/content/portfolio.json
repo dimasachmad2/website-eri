@@ -1,0 +1,16 @@
+[
+  { "client": "PT Hanjaya Mandala Sampoerna Tbk", "loc": "Tegal", "done": ["pertek", "rintek", "ukl", "slo", "andalalin"], "progress": [] },
+  { "client": "RSU Mamami", "loc": "Kupang", "done": ["ukl"], "progress": [] },
+  { "client": "Toyota Asri Motor Surabaya", "loc": "Surabaya", "done": ["rintek"], "progress": [] },
+  { "client": "PT Bhirawa Steel Surabaya", "loc": "Surabaya", "done": ["pertek", "slo"], "progress": [] },
+  { "client": "PT Anugerah Anekabox Gresik", "loc": "Gresik", "done": ["pertek", "slo"], "progress": [] },
+  { "client": "PT Asri Mitra Jaya", "loc": "Sidoarjo", "done": ["ukl"], "progress": [] },
+  { "client": "PT Bawen Marga Rahayu", "loc": "Semarang", "done": ["ukl"], "progress": [] },
+  { "client": "CV Dua Ikan Laut", "loc": "Sidoarjo", "done": ["pertek"], "progress": [] },
+  { "client": "PT Gilang Jayaraya", "loc": "Sidoarjo", "done": ["pertek", "pkkpr", "rintek"], "progress": ["ukl", "slo"] },
+  { "client": "PT Adaro Tirta", "loc": "Gresik", "done": [], "progress": ["pertek", "slo"] },
+  { "client": "PT Wangky Sentosa Plastik", "loc": "Gresik", "done": [], "progress": ["pertek", "slo"] },
+  { "client": "PT Sensatia Botanicals", "loc": "Karangasem", "done": [], "progress": ["andalalin", "pertek", "rintek", "amdal", "slo"] },
+  { "client": "PT SHCP", "loc": "Serang", "done": [], "progress": ["pertek", "rintek", "ukl", "slo"] },
+  { "client": "PT SHCP", "loc": "Gresik", "done": [], "progress": ["pertek", "rintek", "ukl", "slo"] }
+]

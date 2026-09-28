@@ -19,6 +19,10 @@
   --color-tint: #f2f6f3;          /* permukaan lembut */
   --color-badge: #eef6ef;         /* latar ikon */
   --color-dark2: #2c5238;         /* border di latar gelap */
+
+  --color-amber: #9a6414;         /* status "sedang berjalan" (aksen semantik) */
+  --color-amber-soft: #f6efe6;    /* latar status berjalan */
+  --color-amber-line: #e6d6bf;    /* garis status berjalan */
 }
 
 /* rgb latar gelap untuk overlay gradient */
