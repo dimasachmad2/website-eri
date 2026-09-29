@@ -9,13 +9,24 @@
 // Telegram dengan tombol Publish / Revisi / Batal → Directus (published) → rebuild.
 // Kunci API dibaca dari env container n8n lewat ekspresi {{ $env.X }}.
 import { randomBytes, randomUUID } from 'node:crypto';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const allowed = (process.argv[2] || '').split(',').map((s) => s.trim()).filter(Boolean).map(Number);
-const WEBHOOK_PATH = `tg-${randomBytes(16).toString('hex')}`;
+
+// Pertahankan alamat webhook dari build sebelumnya bila ada, supaya impor ulang
+// tidak perlu setWebhook lagi ke Telegram. Baru diacak bila belum pernah dibuat.
+let WEBHOOK_PATH, WEBHOOK_ID;
+try {
+  const prev = JSON.parse(readFileSync(join(here, 'out', 'eri-telegram-articles.json'), 'utf8'));
+  const wh = prev.nodes.find((n) => n.type === 'n8n-nodes-base.webhook');
+  WEBHOOK_PATH = wh?.parameters?.path;
+  WEBHOOK_ID = wh?.webhookId;
+} catch { /* belum ada build sebelumnya */ }
+WEBHOOK_PATH ||= `tg-${randomBytes(16).toString('hex')}`;
+WEBHOOK_ID ||= randomUUID();
 
 const CMS_PUBLIC = 'https://cms.enviroresources.co.id';
 const SITE = 'https://enviroresources.co.id';
@@ -113,7 +124,7 @@ const filterNode = (name, expr, pos) =>
 
 // ── 1. Masuk & routing ───────────────────────────────────────────────────
 node('Telegram Webhook', 'n8n-nodes-base.webhook', 2, { httpMethod: 'POST', path: WEBHOOK_PATH, options: {} }, [0, 600], {
-  webhookId: randomUUID(),
+  webhookId: WEBHOOK_ID,
 });
 
 code('Router', function () {
@@ -183,6 +194,7 @@ function prepareDraft() {
       request: {
         model: $env.LLM_MODEL,
         max_tokens: 16000,
+        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: __SYSTEM__ },
           { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}` },
@@ -203,6 +215,7 @@ function prepareRevision() {
       request: {
         model: $env.LLM_MODEL,
         max_tokens: 16000,
+        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: __SYSTEM__ },
           {
@@ -228,14 +241,24 @@ function parseLlm() {
   const choice = (r.choices || [])[0];
   if (!choice) return fail('Jawaban AI kosong. Cek LLM_BASE_URL, LLM_API_KEY, dan LLM_MODEL di server.');
   if (choice.finish_reason === 'content_filter') return fail('AI menolak menyusun artikel ini. Coba ubah catatannya.');
-  if (choice.finish_reason === 'length') return fail('Artikel terlalu panjang sehingga terpotong. Coba persempit topiknya.');
-  // Isi bisa berupa string atau daftar bagian; JSON bisa terbungkus ```json atau kalimat pengantar.
-  const c = choice.message?.content;
-  const text = Array.isArray(c) ? c.map((p) => p.text || '').join('') : String(c || '');
+  // Ambil isi jawaban. Bisa berupa string, daftar bagian, atau (model penalar)
+  // di field reasoning_content / choice.text. JSON bisa terbungkus ```json.
+  const m = choice.message || {};
+  const c = m.content;
+  let text = Array.isArray(c) ? c.map((p) => (typeof p === 'string' ? p : p.text || '')).join('') : String(c || '');
+  if (!text.trim() && m.reasoning_content) text = String(m.reasoning_content);
+  if (!text.trim() && typeof choice.text === 'string') text = choice.text;
+  text = text.replace(/```json/gi, '').replace(/```/g, '');
   const from = text.indexOf('{');
   const to = text.lastIndexOf('}');
   let a;
-  try { a = JSON.parse(text.slice(from, to + 1)); } catch (e) { return fail('Format hasil dari AI tidak valid. Coba kirim ulang.'); }
+  try {
+    a = JSON.parse(text.slice(from, to + 1));
+  } catch (e) {
+    if (choice.finish_reason === 'length') return fail('Artikel terlalu panjang sehingga terpotong. Coba persempit topiknya.');
+    const snip = text.trim().slice(0, 200).replace(/\s+/g, ' ');
+    return fail('Format hasil dari AI tidak valid. Cuplikan jawaban: ' + (snip || '(kosong)'));
+  }
   const FIELDS = __FIELDS__;
   const missing = FIELDS.filter((k) => typeof a[k] !== 'string' || !a[k].trim());
   if (missing.length) return fail('Hasil AI tidak lengkap (' + missing.join(', ') + '). Coba kirim ulang.');
