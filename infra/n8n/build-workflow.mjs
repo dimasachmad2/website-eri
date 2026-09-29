@@ -47,7 +47,24 @@ Ringkasan (excerpt_id dan excerpt_en): 1–2 kalimat, maksimal 200 karakter.
 Slug: dari judul Bahasa Indonesia, huruf kecil, kata dipisah tanda hubung, tanpa tanda baca, maksimal 70 karakter.
 Kategori: pilih satu yang paling sesuai dari: ${CATEGORIES.join(', ')}.
 
-Format jawaban: HANYA satu objek JSON yang valid, tanpa kalimat pembuka, tanpa penutup, tanpa pagar kode. Objek itu punya tepat delapan kunci bertipe string: ${FIELDS.join(', ')}.`;
+FORMAT KELUARAN — wajib diikuti PERSIS. Tulis kedelapan bagian berikut, masing-masing diawali penandanya pada baris tersendiri. Jangan menulis apa pun di luar bagian ini: tanpa kalimat pembuka/penutup, tanpa pagar kode (\`\`\`), tanpa judul Markdown (#).
+<<<title_id>>>
+judul Bahasa Indonesia
+<<<title_en>>>
+judul Bahasa Inggris
+<<<excerpt_id>>>
+ringkasan Bahasa Indonesia
+<<<excerpt_en>>>
+ringkasan Bahasa Inggris
+<<<body_id>>>
+isi artikel HTML Bahasa Indonesia
+<<<body_en>>>
+isi artikel HTML Bahasa Inggris
+<<<slug>>>
+slug
+<<<category>>>
+salah satu kategori dari daftar di atas
+<<<end>>>`;
 
 // ── Builder ───────────────────────────────────────────────────────────────
 const nodes = [];
@@ -194,10 +211,9 @@ function prepareDraft() {
       request: {
         model: $env.LLM_MODEL,
         max_tokens: 16000,
-        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: __SYSTEM__ },
-          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}` },
+          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}\n\nIkuti FORMAT KELUARAN dengan penanda <<<...>>> persis.` },
         ],
       },
     },
@@ -215,16 +231,15 @@ function prepareRevision() {
       request: {
         model: $env.LLM_MODEL,
         max_tokens: 16000,
-        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: __SYSTEM__ },
           {
             role: 'user',
             content:
-              `Draft artikel saat ini (JSON):\n${JSON.stringify(current)}\n\n` +
+              `Draft artikel saat ini:\n${JSON.stringify(current)}\n\n` +
               `Catatan revisi dari tim ERI:\n${ctx.feedback}\n\n` +
-              'Revisi artikel sesuai catatan dan kembalikan artikel LENGKAP dalam format yang sama. ' +
-              'Pertahankan slug kecuali catatan meminta perubahan.',
+              'Revisi artikel sesuai catatan dan kembalikan artikel LENGKAP memakai FORMAT KELUARAN ' +
+              'dengan penanda <<<...>>> persis. Pertahankan slug kecuali catatan meminta perubahan.',
           },
         ],
       },
@@ -248,22 +263,23 @@ function parseLlm() {
   let text = Array.isArray(c) ? c.map((p) => (typeof p === 'string' ? p : p.text || '')).join('') : String(c || '');
   if (!text.trim() && m.reasoning_content) text = String(m.reasoning_content);
   if (!text.trim() && typeof choice.text === 'string') text = choice.text;
-  text = text.replace(/```json/gi, '').replace(/```/g, '');
-  const from = text.indexOf('{');
-  const to = text.lastIndexOf('}');
-  let a;
-  try {
-    a = JSON.parse(text.slice(from, to + 1));
-  } catch (e) {
+
+  // Potong per bagian berdasar penanda <<<field>>> — tahan terhadap basa-basi,
+  // pagar kode, dan HTML di dalam body (tak perlu JSON valid).
+  const FIELDS = __FIELDS__;
+  const grab = (key) => {
+    const mm = text.match(new RegExp('<<<\\s*' + key + '\\s*>>>([\\s\\S]*?)(?=<<<|$)', 'i'));
+    return mm ? mm[1].replace(/^```[a-z]*\n?|```$/gi, '').trim() : '';
+  };
+  const a = {};
+  for (const k of FIELDS) a[k] = grab(k);
+  const missing = FIELDS.filter((k) => !a[k]);
+  if (missing.length) {
     if (choice.finish_reason === 'length') return fail('Artikel terlalu panjang sehingga terpotong. Coba persempit topiknya.');
     const snip = text.trim().slice(0, 200).replace(/\s+/g, ' ');
-    return fail('Format hasil dari AI tidak valid. Cuplikan jawaban: ' + (snip || '(kosong)'));
+    return fail('Hasil AI tidak lengkap (bagian hilang: ' + missing.join(', ') + '). Cuplikan: ' + (snip || '(kosong)'));
   }
-  const FIELDS = __FIELDS__;
-  const missing = FIELDS.filter((k) => typeof a[k] !== 'string' || !a[k].trim());
-  if (missing.length) return fail('Hasil AI tidak lengkap (' + missing.join(', ') + '). Coba kirim ulang.');
-  a = Object.fromEntries(FIELDS.map((k) => [k, a[k]]));
-  if (!__CATEGORIES__.includes(a.category)) a.category = 'Lainnya';
+  a.category = __CATEGORIES__.find((x) => a.category.toLowerCase().includes(x.toLowerCase())) || 'Lainnya';
   a.slug = String(a.slug || a.title_id || 'artikel')
     .toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-')
