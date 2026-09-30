@@ -35,6 +35,17 @@ const CMS_PUBLIC = 'https://cms.enviroresources.co.id';
 const SITE = 'https://enviroresources.co.id';
 const CATEGORIES = ['Regulasi', 'Persetujuan Teknis', 'Pelaporan', 'PROPER', 'Prasarana Limbah', 'Lainnya'];
 
+// Cover default per kategori (file id di Directus, diunggah sekali dari Unsplash).
+// Dipakai untuk pilihan "Default" dan sebagai cadangan bila AI gagal.
+const DEFAULT_COVERS = {
+  'Regulasi': '8fd61715-3721-4929-8a41-764585d71fe0',
+  'Persetujuan Teknis': '1f0e6298-0105-426a-910e-c117efc02e2f',
+  'Pelaporan': 'e72ce154-f585-47ad-8b74-85700b38ad1e',
+  'PROPER': 'b1c876b3-e3fa-4a1f-87c2-c35216bff784',
+  'Prasarana Limbah': '8c9fcda3-5f4d-491f-8ba2-90d5c628088f',
+  'Lainnya': 'f3eb62eb-d16d-44fc-b1a2-cce2546be5d5',
+};
+
 // Langkah 1 — tulis artikel Bahasa Indonesia (4 tag). Prompt sengaja ringkas:
 // model di gateway patuh format bila prompt pendek & satu bahasa.
 const SYSTEM_ID = `Kamu penulis artikel untuk PT Enviro Resources Indonesia (ERI), konsultan lingkungan di Sidoarjo, Jawa Timur. Layanan ERI: AMDAL, UKL-UPL, SPPL, DELH/DPLH, Persetujuan Teknis air limbah & emisi, SLO, Rincian Teknis Limbah B3, Andalalin, SIPA, pelaporan RKL-RPL, audit lingkungan, pendampingan PROPER, prasarana pengolahan limbah (IPAL), pengelolaan limbah non-B3.
@@ -81,6 +92,7 @@ const VARS = {
   __SYSTEM_ID__: JSON.stringify(SYSTEM_ID),
   __SYSTEM_EN__: JSON.stringify(SYSTEM_EN),
   __CATEGORIES__: JSON.stringify(CATEGORIES),
+  __DEFAULT_COVERS__: JSON.stringify(DEFAULT_COVERS),
   __CMS__: JSON.stringify(CMS_PUBLIC),
   __SITE__: JSON.stringify(SITE),
   __ALLOWED__: JSON.stringify(allowed),
@@ -131,6 +143,29 @@ const llm = (name, pos) =>
     pos,
     true,
   );
+// Endpoint gambar: POST /images/generations dengan {prompt} saja (tanpa model).
+const img = (name, pos) =>
+  http(name, {
+    url: "={{ String($env.LLM_BASE_URL).replace(/\\/+$/, '') }}/images/generations",
+    headers: [{ name: 'Authorization', value: '=Bearer {{ $env.LLM_API_KEY }}' }],
+    json: '={{ JSON.stringify($json.request) }}',
+    timeout: 120000,
+  }, pos, true);
+// Unggah biner ke Directus /files (multipart, dari properti binary "file").
+const dxUpload = (name, pos) =>
+  node(name, 'n8n-nodes-base.httpRequest', 4.2, {
+    method: 'POST',
+    url: '={{ $env.DIRECTUS_URL }}/files',
+    sendHeaders: true,
+    headerParameters: { parameters: [{ name: 'Authorization', value: '=Bearer {{ $env.DIRECTUS_WRITER_TOKEN }}' }] },
+    sendBody: true,
+    contentType: 'multipart-form-data',
+    bodyParameters: { parameters: [
+      { name: 'title', value: 'Cover AI' },
+      { parameterType: 'formBinaryData', name: 'file', inputDataFieldName: 'file' },
+    ] },
+    options: { timeout: 60000 },
+  }, pos, { onError: 'continueRegularOutput' });
 const filterNode = (name, expr, pos) =>
   code(name, new Function(`return $input.all().filter((i) => ${expr});`), pos);
 
@@ -154,7 +189,7 @@ code('Router', function () {
       return out({ action: 'reply', chatId, text: `⛔ Akun ini belum diizinkan memakai bot ERI.\nID Telegram kamu: ${userId}` });
     }
     const [cmd, draftId] = String(cq.data || '').split(':');
-    const action = { pub: 'publish', rev: 'ask_revision', del: 'cancel' }[cmd];
+    const action = { img: 'imgmenu', iback: 'back', idef: 'pub_default', iai: 'pub_ai', ifoto: 'ask_photo', rev: 'ask_revision', del: 'cancel' }[cmd];
     if (!action || !draftId) return [];
     return out({ action, chatId, draftId, callbackId: cq.id, messageId: cq.message?.message_id });
   }
@@ -169,6 +204,13 @@ code('Router', function () {
       text: `⛔ Akun ini belum diizinkan memakai bot ERI.\nID Telegram kamu: ${userId}\nKirim ID ini ke admin untuk didaftarkan.`,
     });
   }
+  // Foto sebagai balasan permintaan cover → jadikan cover artikel.
+  if (m.photo && m.photo.length) {
+    const ref2 = String(m.reply_to_message?.text || '').match(/([0-9a-f-]{36})/);
+    if (ref2) return out({ action: 'photo_cover', chatId, draftId: ref2[1], fileId: m.photo[m.photo.length - 1].file_id });
+    return out({ action: 'reply', chatId, text: 'Untuk memakai foto sebagai cover: pada draft tekan "🖼 Publish" → "📎 Lampirkan foto", lalu balas pesan itu dengan foto.' });
+  }
+
   const text = String(m.text || '').trim();
   const help =
     '🌿 Bot Artikel ERI\n\n' +
@@ -343,7 +385,7 @@ function previewMessage() {
         disable_web_page_preview: true,
         reply_markup: {
           inline_keyboard: [[
-            { text: '✅ Publish', callback_data: `pub:${id}` },
+            { text: '🖼 Publish', callback_data: `img:${id}` },
             { text: '✏️ Revisi', callback_data: `rev:${id}` },
             { text: '🗑 Batal', callback_data: `del:${id}` },
           ]],
@@ -430,20 +472,107 @@ tg('Telegram: minta catatan', 'sendMessage',
   [960, 950]);
 link('▶ Minta revisi', 'Telegram: jawab tombol revisi', 'Telegram: minta catatan');
 
-// ── 6. Tombol Publish ─────────────────────────────────────────────────────
-branch('▶ Publish', ['publish'], [480, 1150]);
-tg('Telegram: jawab tombol publish', 'answerCallbackQuery',
-  `={{ JSON.stringify({ callback_query_id: $json.callbackId, text: 'Mempublish…' }) }}`, [720, 1150], true);
-dx('Directus: publish', 'PATCH', `/items/articles/{{ $('▶ Publish').first().json.draftId }}`, {
-  json: `={{ JSON.stringify({ status: 'published', published_at: new Date().toISOString() }) }}`,
-}, [960, 1150], true);
-tg('Telegram: hapus tombol (publish)', 'editMessageReplyMarkup',
-  `={{ JSON.stringify({ chat_id: $('▶ Publish').first().json.chatId, message_id: $('▶ Publish').first().json.messageId, reply_markup: { inline_keyboard: [] } }) }}`,
-  [1200, 1150], true);
+// ── 6. Pilih gambar → publish ──────────────────────────────────────────────
+// Fungsi bersama untuk cabang gambar.
+function coverDefault() {
+  const ctx = $('▶ Default kategori').first().json;
+  const d = $input.first().json.data || {};
+  const DEFAULT_COVERS = __DEFAULT_COVERS__;
+  const cover = DEFAULT_COVERS[d.category] || DEFAULT_COVERS['Lainnya'];
+  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover } }];
+}
+function preparePicture() {
+  const d = $('Directus: ambil draft AI').first().json.data || {};
+  const title = d.title_en || d.title_id || 'environmental consulting';
+  return [{ json: { request: { prompt: `Professional editorial cover photograph for an article titled "${title}". Indonesian environmental consulting, topic ${d.category || 'environment'}. Realistic corporate photography, clean composition, green and neutral tones, natural light. No text, no words, no logo, no watermark.` } } }];
+}
+async function prepPicUpload() {
+  const r = $input.first().json;
+  const b64 = (!r.error && r.data && r.data[0] && r.data[0].b64_json) ? r.data[0].b64_json : '';
+  if (!b64) return [{ json: { ok: false } }];
+  const bin = await this.helpers.prepareBinaryData(Buffer.from(b64, 'base64'), 'cover.jpg', 'image/jpeg');
+  return [{ json: { ok: true }, binary: { file: bin } }];
+}
+function coverAI() {
+  const up = $input.first().json;
+  const ctx = $('▶ AI gambar').first().json;
+  const d = $('Directus: ambil draft AI').first().json.data || {};
+  const DEFAULT_COVERS = __DEFAULT_COVERS__;
+  const cover = (up && up.data && up.data.id) ? up.data.id : (DEFAULT_COVERS[d.category] || DEFAULT_COVERS['Lainnya']);
+  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover, aiOk: !!(up && up.data && up.data.id) } }];
+}
+function coverFoto() {
+  const up = $input.first().json;
+  const ctx = $('▶ Foto cover').first().json;
+  const cover = (up && up.data && up.data.id) ? up.data.id : null;
+  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: null, cover } }];
+}
+function assemblePublish() { return $input.all(); }
+
+// 6a. Klik "🖼 Publish" → tampilkan menu pilihan gambar.
+branch('▶ Menu gambar', ['imgmenu'], [480, 1150]);
+tg('Telegram: jawab menu', 'answerCallbackQuery', '={{ JSON.stringify({ callback_query_id: $json.callbackId }) }}', [720, 1100], true);
+tg('Telegram: tampil menu gambar', 'editMessageReplyMarkup',
+  `={{ JSON.stringify({ chat_id: $('▶ Menu gambar').first().json.chatId, message_id: $('▶ Menu gambar').first().json.messageId, reply_markup: { inline_keyboard: [[{ text: '🎨 Default kategori', callback_data: 'idef:' + $('▶ Menu gambar').first().json.draftId }, { text: '🤖 AI buatkan', callback_data: 'iai:' + $('▶ Menu gambar').first().json.draftId }], [{ text: '📎 Lampirkan foto', callback_data: 'ifoto:' + $('▶ Menu gambar').first().json.draftId }, { text: '← Kembali', callback_data: 'iback:' + $('▶ Menu gambar').first().json.draftId }]] } }) }}`,
+  [960, 1150], true);
+link('▶ Menu gambar', 'Telegram: jawab menu', 'Telegram: tampil menu gambar');
+
+// 6b. "← Kembali" → tombol utama lagi.
+branch('▶ Kembali', ['back'], [480, 1320]);
+tg('Telegram: jawab kembali', 'answerCallbackQuery', '={{ JSON.stringify({ callback_query_id: $json.callbackId }) }}', [720, 1320], true);
+tg('Telegram: tombol utama', 'editMessageReplyMarkup',
+  `={{ JSON.stringify({ chat_id: $('▶ Kembali').first().json.chatId, message_id: $('▶ Kembali').first().json.messageId, reply_markup: { inline_keyboard: [[{ text: '🖼 Publish', callback_data: 'img:' + $('▶ Kembali').first().json.draftId }, { text: '✏️ Revisi', callback_data: 'rev:' + $('▶ Kembali').first().json.draftId }, { text: '🗑 Batal', callback_data: 'del:' + $('▶ Kembali').first().json.draftId }]] } }) }}`,
+  [960, 1320], true);
+link('▶ Kembali', 'Telegram: jawab kembali', 'Telegram: tombol utama');
+
+// 6c. Default kategori.
+branch('▶ Default kategori', ['pub_default'], [480, 1550]);
+tg('Telegram: jawab default', 'answerCallbackQuery', `={{ JSON.stringify({ callback_query_id: $json.callbackId, text: 'Memasang gambar default…' }) }}`, [720, 1550], true);
+dx('Directus: ambil kategori', 'GET', `/items/articles/{{ $('▶ Default kategori').first().json.draftId }}`, { query: [{ name: 'fields', value: 'category' }] }, [960, 1550], true);
+code('Cover default', coverDefault, [1200, 1550]);
+link('▶ Default kategori', 'Telegram: jawab default', 'Directus: ambil kategori', 'Cover default', 'Siapkan publish');
+
+// 6d. AI buatkan (best-effort; gagal → cover default).
+branch('▶ AI gambar', ['pub_ai'], [480, 1720]);
+tg('Telegram: jawab AI', 'answerCallbackQuery', `={{ JSON.stringify({ callback_query_id: $json.callbackId, text: 'Membuat gambar AI…' }) }}`, [720, 1720], true);
+dx('Directus: ambil draft AI', 'GET', `/items/articles/{{ $('▶ AI gambar').first().json.draftId }}`, { query: [{ name: 'fields', value: 'category,title_id,title_en' }] }, [960, 1720], true);
+code('Siapkan prompt gambar', preparePicture, [1200, 1720]);
+img('AI: buat gambar', [1440, 1720]);
+code('Olah gambar AI', prepPicUpload, [1680, 1720]);
+dxUpload('Directus: unggah AI', [1920, 1720]);
+code('Cover AI', coverAI, [2160, 1720]);
+link('▶ AI gambar', 'Telegram: jawab AI', 'Directus: ambil draft AI', 'Siapkan prompt gambar', 'AI: buat gambar', 'Olah gambar AI', 'Directus: unggah AI', 'Cover AI', 'Siapkan publish');
+
+// 6e. Lampirkan foto → minta user membalas dengan foto.
+branch('▶ Minta foto', ['ask_photo'], [480, 1950]);
+tg('Telegram: jawab minta foto', 'answerCallbackQuery', '={{ JSON.stringify({ callback_query_id: $json.callbackId }) }}', [720, 1950], true);
+tg('Telegram: minta foto', 'sendMessage',
+  `={{ JSON.stringify({ chat_id: $('▶ Minta foto').first().json.chatId, text: '📎 Balas pesan ini dengan foto untuk cover artikel.\\n\\n(draft: ' + $('▶ Minta foto').first().json.draftId + ')', reply_markup: { force_reply: true, input_field_placeholder: 'Kirim satu foto…' } }) }}`,
+  [960, 1950]);
+link('▶ Minta foto', 'Telegram: jawab minta foto', 'Telegram: minta foto');
+
+// 6f. Foto diterima → import ke Directus → publish.
+branch('▶ Foto cover', ['photo_cover'], [480, 2120]);
+tg('Telegram: info memasang foto', 'sendMessage', `={{ JSON.stringify({ chat_id: $('▶ Foto cover').first().json.chatId, text: '🖼 Memasang foto & mempublish…' }) }}`, [720, 2120], true);
+tg('Telegram: getFile', 'getFile', `={{ JSON.stringify({ file_id: $('▶ Foto cover').first().json.fileId }) }}`, [960, 2120], true);
+dx('Directus: import foto', 'POST', '/files/import', {
+  json: `={{ JSON.stringify({ url: 'https://api.telegram.org/file/bot' + $env.TELEGRAM_BOT_TOKEN + '/' + $('Telegram: getFile').first().json.result.file_path, title: 'Cover dari Telegram' }) }}`,
+}, [1200, 2120], true);
+code('Cover foto', coverFoto, [1440, 2120]);
+link('▶ Foto cover', 'Telegram: info memasang foto', 'Telegram: getFile', 'Directus: import foto', 'Cover foto', 'Siapkan publish');
+
+// 6g. Publish bersama (semua cabang gambar menuju sini).
+code('Siapkan publish', assemblePublish, [2500, 1720]);
+dx('Directus: publish (cover)', 'PATCH', `/items/articles/{{ $json.draftId }}`, {
+  json: `={{ JSON.stringify({ status: 'published', published_at: new Date().toISOString(), cover: $json.cover }) }}`,
+}, [2740, 1720], true);
+tg('Telegram: hapus tombol pub', 'editMessageReplyMarkup',
+  `={{ JSON.stringify({ chat_id: $('Siapkan publish').first().json.chatId, message_id: $('Siapkan publish').first().json.messageId, reply_markup: { inline_keyboard: [] } }) }}`,
+  [2980, 1720], true);
 tg('Telegram: info publish', 'sendMessage',
-  `={{ JSON.stringify({ chat_id: $('▶ Publish').first().json.chatId, text: $('Directus: publish').first().json.data?.slug ? '✅ Dipublish! Website diperbarui otomatis, tayang ±3 menit:\\n' + ${JSON.stringify(SITE)} + '/id/articles/' + $('Directus: publish').first().json.data.slug + '/' : '⚠️ Gagal mempublish (draft mungkin sudah dihapus).' }) }}`,
-  [1440, 1150]);
-link('▶ Publish', 'Telegram: jawab tombol publish', 'Directus: publish', 'Telegram: hapus tombol (publish)', 'Telegram: info publish');
+  `={{ JSON.stringify({ chat_id: $('Siapkan publish').first().json.chatId, text: $('Directus: publish (cover)').first().json.data?.slug ? '✅ Dipublish! Website diperbarui otomatis, tayang ±3 menit:\\n' + ${JSON.stringify(SITE)} + '/id/articles/' + $('Directus: publish (cover)').first().json.data.slug + '/' : '⚠️ Gagal mempublish (draft mungkin sudah dihapus).' }) }}`,
+  [3220, 1720]);
+link('Siapkan publish', 'Directus: publish (cover)', 'Telegram: hapus tombol pub', 'Telegram: info publish');
 
 // ── 7. Tombol Batal ───────────────────────────────────────────────────────
 branch('▶ Batal', ['cancel'], [480, 1350]);
