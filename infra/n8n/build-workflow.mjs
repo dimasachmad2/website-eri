@@ -47,24 +47,25 @@ Ringkasan (excerpt_id dan excerpt_en): 1–2 kalimat, maksimal 200 karakter.
 Slug: dari judul Bahasa Indonesia, huruf kecil, kata dipisah tanda hubung, tanpa tanda baca, maksimal 70 karakter.
 Kategori: pilih satu yang paling sesuai dari: ${CATEGORIES.join(', ')}.
 
-FORMAT KELUARAN — wajib diikuti PERSIS. Tulis kedelapan bagian berikut, masing-masing diawali penandanya pada baris tersendiri. Jangan menulis apa pun di luar bagian ini: tanpa kalimat pembuka/penutup, tanpa pagar kode (\`\`\`), tanpa judul Markdown (#).
-<<<title_id>>>
-judul Bahasa Indonesia
-<<<title_en>>>
-judul Bahasa Inggris
-<<<excerpt_id>>>
-ringkasan Bahasa Indonesia
-<<<excerpt_en>>>
-ringkasan Bahasa Inggris
-<<<body_id>>>
-isi artikel HTML Bahasa Indonesia
-<<<body_en>>>
-isi artikel HTML Bahasa Inggris
-<<<slug>>>
-slug
-<<<category>>>
-salah satu kategori dari daftar di atas
-<<<end>>>`;
+FORMAT KELUARAN — bungkus setiap bagian dengan tag XML persis seperti di bawah, berurutan. Jangan menulis apa pun di luar tag: tanpa kalimat pembuka/penutup, tanpa pagar kode, tanpa tanda pagar (#) Markdown. Mulai LANGSUNG dengan <title_id>.
+<title_id>judul Bahasa Indonesia</title_id>
+<title_en>judul Bahasa Inggris</title_en>
+<excerpt_id>ringkasan Bahasa Indonesia</excerpt_id>
+<excerpt_en>ringkasan Bahasa Inggris</excerpt_en>
+<body_id>isi artikel HTML Bahasa Indonesia</body_id>
+<body_en>isi artikel HTML Bahasa Inggris</body_en>
+<slug>slug</slug>
+<category>salah satu kategori dari daftar di atas</category>
+
+Contoh bentuk keluaran yang BENAR (topik lain, tiru strukturnya — isi sebenarnya harus 600–1000 kata per bahasa):
+<title_id>Kapan Cerobong Pabrik Wajib SLO</title_id>
+<title_en>When Factory Stacks Require an SLO</title_en>
+<excerpt_id>Panduan singkat kapan cerobong wajib Surat Laik Operasi dan langkah dasarnya.</excerpt_id>
+<excerpt_en>A short guide on when stacks require an Operational Feasibility Certificate and the basic steps.</excerpt_en>
+<body_id><h2>Apa itu SLO</h2><p>Penjelasan singkat...</p><p>Konsultasikan kebutuhan Anda dengan ERI.</p></body_id>
+<body_en><h2>What is an SLO</h2><p>A short explanation...</p><p>Consult your needs with ERI.</p></body_en>
+<slug>kapan-cerobong-pabrik-wajib-slo</slug>
+<category>Persetujuan Teknis</category>`;
 
 // ── Builder ───────────────────────────────────────────────────────────────
 const nodes = [];
@@ -213,7 +214,7 @@ function prepareDraft() {
         max_tokens: 16000,
         messages: [
           { role: 'system', content: __SYSTEM__ },
-          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}\n\nIkuti FORMAT KELUARAN dengan penanda <<<...>>> persis.` },
+          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}\n\nIkuti FORMAT KELUARAN: bungkus tiap bagian dengan tag XML, mulai LANGSUNG dari <title_id>.` },
         ],
       },
     },
@@ -239,7 +240,7 @@ function prepareRevision() {
               `Draft artikel saat ini:\n${JSON.stringify(current)}\n\n` +
               `Catatan revisi dari tim ERI:\n${ctx.feedback}\n\n` +
               'Revisi artikel sesuai catatan dan kembalikan artikel LENGKAP memakai FORMAT KELUARAN ' +
-              'dengan penanda <<<...>>> persis. Pertahankan slug kecuali catatan meminta perubahan.',
+              '(tag XML), mulai dari <title_id>. Pertahankan slug kecuali catatan meminta perubahan.',
           },
         ],
       },
@@ -268,8 +269,8 @@ function parseLlm() {
   // pagar kode, dan HTML di dalam body (tak perlu JSON valid).
   const FIELDS = __FIELDS__;
   const grab = (key) => {
-    const mm = text.match(new RegExp('<<<\\s*' + key + '\\s*>>>([\\s\\S]*?)(?=<<<|$)', 'i'));
-    return mm ? mm[1].replace(/^```[a-z]*\n?|```$/gi, '').trim() : '';
+    const mm = text.match(new RegExp('<' + key + '>([\\s\\S]*?)</' + key + '>', 'i'));
+    return mm ? mm[1].trim() : '';
   };
   const a = {};
   for (const k of FIELDS) a[k] = grab(k);
