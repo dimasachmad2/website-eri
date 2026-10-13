@@ -3,10 +3,12 @@ type Q = { text: string; name: string; role: string };
 export function Testimonials({
   eyebrow,
   title,
+  soon,
   list,
 }: {
   eyebrow: string;
   title: string;
+  soon: string;
   list: Q[];
 }) {
   const loop = [...list, ...list];
@@ -24,6 +26,17 @@ export function Testimonials({
         </div>
       </div>
 
+      {/* Belum ada testimoni asli → placeholder jujur (bukan kutipan karangan). */}
+      {list.length === 0 ? (
+        <div className="mx-auto max-w-[600px] px-6 pb-24">
+          <div className="flex flex-col items-center gap-5 rounded-2xl border border-line bg-white px-8 py-12 text-center">
+            <svg width="40" height="32" viewBox="0 0 36 28" fill="#8fdc93" aria-hidden="true">
+              <path d="M0 28V16C0 7 5 1.5 14 0l1.5 4C10 5.5 7.5 9 7.5 13H14v15H0zm21 0V16c0-9 5-14.5 14-16l1 4c-5.5 1.5-8 5-8 9h6.5v15H21z" />
+            </svg>
+            <p className="m-0 text-lg font-medium leading-relaxed text-muted">{soon}</p>
+          </div>
+        </div>
+      ) : (
       <div className="overflow-hidden pb-24 [mask-image:linear-gradient(90deg,transparent_0,#000_6%,#000_94%,transparent_100%)]">
         <div className="flex w-max gap-5 pr-5" style={{ animation: 'tMarquee 60s linear infinite' }}>
           {loop.map((q, i) => {
@@ -53,6 +66,7 @@ export function Testimonials({
           })}
         </div>
       </div>
+      )}
     </section>
   );
 }

@@ -165,6 +165,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Testimonials
         eyebrow={t.testi.eyebrow}
         title={t.testi.title}
+        soon={t.testi.soon}
         list={t.testi.list}
       />
 
