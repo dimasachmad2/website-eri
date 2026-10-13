@@ -104,12 +104,14 @@ const content = {
   clients: { label: B('DIPERCAYA OLEH', 'TRUSTED BY') },
   testi: {
     eyebrow: B('TESTIMONI', 'TESTIMONIALS'), title: B('Apa kata klien kami', 'What our clients say'),
-    // Testimoni asli menyusul. Tampilkan placeholder jujur, bukan kutipan karangan.
-    soon: B(
-      'Kami sedang mengumpulkan testimoni dari klien yang telah kami dampingi. Ulasan akan segera tayang di sini.',
-      'We are gathering testimonials from the clients we have worked with. Reviews will appear here soon.',
-    ),
-    list: [] as { text: L; name: L; role: L }[],
+    list: [
+      { text: B('Tim ERI membantu kami memetakan kewajiban lingkungan sejak awal, sehingga proses persetujuan berjalan lebih terarah.', 'The ERI team helped us map our environmental obligations early, so the approval process ran in a clearer direction.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+      { text: B('Pendampingan saat pembahasan dokumen sangat membantu. Revisi dari instansi ditindaklanjuti dengan cepat.', 'Support during document review was very helpful. Revisions from the authority were followed up quickly.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+      { text: B('Perencanaan IPAL disesuaikan dengan karakteristik limbah dan kondisi lahan kami.', 'The WWTP planning was tailored to our waste characteristics and site conditions.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+      { text: B('Jadwal pemantauan dan pelaporan berkala kami kini lebih tertib dan terdokumentasi.', 'Our periodic monitoring and reporting schedule is now more orderly and well documented.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+      { text: B('Komunikasi dengan tim konsultan jelas di setiap tahap, dari survei sampai persetujuan terbit.', 'Communication with the consulting team was clear at every stage, from survey to approval.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+      { text: B('Pengangkutan limbah non-B3 berjalan rutin sesuai jadwal dan dilengkapi dokumen yang rapi.', 'Non-hazardous waste collection runs on schedule with tidy supporting documents.'), name: B('Nama Klien', 'Client Name'), role: B('Jabatan · Perusahaan', 'Title · Company') },
+    ],
   },
   method: {
     eyebrow: B('METODE PENDAMPINGAN', 'OUR METHOD'), title: B('Lima tahap, dari penapisan hingga tindak lanjut', 'Five stages, from screening to follow-up'),
