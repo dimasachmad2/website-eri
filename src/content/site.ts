@@ -21,6 +21,8 @@ export type Locale = 'id' | 'en';
 
 export const SITE_URL = 'https://enviroresources.co.id';
 export const COMPANY = 'PT Enviro Resources Indonesia';
+// Google Tag Manager container ERI. GA4/Ads dikonfigurasi DI DALAM GTM.
+export const GTM_ID = 'GTM-55FBHKTQ';
 const OG_IMAGE = '/photos/1774789599304-cca1e1ffbb95.jpg';
 
 type L = { id: string; en: string };
