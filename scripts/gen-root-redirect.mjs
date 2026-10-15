@@ -9,6 +9,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="4ayvO_n9NzqIeKdzJtV-q2oJh8mpKlazVqVjWUOFtAA">
 <title>PT Enviro Resources Indonesia</title>
 <script>
   (function () {
