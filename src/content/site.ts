@@ -536,7 +536,8 @@ export function metaFor(locale: Locale, page: PageKey): Metadata {
   let description: string;
 
   if (page === 'home') {
-    ogTitle = `${COMPANY} — Solutions for a Greener Tomorrow`;
+    const homeTag = locale === 'en' ? 'Environmental Consultant in Sidoarjo & East Java' : 'Konsultan Lingkungan Sidoarjo & Jawa Timur';
+    ogTitle = `${homeTag} — ${COMPANY}`;
     title = { absolute: ogTitle };
     description = loc(content.hero.sub, locale, 'hero.sub') as string;
   } else {

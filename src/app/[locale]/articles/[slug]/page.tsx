@@ -60,8 +60,23 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
   }
   if (!a) notFound();
 
+  const articleLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: a.title,
+    description: a.excerpt || undefined,
+    image: a.cover ? (a.cover.startsWith('http') ? a.cover : `${SITE_URL}${a.cover}`) : undefined,
+    datePublished: a.dateISO || undefined,
+    dateModified: a.dateISO || undefined,
+    inLanguage: l === 'en' ? 'en' : 'id',
+    author: { '@type': 'Organization', name: COMPANY, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: COMPANY, logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.svg` } },
+    mainEntityOfPage: `${SITE_URL}/${l}${ROUTES.articles}/${slug}/`,
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       <article>
         <Container className="pt-16">
           <Link href={ROUTES.articles} className="text-sm font-bold">

@@ -8,7 +8,7 @@ import { routing } from '@/i18n/routing';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
-import { getSite, SITE_URL, COMPANY, GTM_ID, type Locale } from '@/content/site';
+import { getSite, SITE_URL, COMPANY, GTM_ID, EMAIL, LANDLINE_TEL, type Locale } from '@/content/site';
 import '../globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -63,6 +63,31 @@ export default async function LocaleLayout({
   const { nav, t } = getSite(locale as Locale);
   const aboutOverview = locale === 'en' ? 'Company Overview' : 'Sekilas Perusahaan';
 
+  // Structured data (schema.org) — bantu Google memahami bisnis & SEO lokal.
+  const orgLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    '@id': `${SITE_URL}/#organization`,
+    name: COMPANY,
+    alternateName: 'Enviro Resources Indonesia',
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.svg`,
+    image: `${SITE_URL}/photos/1774789599304-cca1e1ffbb95.jpg`,
+    telephone: LANDLINE_TEL.replace('tel:', ''),
+    email: EMAIL,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Jl. Tropodo Indah J-19, Waru',
+      addressLocality: 'Sidoarjo',
+      addressRegion: 'Jawa Timur',
+      addressCountry: 'ID',
+    },
+    areaServed: ['Sidoarjo', 'Surabaya', 'Gresik', 'Jawa Timur', 'Indonesia'],
+    description:
+      'Konsultan lingkungan: AMDAL, UKL-UPL, SPPL, Persetujuan Teknis air limbah & emisi, SLO, Rincian Teknis Limbah B3, Andalalin, prasarana pengolahan limbah (IPAL), dan pengelolaan limbah non-B3.',
+    knowsAbout: ['AMDAL', 'UKL-UPL', 'SPPL', 'Persetujuan Teknis', 'SLO', 'Rincian Teknis Limbah B3', 'Andalalin', 'PROPER', 'IPAL', 'Audit Lingkungan'],
+  };
+
   return (
     <html lang={locale} className={`${jakarta.variable} ${jetbrains.variable}`}>
       <body>
@@ -82,6 +107,7 @@ export default async function LocaleLayout({
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
         <NextIntlClientProvider messages={messages}>
           <div className="flex min-h-screen flex-col">
             <Header nav={nav} cta={t.cta} aboutOverview={aboutOverview} />
