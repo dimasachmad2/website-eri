@@ -49,7 +49,7 @@ export function WhatsAppFloat({ locale }: { locale: Locale }) {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end gap-4">
+    <div data-cta="wa_float" className="fixed bottom-6 right-6 z-30 flex flex-col items-end gap-4">
       {open && (
         <div
           className="w-80 max-w-[calc(100vw-48px)] origin-bottom-right overflow-hidden rounded-2xl bg-[#efe7dd] shadow-[0_20px_50px_rgba(0,0,0,0.25)]"

@@ -55,7 +55,7 @@ export function CtaBand({ locale }: { locale: Locale }) {
             {t.ctaBand}
           </h2>
         </div>
-        <div className="relative flex flex-wrap gap-3">
+        <div data-cta="cta_band" className="relative flex flex-wrap gap-3">
           <a
             href={WHATSAPP}
             className="rounded-lg bg-white px-6 py-4 font-bold text-forest hover:text-forest"

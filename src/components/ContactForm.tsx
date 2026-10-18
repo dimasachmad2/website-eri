@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { WHATSAPP } from '@/content/site';
+import { track } from './ConversionTracker';
 
 type Labels = {
   name: string;
@@ -48,6 +49,7 @@ export function ContactForm({
       ``,
       `${fd.get('message') || ''}`,
     ].join('\n');
+    track('contact_form_submit', { cta_location: 'contact_form', service: String(fd.get('service') || '') });
     window.open(`${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
     setSent(true);
   };

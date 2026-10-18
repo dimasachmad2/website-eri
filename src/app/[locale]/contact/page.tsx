@@ -24,7 +24,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       <Container className="grid grid-cols-1 gap-14 pt-20 lg:grid-cols-2">
         {/* Info */}
         <div>
-          <div className="flex flex-col gap-7">
+          <div data-cta="contact_page" className="flex flex-col gap-7">
             <div>
               <div className="mb-2 text-sm font-bold uppercase tracking-wide text-brand">{c.officeL}</div>
               <div className="text-lg font-semibold leading-snug">

@@ -8,6 +8,7 @@ import { routing } from '@/i18n/routing';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFloat } from '@/components/WhatsAppFloat';
+import { ConversionTracker } from '@/components/ConversionTracker';
 import { getSite, SITE_URL, COMPANY, GTM_ID, EMAIL, LANDLINE_TEL, type Locale } from '@/content/site';
 import '../globals.css';
 
@@ -115,6 +116,7 @@ export default async function LocaleLayout({
             <Footer locale={locale as Locale} />
           </div>
           <WhatsAppFloat locale={locale as Locale} />
+          <ConversionTracker />
         </NextIntlClientProvider>
       </body>
     </html>

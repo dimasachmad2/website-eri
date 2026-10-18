@@ -73,7 +73,7 @@ export function Faq({
         })}
       </div>
 
-      <div className="flex justify-center">
+      <div data-cta="faq" className="flex justify-center">
         <a
           href={WHATSAPP}
           className="rounded-lg bg-brand px-6 py-4 font-bold text-white hover:bg-brand-dark hover:text-white"

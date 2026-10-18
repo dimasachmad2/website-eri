@@ -44,7 +44,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               Solutions for a Greener Tomorrow
             </h1>
             <p className="m-0 mb-9 max-w-[600px] text-lg leading-relaxed text-ondark">{t.hero.sub}</p>
-            <div className="flex flex-wrap gap-3">
+            <div data-cta="hero" className="flex flex-wrap gap-3">
               <Link
                 href={ROUTES.contact}
                 className="rounded-lg bg-brand-bright px-6 py-4 font-bold text-white hover:text-white"
