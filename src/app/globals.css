@@ -104,6 +104,34 @@
   to { width: 100%; }
 }
 
+@keyframes heroZoom {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ── Reveal saat scroll ──────────────────────────────────────────────
+   .rv-hide HANYA dipasang oleh <RevealOnScroll> (JS) pada elemen yang masih
+   di bawah layar — tanpa JS / bagi crawler, konten tetap tampil utuh.
+   data-reveal = fade-up · data-reveal-zoom = foto zoom-out · data-reveal-line = garis terisi */
+[data-reveal] {
+  transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);
+  transition-delay: var(--rd, 0ms);
+}
+[data-reveal].rv-hide { opacity: 0; transform: translateY(28px); }
+[data-reveal-zoom] .rv-img { transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
+[data-reveal-zoom].rv-hide .rv-img { transform: scale(1.14); }
+[data-reveal-line] .rv-fill { transform-origin: left; transition: transform 1.6s cubic-bezier(.4,.1,.2,1) .2s; }
+[data-reveal-line].rv-hide .rv-fill { transform: scaleX(0); }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; scroll-behavior: auto !important; }
+  .rv-hide, .rv-hide .rv-img, .rv-hide .rv-fill { opacity: 1 !important; transform: none !important; }
 }

@@ -19,7 +19,7 @@ type ServiceDef = {
   metaTitle: L;
   metaDesc: L;
   sub: L;
-  photo: string;
+  photo: string; // foto hero (juga gambar OpenGraph)
   serviceType: string;
   waTopic: string; // diselipkan di pesan WhatsApp terisi
   who: { title: L; items: L[]; note?: L };
@@ -45,7 +45,7 @@ const SERVICES: ServiceDef[] = [
       'Kami membantu memastikan apakah usaha Anda wajib UKL-UPL atau cukup SPPL, menyusun dokumennya, dan mendampingi pemeriksaan sampai persetujuan diterbitkan.',
       'We help confirm whether your business needs a UKL-UPL or just an SPPL, prepare the document, and support the review until the approval is issued.',
     ),
-    photo: '/photos/1581092570490-cc40829efaae.jpg',
+    photo: '/photos/1760921678729-9658c8b792bb.jpg',
     serviceType: 'Penyusunan dokumen UKL-UPL dan SPPL',
     waTopic: 'UKL-UPL / SPPL',
     who: {
@@ -129,7 +129,7 @@ const SERVICES: ServiceDef[] = [
       'Pendampingan AMDAL untuk rencana kegiatan berdampak penting, serta DELH dan DPLH untuk kegiatan yang sudah berjalan namun belum memiliki dokumen lingkungan.',
       'AMDAL support for planned activities with significant impacts, plus DELH and DPLH for activities already operating without an environmental document.',
     ),
-    photo: '/photos/1774789599304-cca1e1ffbb95.jpg',
+    photo: '/photos/1783393208952-5cf06f930c42.jpg',
     serviceType: 'Penyusunan AMDAL, DELH, dan DPLH',
     waTopic: 'AMDAL / DELH / DPLH',
     who: {
@@ -362,6 +362,77 @@ const SERVICES: ServiceDef[] = [
   },
 ];
 
+// ── Ikon garis (24×24, dirender via <Icon>) ──
+export const ICONS = {
+  search: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+  pin: '<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+  doc: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  chart: '<path d="M4 20V4M4 20h16"/><path d="M8 16l4-5 3 3 5-6"/>',
+  people: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 11a3 3 0 1 0 0-6M21 20a6 6 0 0 0-4-5.6"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  clipboard: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2.5h6v3H9zM9 13l2 2 4-4"/>',
+  droplet: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M9 14a3 3 0 0 0 3 3"/>',
+  cloud: '<path d="M7 18h10a4 4 0 0 0 .5-7.97A6 6 0 0 0 6 11a3.5 3.5 0 0 0 1 7z"/>',
+  build: '<path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/>',
+  box: '<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+  tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+  book: '<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"/>',
+  upload: '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+} as const;
+type IconKey = keyof typeof ICONS;
+
+// ── Foto & elemen visual per layanan (foto di public/photos/, Unsplash) ──
+type Media = {
+  heroAlt: L;
+  side: string; // foto di samping "Kapan dibutuhkan"
+  sideAlt: L;
+  band: string; // pita foto lebar
+  bandAlt: L;
+  bandText: L;
+  icons: IconKey[]; // per item scope, urut sama
+};
+
+const MEDIA: Record<ServiceSlug, Media> = {
+  'ukl-upl-sppl': {
+    heroAlt: B('Bangunan pabrik dan gudang industri', 'Factory and industrial warehouse building'),
+    side: '/photos/1581094481644-f2ab64522498.jpg',
+    sideAlt: B('Tim lapangan berdiskusi saat survei lokasi', 'Field team discussing during a site survey'),
+    band: '/photos/1622322977879-af6982dcba00.jpg',
+    bandAlt: B('Foto udara instalasi pengolahan air limbah', 'Aerial view of a wastewater treatment plant'),
+    bandText: B('Dokumen yang tepat sejak awal menghemat waktu perizinan.', 'The right document from the start saves permitting time.'),
+    icons: ['search', 'pin', 'doc', 'link', 'shield', 'chart'],
+  },
+  'amdal-delh-dplh': {
+    heroAlt: B('Foto udara kawasan pengolahan di tengah perbukitan hijau', 'Aerial view of a treatment facility among green hills'),
+    side: '/photos/1622322977875-e2d580e129ba.jpg',
+    sideAlt: B('Foto udara permukiman di sekitar instalasi pengolahan', 'Aerial view of homes next to a treatment facility'),
+    band: '/photos/1774789599304-cca1e1ffbb95.jpg',
+    bandAlt: B('Foto udara instalasi pengolahan air limbah dan lahan sekitarnya', 'Aerial view of a wastewater plant and surrounding land'),
+    bandText: B('Kajian dampak yang teliti, dari data lapangan hingga uji kelayakan.', 'Careful impact studies, from field data to feasibility review.'),
+    icons: ['search', 'people', 'layers', 'shield', 'clipboard', 'chart'],
+  },
+  'persetujuan-teknis-slo': {
+    heroAlt: B('Bak pengendap instalasi pengolahan air limbah dari udara', 'Aerial view of a wastewater clarifier'),
+    side: '/photos/1617155093730-a8bf47be792d.jpg',
+    sideAlt: B('Sampel air limbah dalam gelas ukur laboratorium', 'Wastewater sample in a laboratory beaker'),
+    band: '/photos/1705147219565-fe9f6f369d03.jpg',
+    bandAlt: B('Unit pengendali emisi pada bangunan industri', 'Emission control units on an industrial building'),
+    bandText: B('Dari kajian baku mutu dan desain IPAL hingga fasilitas layak beroperasi.', 'From quality standard studies and WWTP design to a facility fit to operate.'),
+    icons: ['droplet', 'cloud', 'build', 'clipboard', 'link', 'chart'],
+  },
+  'rincian-teknis-limbah-b3': {
+    heroAlt: B('Area penyimpanan barang di dalam gudang', 'Storage area inside a warehouse'),
+    side: '/photos/1504917595217-d4dc5ebe6122.jpg',
+    sideAlt: B('Pekerjaan logam di area produksi', 'Metalwork in a production area'),
+    band: '/photos/1711304548487-4950020f4d62.jpg',
+    bandAlt: B('Bangunan pabrik dengan cerobong', 'Factory building with a stack'),
+    bandText: B('Limbah B3 tersimpan aman, tercatat rapi, dan siap diverifikasi.', 'Hazardous waste stored safely, recorded properly, and ready for verification.'),
+    icons: ['search', 'box', 'tag', 'book', 'doc', 'upload'],
+  },
+};
+
 export const SERVICE_SLUGS = SERVICES.map((s) => s.slug);
 
 // Kartu layanan di beranda/halaman layanan → halaman detail (urutan = svc.docs / svc.tech di site.ts).
@@ -380,13 +451,15 @@ function pick<T>(node: T, l: Locale): Resolved<T> {
   return node as Resolved<T>;
 }
 
-export type Service = Resolved<ServiceDef>;
+export type Service = Resolved<ServiceDef> & { media: Resolved<Media> };
+
+const resolve = (s: ServiceDef, l: Locale): Service => ({ ...pick(s, l), media: pick(MEDIA[s.slug], l) });
 
 export function getService(slug: string, l: Locale): Service | undefined {
   const s = SERVICES.find((x) => x.slug === slug);
-  return s ? pick(s, l) : undefined;
+  return s ? resolve(s, l) : undefined;
 }
 
 export function getServices(l: Locale): Service[] {
-  return SERVICES.map((s) => pick(s, l));
+  return SERVICES.map((s) => resolve(s, l));
 }
