@@ -346,18 +346,7 @@ const SERVICES: ServiceDef[] = [
           'Hazardous waste obligations apply to every generator, including small businesses, with storage requirements scaled to the quantity generated.',
         ),
       },
-      {
-        q: B('Apakah ERI juga mengangkut limbah B3?', 'Does ERI also transport hazardous waste?'),
-        a: B(
-          'Tidak. Kami berfokus pada rincian teknis, desain TPS, dan pendampingan kepatuhan. Pengangkutan dan pengolahan dilakukan oleh pihak yang memiliki izin khusus.',
-          'No. We focus on technical details, TPS design, and compliance support. Transport and treatment are carried out by specially licensed parties.',
-        ),
-      },
     ],
-    notice: B(
-      'ERI menyusun dokumen dan mendampingi penyimpanan limbah B3 di lokasi Anda. Pengangkutan, pemanfaatan, dan pengolahan limbah B3 dilakukan oleh pihak yang memiliki izin khusus.',
-      'ERI prepares documents and supports on-site hazardous waste storage. Transport, utilisation, and treatment of hazardous waste are carried out by specially licensed parties.',
-    ),
     articleKeywords: ['limbah b3', 'rincian teknis', 'rintek', 'tps'],
   },
 ];

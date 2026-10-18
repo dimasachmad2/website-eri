@@ -256,7 +256,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 [pengurusan tps limbah b3]
 ```
 
-**Kata kunci negatif khusus grup ini** (ERI menyusun Rintek, bukan jasa angkut/pemusnahan B3):
+**Kata kunci negatif khusus grup ini** (grup ini fokus Rintek; hapus bila ERI ternyata melayani pengangkutan/pemusnahan B3):
 
 ```
 angkut
