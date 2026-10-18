@@ -10,6 +10,7 @@ import projectsData from './projects.json';
 import portfolioData from './portfolio.json';
 import teamData from './team.json';
 import overridesData from './overrides.json';
+import { DOC_LINKS, TECH_LINKS } from './services';
 
 // Teks yang diubah lewat CMS (koleksi `site_texts`). Kunci = jalur di `content`
 // (mis. "hero.sub", "faq.list.0.q") atau "contact.*".
@@ -400,9 +401,11 @@ export function getSite(locale: Locale) {
   const t = loc(content, locale, '') as any;
   const projects = loc(projectsData, locale, 'projects') as ProjectItem[];
 
+  // href → halaman detail layanan bila ada, selain itu halaman Layanan.
+  const svcHref = (slug: string | null) => (slug ? `${ROUTES.services}/${slug}` : ROUTES.services);
   const allServices = [
-    ...t.svc.docs.map((d: { t: string }) => ({ cat: locale === 'id' ? 'DOKUMEN' : 'DOCUMENTS', t: d.t })),
-    ...t.svc.tech.map((d: { t: string }) => ({ cat: locale === 'id' ? 'TEKNIS & PELAPORAN' : 'TECHNICAL & REPORTING', t: d.t })),
+    ...t.svc.docs.map((d: { t: string }, i: number) => ({ cat: locale === 'id' ? 'DOKUMEN' : 'DOCUMENTS', t: d.t, href: svcHref(DOC_LINKS[i] ?? null) })),
+    ...t.svc.tech.map((d: { t: string }, i: number) => ({ cat: locale === 'id' ? 'TEKNIS & PELAPORAN' : 'TECHNICAL & REPORTING', t: d.t, href: svcHref(TECH_LINKS[i] ?? null) })),
   ];
 
   const methodSteps = t.method.steps.map((s: { n: string; t: string; d: string }, i: number) => ({

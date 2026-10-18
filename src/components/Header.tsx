@@ -22,7 +22,8 @@ export function Header({
 
   // Normalisasi trailing slash (situs statis pakai trailingSlash), mis. /services/ -> /services
   const path = pathname !== '/' && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-  const isActive = (key: PageKey) => (key === 'home' ? path === '/' : path === ROUTES[key]);
+  const isActive = (key: PageKey) =>
+    key === 'home' ? path === '/' : path === ROUTES[key] || path.startsWith(`${ROUTES[key]}/`);
 
   const linkClass = (active: boolean) =>
     `rounded-md px-3 py-2 text-sm font-semibold transition-colors ${

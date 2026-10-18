@@ -120,7 +120,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           {allServices.map((sv, i) => (
             <Link
               key={i}
-              href={ROUTES.services}
+              href={sv.href}
               className="flex min-h-[128px] flex-col justify-between gap-4 rounded-[10px] border border-line p-6 text-ink transition-colors hover:border-brand hover:text-ink"
             >
               <div className="text-xs font-bold uppercase tracking-wide text-faint">{sv.cat}</div>

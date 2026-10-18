@@ -64,7 +64,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 
 ### 3.1 UKL-UPL & SPPL
 
-- **URL akhir:** https://enviroresources.co.id/id/services/
+- **URL akhir:** https://enviroresources.co.id/id/services/ukl-upl-sppl/
 - **Path tampilan:** `Layanan/UKL-UPL`
 
 **Kata kunci:**
@@ -120,7 +120,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 
 ### 3.2 AMDAL & DELH/DPLH
 
-- **URL akhir:** https://enviroresources.co.id/id/services/
+- **URL akhir:** https://enviroresources.co.id/id/services/amdal-delh-dplh/
 - **Path tampilan:** `Layanan/AMDAL`
 
 **Kata kunci:**
@@ -176,7 +176,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 
 ### 3.3 Pertek & SLO (IPAL/Emisi)
 
-- **URL akhir:** https://enviroresources.co.id/id/services/
+- **URL akhir:** https://enviroresources.co.id/id/services/persetujuan-teknis-slo/
 - **Path tampilan:** `Layanan/Pertek-SLO`
 
 **Kata kunci:**
@@ -196,6 +196,8 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 [jasa persetujuan teknis]
 "slo ipal"
 [slo ipal]
+"surat kelayakan operasional"
+[surat kelayakan operasional]
 "surat laik operasi ipal"
 [surat laik operasi ipal]
 "slo air limbah"
@@ -225,14 +227,14 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 
 **Deskripsi (maks 90):**
 
-1. Kajian Persetujuan Teknis air limbah & emisi serta pendampingan Surat Laik Operasi (SLO).
+1. Kajian Pertek air limbah & emisi serta pendampingan SLO (Surat Kelayakan Operasional).
 2. Perencanaan dan konstruksi IPAL sesuai karakteristik limbah dan kapasitas produksi Anda.
 3. Konsultan lingkungan bersertifikat ISO 9001, 14001 & 45001. Konsultasi via WhatsApp.
 4. Kantor di Sidoarjo, melayani Surabaya, Gresik & Jawa Timur. Hubungi tim kami hari ini.
 
 ### 3.4 Rintek Limbah B3
 
-- **URL akhir:** https://enviroresources.co.id/id/services/
+- **URL akhir:** https://enviroresources.co.id/id/services/rincian-teknis-limbah-b3/
 - **Path tampilan:** `Layanan/Rintek-B3`
 
 **Kata kunci:**

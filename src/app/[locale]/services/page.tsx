@@ -2,7 +2,9 @@ import { setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/Container';
 import { PageHero } from '@/components/PageHero';
 import { CtaBand } from '@/components/CtaBand';
-import { getSite, metaFor, type Locale } from '@/content/site';
+import { Link } from '@/i18n/navigation';
+import { getSite, metaFor, ROUTES, type Locale } from '@/content/site';
+import { DOC_LINKS, TECH_LINKS } from '@/content/services';
 
 const PILLS = ['AMDAL', 'UKL-UPL', 'SPPL', 'DELH', 'DPLH'];
 
@@ -27,12 +29,24 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
         <h2 className="m-0 mb-3 text-3xl font-extrabold tracking-tight md:text-4xl">{svc.docT}</h2>
         <p className="m-0 mb-9 max-w-[720px] text-base leading-relaxed text-muted">{svc.docNote}</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {svc.docs.map((d: { n: string; t: string }) => (
-            <div key={d.n} className="flex items-baseline gap-5 rounded-xl border border-line p-7">
-              <span className="text-sm font-extrabold text-brand">{d.n}</span>
-              <span className="text-lg font-bold leading-snug">{d.t}</span>
-            </div>
-          ))}
+          {svc.docs.map((d: { n: string; t: string }, i: number) => {
+            const slug = DOC_LINKS[i];
+            const body = (
+              <>
+                <span className="text-sm font-extrabold text-brand">{d.n}</span>
+                <span className="flex-1 text-lg font-bold leading-snug">{d.t}</span>
+                {slug && <span className="font-bold text-brand">→</span>}
+              </>
+            );
+            const cls = 'flex items-baseline gap-5 rounded-xl border border-line p-7';
+            return slug ? (
+              <Link key={d.n} href={`${ROUTES.services}/${slug}`} className={`${cls} text-ink transition-colors hover:border-brand hover:text-ink`}>
+                {body}
+              </Link>
+            ) : (
+              <div key={d.n} className={cls}>{body}</div>
+            );
+          })}
         </div>
       </Container>
 
@@ -41,12 +55,23 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
         <div className="mb-3 text-sm font-bold uppercase tracking-wide text-brand">{svc.techL}</div>
         <h2 className="m-0 mb-9 text-3xl font-extrabold tracking-tight md:text-4xl">{svc.techT}</h2>
         <div className="grid grid-cols-1 gap-x-10 md:grid-cols-2">
-          {svc.tech.map((d: { t: string; d: string }) => (
-            <div key={d.t} className="border-t border-line py-6">
-              <div className="mb-1.5 text-lg font-bold">{d.t}</div>
-              <div className="text-sm leading-relaxed text-muted">{d.d}</div>
-            </div>
-          ))}
+          {svc.tech.map((d: { t: string; d: string }, i: number) => {
+            const slug = TECH_LINKS[i];
+            return (
+              <div key={d.t} className="border-t border-line py-6">
+                <div className="mb-1.5 text-lg font-bold">
+                  {slug ? (
+                    <Link href={`${ROUTES.services}/${slug}`} className="text-ink hover:text-brand">
+                      {d.t} <span className="text-brand">→</span>
+                    </Link>
+                  ) : (
+                    d.t
+                  )}
+                </div>
+                <div className="text-sm leading-relaxed text-muted">{d.d}</div>
+              </div>
+            );
+          })}
         </div>
       </Container>
 

@@ -1,9 +1,25 @@
+import type { ReactNode } from 'react';
 import { Container } from './Container';
 import { pageHero, type Locale, type PageKey } from '@/content/site';
 
 export function PageHero({ locale, page }: { locale: Locale; page: PageKey }) {
   const { title, sub, crumbs, photo } = pageHero(locale, page);
+  return <HeroBanner title={title} sub={sub} crumbs={crumbs} img={photo.img} />;
+}
 
+export function HeroBanner({
+  title,
+  sub,
+  crumbs,
+  img,
+  children,
+}: {
+  title: string;
+  sub: string;
+  crumbs: string[];
+  img: string;
+  children?: ReactNode;
+}) {
   return (
     <section className="relative overflow-hidden bg-forest text-white">
       {/* Foto kanan ter-mask */}
@@ -15,7 +31,7 @@ export function PageHero({ locale, page }: { locale: Locale; page: PageKey }) {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={photo.img} alt="" className="h-full w-full object-cover" />
+        <img src={img} alt="" className="h-full w-full object-cover" />
       </div>
       {/* Overlay gradient */}
       <div
@@ -56,6 +72,7 @@ export function PageHero({ locale, page }: { locale: Locale; page: PageKey }) {
           <span className="w-[3px] flex-none rounded bg-brand-bright" />
           <p className="m-0 text-lg leading-relaxed text-ondark">{sub}</p>
         </div>
+        {children}
       </Container>
     </section>
   );

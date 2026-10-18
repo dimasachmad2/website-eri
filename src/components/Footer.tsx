@@ -4,6 +4,7 @@ import {
   getSite, ROUTES, WHATSAPP, PHONE_DISPLAY, LANDLINE_DISPLAY, LANDLINE_TEL,
   ADDRESS_LINE1, ADDRESS_LINE2, EMAIL, type Locale,
 } from '@/content/site';
+import { getServices } from '@/content/services';
 
 export function Footer({ locale }: { locale: Locale }) {
   const { t, nav } = getSite(locale);
@@ -34,7 +35,13 @@ export function Footer({ locale }: { locale: Locale }) {
           <div>
             <div className="mb-2 font-bold text-white">{nav.services}</div>
             <div className="flex flex-col">
-              {(t.footer.svc as string[]).map((s) => (
+              {getServices(locale).map((s) => (
+                <Link key={s.slug} href={`${ROUTES.services}/${s.slug}`} className="text-ondark hover:text-white">
+                  {s.short}
+                </Link>
+              ))}
+              {/* Prasarana & limbah non-B3 belum punya halaman detail */}
+              {(t.footer.svc as string[]).slice(2).map((s) => (
                 <Link key={s} href={ROUTES.services} className="text-ondark hover:text-white">
                   {s}
                 </Link>
