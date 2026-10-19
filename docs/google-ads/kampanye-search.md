@@ -108,7 +108,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 8. Bersertifikat ISO 9001 & 14001
 9. Kantor di Sidoarjo, Jatim
 10. Konsultasi via WhatsApp
-11. Hubungi 031-30000404
+11. Melayani Surabaya & Gresik
 12. Tim Ahli Multidisiplin
 
 **Deskripsi (maks 90):**
@@ -164,7 +164,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 8. Bersertifikat ISO 9001 & 14001
 9. Kantor di Sidoarjo, Jatim
 10. Konsultasi via WhatsApp
-11. Hubungi 031-30000404
+11. Melayani Surabaya & Gresik
 12. Tim Ahli Multidisiplin
 
 **Deskripsi (maks 90):**
@@ -222,7 +222,7 @@ Setiap kata kunci dimasukkan **dua kali**: pencocokan frasa `"…"` dan pencocok
 8. Bersertifikat ISO 9001 & 14001
 9. Kantor di Sidoarjo, Jatim
 10. Konsultasi via WhatsApp
-11. Hubungi 031-30000404
+11. Melayani Surabaya & Gresik
 12. Tim Ahli Multidisiplin
 
 **Deskripsi (maks 90):**
@@ -279,7 +279,7 @@ jual
 8. Bersertifikat ISO 9001 & 14001
 9. Kantor di Sidoarjo, Jatim
 10. Konsultasi via WhatsApp
-11. Hubungi 031-30000404
+11. Melayani Surabaya & Gresik
 12. Tim Ahli Multidisiplin
 
 **Deskripsi (maks 90):**
@@ -329,7 +329,7 @@ jual
 8. Bersertifikat ISO 9001 & 14001
 9. Kantor di Sidoarjo, Jatim
 10. Konsultasi via WhatsApp
-11. Hubungi 031-30000404
+11. Melayani Surabaya & Gresik
 12. Tim Ahli Multidisiplin
 
 **Deskripsi (maks 90):**
