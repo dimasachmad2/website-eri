@@ -14,7 +14,8 @@ const html = `<!doctype html>
 <script>
   (function () {
     var en = (navigator.language || 'id').toLowerCase().indexOf('en') === 0;
-    location.replace(en ? '/en/' : '/id/');
+    // Pertahankan query (gclid/utm) & hash agar atribusi iklan tidak hilang.
+    location.replace((en ? '/en/' : '/id/') + location.search + location.hash);
   })();
 </script>
 <meta http-equiv="refresh" content="0; url=/id/">
