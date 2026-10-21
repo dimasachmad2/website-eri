@@ -70,6 +70,22 @@ Keluarkan HANYA tiga tag XML ini berurutan, tanpa teks atau Markdown di luar tag
 
 Mulai LANGSUNG dengan <judul>.`;
 
+// Prompt gambar siap tempel (untuk ChatGPT/Gemini/Midjourney) saat admin memilih
+// "📎 Lampirkan foto". Satu tag saja; gagal/terlambat → template dari SCENES.
+const SYSTEM_IMG = `You write prompts for AI image generators (ChatGPT, Gemini, Midjourney). Given an article from an Indonesian environmental consulting firm, write ONE English prompt (60-120 words) for a cover photo: a concrete, realistic scene that fits the article topic, set in Indonesia (East Java), professional editorial photography, natural light, clean composition, green and neutral tones. Never ask for text, words, signs, logos or watermarks in the image. End with: "16:9 landscape, photorealistic, no text, no logos, no watermark."
+
+Output ONLY: <prompt>the prompt</prompt>`;
+
+// Adegan dasar per kategori untuk template prompt cadangan.
+const SCENES = {
+  'Regulasi': 'an Indonesian business owner and an environmental consultant reviewing permit documents at a desk in a bright modern office, a factory visible through the window',
+  'Persetujuan Teknis': 'an environmental engineer in a white safety helmet inspecting a wastewater discharge outlet and an emission stack at an Indonesian factory',
+  'Pelaporan': 'an HSE manager reviewing environmental monitoring charts on a laptop, labelled water sample bottles on the table, industrial site in the background',
+  'PROPER': 'a clean, well-managed Indonesian industrial facility with green landscaping, tidy waste storage area and solar panels on the roof',
+  'Prasarana Limbah': 'a modern wastewater treatment plant with aeration tanks and clarifiers at an Indonesian industrial estate, an engineer checking the water',
+  'Lainnya': 'environmental consultants doing a field survey at an industrial site in East Java, holding a clipboard and a water quality meter',
+};
+
 // ── Builder ───────────────────────────────────────────────────────────────
 const nodes = [];
 const connections = {};
@@ -91,6 +107,8 @@ const fill = (code, vars) => Object.entries(vars).reduce((c, [k, v]) => c.split(
 const VARS = {
   __SYSTEM_ID__: JSON.stringify(SYSTEM_ID),
   __SYSTEM_EN__: JSON.stringify(SYSTEM_EN),
+  __SYSTEM_IMG__: JSON.stringify(SYSTEM_IMG),
+  __SCENES__: JSON.stringify(SCENES),
   __CATEGORIES__: JSON.stringify(CATEGORIES),
   __DEFAULT_COVERS__: JSON.stringify(DEFAULT_COVERS),
   __CMS__: JSON.stringify(CMS_PUBLIC),
@@ -131,14 +149,14 @@ const dx = (name, method, path, { json, query } = {}, pos, continueOnError = fal
     continueOnError,
   );
 // Endpoint OpenAI-compatible (chat completions). LLM_BASE_URL sudah termasuk versinya.
-const llm = (name, pos) =>
+const llm = (name, pos, timeout = 300000) =>
   http(
     name,
     {
       url: "={{ String($env.LLM_BASE_URL).replace(/\\/+$/, '') }}/chat/completions",
       headers: [{ name: 'Authorization', value: '=Bearer {{ $env.LLM_API_KEY }}' }],
       json: '={{ JSON.stringify($json.request) }}',
-      timeout: 300000,
+      timeout,
     },
     pos,
     true,
@@ -204,11 +222,13 @@ code('Router', function () {
       text: `⛔ Akun ini belum diizinkan memakai bot ERI.\nID Telegram kamu: ${userId}\nKirim ID ini ke admin untuk didaftarkan.`,
     });
   }
-  // Foto sebagai balasan permintaan cover → jadikan cover artikel.
-  if (m.photo && m.photo.length) {
-    const ref2 = String(m.reply_to_message?.text || '').match(/([0-9a-f-]{36})/);
-    if (ref2) return out({ action: 'photo_cover', chatId, draftId: ref2[1], fileId: m.photo[m.photo.length - 1].file_id });
-    return out({ action: 'reply', chatId, text: 'Untuk memakai foto sebagai cover: pada draft tekan "🖼 Publish" → "📎 Lampirkan foto", lalu balas pesan itu dengan foto.' });
+  // Foto (atau gambar yang dikirim sebagai file) sebagai balasan permintaan cover → jadikan cover artikel.
+  const doc = m.document && /^image\//.test(m.document.mime_type || '') ? m.document : null;
+  if ((m.photo && m.photo.length) || doc) {
+    const fileId = doc ? doc.file_id : m.photo[m.photo.length - 1].file_id;
+    const ids = String(m.reply_to_message?.text || '').match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g);
+    if (ids) return out({ action: 'photo_cover', chatId, draftId: ids[ids.length - 1], fileId });
+    return out({ action: 'reply', chatId, text: 'Untuk memakai foto sebagai cover: pada draft tekan "🖼 Publish" → "📎 Lampirkan foto", lalu BALAS pesan itu dengan foto.' });
   }
 
   const text = String(m.text || '').trim();
@@ -479,7 +499,7 @@ function coverDefault() {
   const d = $input.first().json.data || {};
   const DEFAULT_COVERS = __DEFAULT_COVERS__;
   const cover = DEFAULT_COVERS[d.category] || DEFAULT_COVERS['Lainnya'];
-  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover } }];
+  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover, note: '🎨 Cover: gambar default kategori.' } }];
 }
 function preparePicture() {
   const d = $('Directus: ambil draft AI').first().json.data || {};
@@ -498,14 +518,92 @@ function coverAI() {
   const ctx = $('▶ AI gambar').first().json;
   const d = $('Directus: ambil draft AI').first().json.data || {};
   const DEFAULT_COVERS = __DEFAULT_COVERS__;
-  const cover = (up && up.data && up.data.id) ? up.data.id : (DEFAULT_COVERS[d.category] || DEFAULT_COVERS['Lainnya']);
-  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover, aiOk: !!(up && up.data && up.data.id) } }];
+  const aiOk = !!(up && up.data && up.data.id);
+  const cover = aiOk ? up.data.id : (DEFAULT_COVERS[d.category] || DEFAULT_COVERS['Lainnya']);
+  const note = aiOk ? '🤖 Cover: gambar buatan AI.' : 'ℹ️ Gambar AI gagal dibuat (layanan gambar sedang sibuk) — dipakai cover default kategori.';
+  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover, aiOk, note } }];
 }
+// Foto kiriman admin. Gagal → ok:false (TIDAK dipublish; admin diberi pilihan lagi).
 function coverFoto() {
   const up = $input.first().json;
   const ctx = $('▶ Foto cover').first().json;
-  const cover = (up && up.data && up.data.id) ? up.data.id : null;
-  return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: null, cover } }];
+  if (up && up.data && up.data.id) {
+    return [{ json: { ok: true, draftId: ctx.draftId, chatId: ctx.chatId, messageId: null, cover: up.data.id, note: '🖼 Cover: foto kiriman kamu.' } }];
+  }
+  const raw = (up && up.error && (up.error.message || up.error.description)) || JSON.stringify((up && up.error) || up || {});
+  const inner = String(raw).match(/message\\*"\s*:\s*\\*"([^"\\]+)/); // pesan asli Directus di dalam "400 - {...}"
+  const error = String(inner ? inner[1] : raw).replace(/bot\d+:[\w-]+/g, 'bot…').slice(0, 250);
+  return [{ json: { ok: false, draftId: ctx.draftId, chatId: ctx.chatId, error } }];
+}
+// Minta prompt gambar ke AI (panggilan kecil, satu tag) dari data draft.
+function preparePhotoPrompt() {
+  const d = $input.first().json.data || {};
+  const plain = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return [{
+    json: {
+      request: {
+        model: $env.LLM_MODEL,
+        max_tokens: 1500,
+        messages: [
+          { role: 'system', content: __SYSTEM_IMG__ },
+          {
+            role: 'user',
+            content:
+              `Article title: ${plain(d.title_en || d.title_id)}\nSummary: ${plain(d.excerpt_en || d.excerpt_id)}\nCategory: ${d.category || 'Lainnya'}\n\n` +
+              'Write the cover photo prompt. Start directly with <prompt>.',
+          },
+        ],
+      },
+    },
+  }];
+}
+// Ambil <prompt> dari jawaban AI; gagal/kurang → template. Susun pesan Telegram (force_reply).
+function photoPromptMessage() {
+  const r = $input.first().json;
+  const ctx = $('▶ Minta foto').first().json;
+  const d = $('Directus: ambil draft foto').first().json.data || {};
+  const SCENES = __SCENES__;
+  const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const plain = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+  let prompt = '';
+  const choice = (r && !r.error && r.choices || [])[0];
+  if (choice) {
+    const m = choice.message || {};
+    let text = Array.isArray(m.content) ? m.content.map((p) => (typeof p === 'string' ? p : p.text || '')).join('') : String(m.content || '');
+    if (!text.trim() && m.reasoning_content) text = String(m.reasoning_content);
+    const mm = text.match(/<prompt>([\s\S]*?)<\/prompt>/i);
+    prompt = mm ? plain(mm[1]).replace(/^["'`]+|["'`]+$/g, '') : '';
+  }
+  const fromAi = prompt.length >= 60 && prompt.length <= 1500;
+  if (!fromAi) {
+    const title = plain(d.title_en || d.title_id) || 'environmental compliance';
+    prompt =
+      `Photorealistic editorial cover photograph for an article titled "${title}". ` +
+      `Scene: ${SCENES[d.category] || SCENES['Lainnya']}. ` +
+      'Setting: Indonesia (East Java), tropical daylight. Style: professional corporate photography, natural light, clean composition, green and neutral tones, shallow depth of field. ' +
+      '16:9 landscape, photorealistic, no text, no logos, no watermark.';
+  } else if (!/no text/i.test(prompt)) {
+    prompt += ' 16:9 landscape, photorealistic, no text, no logos, no watermark.';
+  }
+
+  const text =
+    '🎨 <b>Prompt gambar</b> — ketuk blok di bawah untuk menyalin, lalu tempel di ChatGPT / Gemini / Midjourney:\n\n' +
+    `<pre>${esc(prompt)}</pre>\n\n` +
+    (fromAi ? '' : '<i>(prompt dari template — AI sedang tidak tersedia)</i>\n\n') +
+    '📎 Setelah gambarnya jadi, <b>BALAS pesan ini</b> dengan gambarnya (boleh sebagai foto atau file).\n\n' +
+    `(draft: ${ctx.draftId})`;
+  return [{
+    json: {
+      fromAi,
+      body: {
+        chat_id: ctx.chatId,
+        text,
+        parse_mode: 'HTML',
+        reply_markup: { force_reply: true, input_field_placeholder: 'Kirim satu gambar…' },
+      },
+    },
+  }];
 }
 function assemblePublish() { return $input.all(); }
 
@@ -543,23 +641,37 @@ dxUpload('Directus: unggah AI', [1920, 1720]);
 code('Cover AI', coverAI, [2160, 1720]);
 link('▶ AI gambar', 'Telegram: jawab AI', 'Directus: ambil draft AI', 'Siapkan prompt gambar', 'AI: buat gambar', 'Olah gambar AI', 'Directus: unggah AI', 'Cover AI', 'Siapkan publish');
 
-// 6e. Lampirkan foto → minta user membalas dengan foto.
+// 6e. Lampirkan foto → kirim prompt gambar siap tempel + minta user membalas dengan foto.
 branch('▶ Minta foto', ['ask_photo'], [480, 1950]);
-tg('Telegram: jawab minta foto', 'answerCallbackQuery', '={{ JSON.stringify({ callback_query_id: $json.callbackId }) }}', [720, 1950], true);
-tg('Telegram: minta foto', 'sendMessage',
-  `={{ JSON.stringify({ chat_id: $('▶ Minta foto').first().json.chatId, text: '📎 Balas pesan ini dengan foto untuk cover artikel.\\n\\n(draft: ' + $('▶ Minta foto').first().json.draftId + ')', reply_markup: { force_reply: true, input_field_placeholder: 'Kirim satu foto…' } }) }}`,
-  [960, 1950]);
-link('▶ Minta foto', 'Telegram: jawab minta foto', 'Telegram: minta foto');
+tg('Telegram: jawab minta foto', 'answerCallbackQuery', `={{ JSON.stringify({ callback_query_id: $json.callbackId, text: 'Menyiapkan prompt gambar…' }) }}`, [720, 1950], true);
+tg('Telegram: info siapkan prompt', 'sendMessage',
+  `={{ JSON.stringify({ chat_id: $('▶ Minta foto').first().json.chatId, text: '⏳ Menyiapkan prompt gambar untuk artikel ini… (±30 detik)' }) }}`, [960, 1950], true);
+dx('Directus: ambil draft foto', 'GET', `/items/articles/{{ $('▶ Minta foto').first().json.draftId }}`,
+  { query: [{ name: 'fields', value: 'category,title_id,title_en,excerpt_id,excerpt_en' }] }, [1200, 1950], true);
+code('Siapkan prompt foto', preparePhotoPrompt, [1440, 1950]);
+llm('AI: prompt gambar', [1680, 1950], 90000);
+code('Susun pesan prompt', photoPromptMessage, [1920, 1950]);
+tg('Telegram: minta foto', 'sendMessage', sendBody, [2160, 1950]);
+link('▶ Minta foto', 'Telegram: jawab minta foto', 'Telegram: info siapkan prompt', 'Directus: ambil draft foto',
+  'Siapkan prompt foto', 'AI: prompt gambar', 'Susun pesan prompt', 'Telegram: minta foto');
 
-// 6f. Foto diterima → import ke Directus → publish.
+// 6f. Foto diterima → import ke Directus → publish. Gagal → tidak dipublish, tawarkan pilihan lagi.
 branch('▶ Foto cover', ['photo_cover'], [480, 2120]);
 tg('Telegram: info memasang foto', 'sendMessage', `={{ JSON.stringify({ chat_id: $('▶ Foto cover').first().json.chatId, text: '🖼 Memasang foto & mempublish…' }) }}`, [720, 2120], true);
 tg('Telegram: getFile', 'getFile', `={{ JSON.stringify({ file_id: $('▶ Foto cover').first().json.fileId }) }}`, [960, 2120], true);
+// Directus /files/import: kolom file (title, dll.) wajib di dalam "data", bukan di level atas.
 dx('Directus: import foto', 'POST', '/files/import', {
-  json: `={{ JSON.stringify({ url: 'https://api.telegram.org/file/bot' + $env.TELEGRAM_BOT_TOKEN + '/' + $('Telegram: getFile').first().json.result.file_path, title: 'Cover dari Telegram' }) }}`,
+  json: `={{ JSON.stringify({ url: 'https://api.telegram.org/file/bot' + $env.TELEGRAM_BOT_TOKEN + '/' + $('Telegram: getFile').first().json.result.file_path, data: { title: 'Cover dari Telegram' } }) }}`,
 }, [1200, 2120], true);
 code('Cover foto', coverFoto, [1440, 2120]);
-link('▶ Foto cover', 'Telegram: info memasang foto', 'Telegram: getFile', 'Directus: import foto', 'Cover foto', 'Siapkan publish');
+filterNode('✓ Foto terpasang', 'i.json.ok', [1680, 2120]);
+filterNode('✗ Foto gagal', '!i.json.ok', [1680, 2300]);
+tg('Telegram: foto gagal', 'sendMessage',
+  `={{ JSON.stringify({ chat_id: $json.chatId, text: '⚠️ Gagal memasang foto: ' + $json.error + '\\n\\nArtikel BELUM dipublish. Pilih cover lain, atau balas pesan ini dengan gambar lain.\\n\\n(draft: ' + $json.draftId + ')', reply_markup: { inline_keyboard: [[{ text: '🎨 Default kategori', callback_data: 'idef:' + $json.draftId }, { text: '🤖 AI buatkan', callback_data: 'iai:' + $json.draftId }], [{ text: '📎 Lampirkan foto lagi', callback_data: 'ifoto:' + $json.draftId }]] } }) }}`,
+  [1920, 2300], true);
+link('▶ Foto cover', 'Telegram: info memasang foto', 'Telegram: getFile', 'Directus: import foto', 'Cover foto');
+link('Cover foto', '✓ Foto terpasang', 'Siapkan publish');
+link('Cover foto', '✗ Foto gagal', 'Telegram: foto gagal');
 
 // 6g. Publish bersama (semua cabang gambar menuju sini).
 code('Siapkan publish', assemblePublish, [2500, 1720]);
@@ -570,7 +682,7 @@ tg('Telegram: hapus tombol pub', 'editMessageReplyMarkup',
   `={{ JSON.stringify({ chat_id: $('Siapkan publish').first().json.chatId, message_id: $('Siapkan publish').first().json.messageId, reply_markup: { inline_keyboard: [] } }) }}`,
   [2980, 1720], true);
 tg('Telegram: info publish', 'sendMessage',
-  `={{ JSON.stringify({ chat_id: $('Siapkan publish').first().json.chatId, text: $('Directus: publish (cover)').first().json.data?.slug ? '✅ Dipublish! Website diperbarui otomatis, tayang ±3 menit:\\n' + ${JSON.stringify(SITE)} + '/id/articles/' + $('Directus: publish (cover)').first().json.data.slug + '/' : '⚠️ Gagal mempublish (draft mungkin sudah dihapus).' }) }}`,
+  `={{ JSON.stringify({ chat_id: $('Siapkan publish').first().json.chatId, text: $('Directus: publish (cover)').first().json.data?.slug ? '✅ Dipublish! Website diperbarui otomatis, tayang ±3 menit:\\n' + ${JSON.stringify(SITE)} + '/id/articles/' + $('Directus: publish (cover)').first().json.data.slug + '/' + ($('Siapkan publish').first().json.note ? '\\n\\n' + $('Siapkan publish').first().json.note : '') : '⚠️ Gagal mempublish (draft mungkin sudah dihapus).' }) }}`,
   [3220, 1720]);
 link('Siapkan publish', 'Directus: publish (cover)', 'Telegram: hapus tombol pub', 'Telegram: info publish');
 
