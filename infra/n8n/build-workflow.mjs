@@ -170,7 +170,7 @@ const img = (name, pos) =>
     timeout: 120000,
   }, pos, true);
 // Unggah biner ke Directus /files (multipart, dari properti binary "file").
-const dxUpload = (name, pos) =>
+const dxUpload = (name, pos, title = 'Cover AI') =>
   node(name, 'n8n-nodes-base.httpRequest', 4.2, {
     method: 'POST',
     url: '={{ $env.DIRECTUS_URL }}/files',
@@ -179,7 +179,7 @@ const dxUpload = (name, pos) =>
     sendBody: true,
     contentType: 'multipart-form-data',
     bodyParameters: { parameters: [
-      { name: 'title', value: 'Cover AI' },
+      { name: 'title', value: title },
       { parameterType: 'formBinaryData', name: 'file', inputDataFieldName: 'file' },
     ] },
     options: { timeout: 60000 },
@@ -523,16 +523,33 @@ function coverAI() {
   const note = aiOk ? '🤖 Cover: gambar buatan AI.' : 'ℹ️ Gambar AI gagal dibuat (layanan gambar sedang sibuk) — dipakai cover default kategori.';
   return [{ json: { draftId: ctx.draftId, chatId: ctx.chatId, messageId: ctx.messageId, cover, aiOk, note } }];
 }
+// Foto hasil unduhan dari Telegram → beri nama & tipe gambar yang benar (Telegram
+// mengirim application/octet-stream, padahal Directus butuh image/* untuk transformasi).
+function preparePhotoUpload() {
+  const item = $input.first();
+  const filePath = String($('Telegram: getFile').first().json.result?.file_path || '');
+  const bin = item.binary && item.binary.file;
+  if (!bin) return [{ json: { downloadError: 'Gagal mengunduh foto dari Telegram. Coba kirim ulang.' } }];
+  const ext = (filePath.match(/\.(jpe?g|png|webp|gif|heic)$/i) || [, 'jpg'])[1].toLowerCase();
+  const mime = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', heic: 'image/heic' }[ext];
+  return [{ json: {}, binary: { file: { ...bin, mimeType: mime, fileName: `cover-telegram.${ext}`, fileExtension: ext } } }];
+}
 // Foto kiriman admin. Gagal → ok:false (TIDAK dipublish; admin diberi pilihan lagi).
 function coverFoto() {
   const up = $input.first().json;
   const ctx = $('▶ Foto cover').first().json;
-  if (up && up.data && up.data.id) {
+  const prep = $('Siapkan unggah foto').first().json;
+  if (!prep.downloadError && up && up.data && up.data.id) {
     return [{ json: { ok: true, draftId: ctx.draftId, chatId: ctx.chatId, messageId: null, cover: up.data.id, note: '🖼 Cover: foto kiriman kamu.' } }];
   }
-  const raw = (up && up.error && (up.error.message || up.error.description)) || JSON.stringify((up && up.error) || up || {});
-  const inner = String(raw).match(/message\\*"\s*:\s*\\*"([^"\\]+)/); // pesan asli Directus di dalam "400 - {...}"
-  const error = String(inner ? inner[1] : raw).replace(/bot\d+:[\w-]+/g, 'bot…').slice(0, 250);
+  let error = prep.downloadError || (up && up.error && (up.error.message || up.error.description)) || JSON.stringify((up && up.error) || up || {});
+  // Error HTTP n8n berbentuk: 503 - "{\"errors\":[{\"message\":\"...\"}]}" → ambil pesan aslinya.
+  try {
+    const s = String(error);
+    const o = JSON.parse(JSON.parse(s.slice(s.indexOf('"'), s.lastIndexOf('"') + 1)));
+    if (o.errors && o.errors[0] && o.errors[0].message) error = s.split(' ')[0] + ' ' + o.errors[0].message;
+  } catch { /* bukan format itu, pakai apa adanya */ }
+  error = String(error).replace(/bot\d+:[\w-]+/g, 'bot…').slice(0, 250);
   return [{ json: { ok: false, draftId: ctx.draftId, chatId: ctx.chatId, error } }];
 }
 // Minta prompt gambar ke AI (panggilan kecil, satu tag) dari data draft.
@@ -659,17 +676,23 @@ link('▶ Minta foto', 'Telegram: jawab minta foto', 'Telegram: info siapkan pro
 branch('▶ Foto cover', ['photo_cover'], [480, 2120]);
 tg('Telegram: info memasang foto', 'sendMessage', `={{ JSON.stringify({ chat_id: $('▶ Foto cover').first().json.chatId, text: '🖼 Memasang foto & mempublish…' }) }}`, [720, 2120], true);
 tg('Telegram: getFile', 'getFile', `={{ JSON.stringify({ file_id: $('▶ Foto cover').first().json.fileId }) }}`, [960, 2120], true);
-// Directus /files/import: kolom file (title, dll.) wajib di dalam "data", bukan di level atas.
-dx('Directus: import foto', 'POST', '/files/import', {
-  json: `={{ JSON.stringify({ url: 'https://api.telegram.org/file/bot' + $env.TELEGRAM_BOT_TOKEN + '/' + $('Telegram: getFile').first().json.result.file_path, data: { title: 'Cover dari Telegram' } }) }}`,
-}, [1200, 2120], true);
-code('Cover foto', coverFoto, [1440, 2120]);
-filterNode('✓ Foto terpasang', 'i.json.ok', [1680, 2120]);
-filterNode('✗ Foto gagal', '!i.json.ok', [1680, 2300]);
+// n8n sendiri yang mengunduh foto lalu mengunggahnya ke Directus. JANGAN pakai Directus
+// /files/import: Directus (Node 22) memakai batas 250 ms per percobaan koneksi, padahal
+// RTT server → Telegram ±275 ms, sehingga ±50% impor gagal (AggregateError ETIMEDOUT).
+node('Telegram: unduh foto', 'n8n-nodes-base.httpRequest', 4.2, {
+  method: 'GET',
+  url: `=https://api.telegram.org/file/bot{{ $env.TELEGRAM_BOT_TOKEN }}/{{ $('Telegram: getFile').first().json.result.file_path }}`,
+  options: { timeout: 60000, response: { response: { responseFormat: 'file', outputPropertyName: 'file' } } },
+}, [1200, 2120], { onError: 'continueRegularOutput', retryOnFail: true, maxTries: 3, waitBetweenTries: 2000 });
+code('Siapkan unggah foto', preparePhotoUpload, [1440, 2120]);
+dxUpload('Directus: unggah foto', [1680, 2120], 'Cover dari Telegram');
+code('Cover foto', coverFoto, [1920, 2120]);
+filterNode('✓ Foto terpasang', 'i.json.ok', [2160, 2120]);
+filterNode('✗ Foto gagal', '!i.json.ok', [2160, 2300]);
 tg('Telegram: foto gagal', 'sendMessage',
   `={{ JSON.stringify({ chat_id: $json.chatId, text: '⚠️ Gagal memasang foto: ' + $json.error + '\\n\\nArtikel BELUM dipublish. Pilih cover lain, atau balas pesan ini dengan gambar lain.\\n\\n(draft: ' + $json.draftId + ')', reply_markup: { inline_keyboard: [[{ text: '🎨 Default kategori', callback_data: 'idef:' + $json.draftId }, { text: '🤖 AI buatkan', callback_data: 'iai:' + $json.draftId }], [{ text: '📎 Lampirkan foto lagi', callback_data: 'ifoto:' + $json.draftId }]] } }) }}`,
-  [1920, 2300], true);
-link('▶ Foto cover', 'Telegram: info memasang foto', 'Telegram: getFile', 'Directus: import foto', 'Cover foto');
+  [2400, 2300], true);
+link('▶ Foto cover', 'Telegram: info memasang foto', 'Telegram: getFile', 'Telegram: unduh foto', 'Siapkan unggah foto', 'Directus: unggah foto', 'Cover foto');
 link('Cover foto', '✓ Foto terpasang', 'Siapkan publish');
 link('Cover foto', '✗ Foto gagal', 'Telegram: foto gagal');
 
