@@ -46,9 +46,11 @@ const DEFAULT_COVERS = {
   'Lainnya': 'f3eb62eb-d16d-44fc-b1a2-cce2546be5d5',
 };
 
+const LAYANAN = 'AMDAL, UKL-UPL, SPPL, DELH/DPLH, Persetujuan Teknis air limbah & emisi, SLO, Rincian Teknis Limbah B3, Andalalin, SIPA, pelaporan RKL-RPL, audit lingkungan, pendampingan PROPER, prasarana pengolahan limbah (IPAL), pengelolaan limbah non-B3';
+
 // Langkah 1 — tulis artikel Bahasa Indonesia (4 tag). Prompt sengaja ringkas:
 // model di gateway patuh format bila prompt pendek & satu bahasa.
-const SYSTEM_ID = `Kamu penulis artikel untuk PT Enviro Resources Indonesia (ERI), konsultan lingkungan di Sidoarjo, Jawa Timur. Layanan ERI: AMDAL, UKL-UPL, SPPL, DELH/DPLH, Persetujuan Teknis air limbah & emisi, SLO, Rincian Teknis Limbah B3, Andalalin, SIPA, pelaporan RKL-RPL, audit lingkungan, pendampingan PROPER, prasarana pengolahan limbah (IPAL), pengelolaan limbah non-B3.
+const SYSTEM_ID = `Kamu penulis artikel untuk PT Enviro Resources Indonesia (ERI), konsultan lingkungan di Sidoarjo, Jawa Timur. Layanan ERI: ${LAYANAN}.
 
 Ubah catatan tim ERI menjadi artikel wawasan Bahasa Indonesia untuk pembaca pemilik usaha & manajer HSE: jelas, praktis, akurat. Jelaskan istilah teknis saat pertama muncul. JANGAN mengarang nomor peraturan, nomor pasal, angka baku mutu, biaya, atau tenggat; bila ragu jelaskan umum dan sarankan konsultasi kasus spesifik. Panjang isi sekitar 600-900 kata, diakhiri satu paragraf ajakan konsultasi ke ERI.
 
@@ -75,6 +77,17 @@ Mulai LANGSUNG dengan <judul>.`;
 const SYSTEM_IMG = `You write prompts for AI image generators (ChatGPT, Gemini, Midjourney). Given an article from an Indonesian environmental consulting firm, write ONE English prompt (60-120 words) for a cover photo: a concrete, realistic scene that fits the article topic, set in Indonesia (East Java), professional editorial photography, natural light, clean composition, green and neutral tones. Never ask for text, words, signs, logos or watermarks in the image. End with: "16:9 landscape, photorealistic, no text, no logos, no watermark."
 
 Output ONLY: <prompt>the prompt</prompt>`;
+
+// Roadmap baru (/roadmapbaru <fokus>) — AI mengusulkan RM_COUNT ide artikel, blok tag berulang.
+const RM_COUNT = 8;
+const SYSTEM_RM = `Kamu perencana konten SEO untuk PT Enviro Resources Indonesia (ERI), konsultan lingkungan di Sidoarjo, Jawa Timur. Layanan ERI: ${LAYANAN}.
+
+Susun ${RM_COUNT} ide artikel blog untuk fokus yang diberikan. Tiap ide menyasar SATU kata kunci pencarian Google yang realistis diketik pemilik usaha atau manajer HSE di Indonesia (huruf kecil, 2-5 kata). Judul jelas dan menarik, maksimal 80 karakter. Jangan mengarang nomor peraturan atau angka. Jangan mengulang judul yang sudah ada.
+
+Keluarkan HANYA ${RM_COUNT} blok ini berurutan, tanpa teks atau Markdown lain:
+<artikel><judul>judul artikel</judul><keyword>kata kunci</keyword><sudut>1 kalimat: apa yang dibahas dan untuk siapa</sudut></artikel>
+
+Mulai LANGSUNG dengan <artikel>.`;
 
 // Adegan dasar per kategori untuk template prompt cadangan.
 const SCENES = {
@@ -109,6 +122,8 @@ const VARS = {
   __SYSTEM_EN__: JSON.stringify(SYSTEM_EN),
   __SYSTEM_IMG__: JSON.stringify(SYSTEM_IMG),
   __SCENES__: JSON.stringify(SCENES),
+  __SYSTEM_RM__: JSON.stringify(SYSTEM_RM),
+  __RM_COUNT__: String(RM_COUNT),
   __CATEGORIES__: JSON.stringify(CATEGORIES),
   __DEFAULT_COVERS__: JSON.stringify(DEFAULT_COVERS),
   __CMS__: JSON.stringify(CMS_PUBLIC),
@@ -207,7 +222,16 @@ code('Router', function () {
       return out({ action: 'reply', chatId, text: `⛔ Akun ini belum diizinkan memakai bot ERI.\nID Telegram kamu: ${userId}` });
     }
     const [cmd, draftId] = String(cq.data || '').split(':');
-    const action = { img: 'imgmenu', iback: 'back', idef: 'pub_default', iai: 'pub_ai', ifoto: 'ask_photo', rev: 'ask_revision', del: 'cancel' }[cmd];
+    // Tombol roadmap: rm:<id> (detail), rmw/rmp/rms/rmd:<id>, rmok/rmre/rmx:<idAwal>-<idAkhir> (usulan AI).
+    const RM = { rm: 'rm_detail', rmw: 'rm_write', rmp: 'rm_prio', rms: 'rm_skip', rmd: 'rm_delete', rmok: 'rm_save', rmre: 'rm_redo', rmx: 'rm_discard' };
+    if (RM[cmd]) {
+      const base = { action: RM[cmd], chatId, callbackId: cq.id, messageId: cq.message?.message_id };
+      const range = String(draftId || '').match(/^(\d+)-(\d+)$/);
+      if (['rmok', 'rmre', 'rmx'].includes(cmd)) return range ? out({ ...base, from: +range[1], to: +range[2] }) : [];
+      const planId = parseInt(draftId, 10);
+      return planId ? out({ ...base, planId }) : [];
+    }
+    const action ={ img: 'imgmenu', iback: 'back', idef: 'pub_default', iai: 'pub_ai', ifoto: 'ask_photo', rev: 'ask_revision', del: 'cancel' }[cmd];
     if (!action || !draftId) return [];
     return out({ action, chatId, draftId, callbackId: cq.id, messageId: cq.message?.message_id });
   }
@@ -234,10 +258,32 @@ code('Router', function () {
   const text = String(m.text || '').trim();
   const help =
     '🌿 Bot Artikel ERI\n\n' +
-    'Kirim ide atau poin-poin artikel dalam satu pesan teks. Contoh:\n' +
-    '"Kapan usaha butuh UKL-UPL vs SPPL. Sasar pemilik pabrik kecil. Sebut Permen LHK 4/2021."\n\n' +
-    'Bot menyusun draft (Indonesia + English), lalu mengirim pratinjau dengan tombol Publish / Revisi / Batal.\n\n' +
+    '✍️ Kirim ide atau poin-poin artikel dalam satu pesan teks. Contoh:\n' +
+    '"Kapan usaha butuh UKL-UPL vs SPPL. Sasar pemilik pabrik kecil."\n' +
+    'Bot menyusun draft (Indonesia + English) dengan tombol Publish / Revisi / Batal.\n\n' +
+    '🗺 Roadmap artikel:\n' +
+    '/roadmap — lihat roadmap & pilih artikel yang mau ditulis\n' +
+    '/tulis — tulis rencana prioritas teratas (/tulis 7 = rencana #7)\n' +
+    '/roadmapbaru <fokus> — AI mengusulkan 8 judul baru, mis. /roadmapbaru limbah B3 Gresik\n' +
+    '/tambah judul | kata kunci | sudut — tambah satu rencana manual\n\n' +
     `ID Telegram kamu: ${userId}`;
+  const command = text.match(/^\/([A-Za-z_]+)(?:@\w+)?\s*([\s\S]*)$/);
+  if (command) {
+    const c = command[1].toLowerCase();
+    const arg = command[2].trim();
+    if (c === 'roadmap') return out({ action: 'rm_list', chatId });
+    if (c === 'tulis') return out({ action: 'rm_write', chatId, planId: parseInt(arg.replace(/^#/, ''), 10) || null });
+    if (c === 'roadmapbaru') {
+      if (!arg) return out({ action: 'reply', chatId, text: 'Tulis fokus roadmap-nya. Contoh:\n/roadmapbaru limbah B3 Gresik' });
+      return out({ action: 'rm_new', chatId, focus: arg.replace(/\s+/g, ' ').slice(0, 60) });
+    }
+    if (c === 'tambah') {
+      const [title, keyword, angle] = arg.split('|').map((s) => s.trim());
+      if (!title) return out({ action: 'reply', chatId, text: 'Format: /tambah judul | kata kunci | sudut (kata kunci & sudut opsional)\nContoh:\n/tambah Cara Mengurus SLO IPAL | slo ipal | langkah praktis untuk pabrik' });
+      return out({ action: 'rm_add', chatId, title: title.slice(0, 200), keyword: (keyword || '').toLowerCase().slice(0, 100), angle: (angle || '').slice(0, 500) });
+    }
+    return out({ action: 'reply', chatId, text: help });
+  }
   if (!text || text.startsWith('/')) return out({ action: 'reply', chatId, text: help });
 
   const replied = String(m.reply_to_message?.text || '');
@@ -262,7 +308,11 @@ link('▶ Balasan', 'Telegram: balas');
 // ── Fungsi bersama ─────────────────────────────────────────────────────────
 // Langkah 1: minta artikel Indonesia (4 tag).
 function prepareId() {
-  const ctx = $('▶ Draft baru').first().json;
+  const ctx = $('Mulai draft').first().json;
+  // Dari roadmap: kata kunci fokus dipakai di judul, paragraf pertama, dan satu <h2>.
+  const kw = ctx.keyword
+    ? `Kata kunci utama (SEO): "${ctx.keyword}". Pakai kata kunci ini apa adanya di <judul>, di paragraf pertama, dan di salah satu <h2>.\n\n`
+    : '';
   return [{
     json: {
       request: {
@@ -270,7 +320,7 @@ function prepareId() {
         max_tokens: 4000,
         messages: [
           { role: 'system', content: __SYSTEM_ID__ },
-          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}\n\nMulai LANGSUNG dari <judul>.` },
+          { role: 'user', content: `Catatan dari tim ERI:\n\n${ctx.notes}\n\n${kw}Mulai LANGSUNG dari <judul>.` },
         ],
       },
     },
@@ -420,15 +470,18 @@ const errorBody = (route) =>
 
 // ── 3. Draft baru (dua langkah: tulis ID → terjemah EN → gabung) ───────────
 branch('▶ Draft baru', ['draft'], [480, 0]);
+// Titik masuk bersama: pesan teks bebas (▶ Draft baru) & rencana roadmap (✓ Rencana siap).
+// Item: { chatId, notes, planId?, keyword?, planTitle? }.
+code('Mulai draft', function () { return $input.all(); }, [600, 0]);
 tg('Telegram: sedang menyusun', 'sendMessage',
-  `={{ JSON.stringify({ chat_id: $json.chatId, text: '⏳ Menyusun artikel Indonesia lalu terjemahannya… biasanya 2–3 menit.' }) }}`,
+  `={{ JSON.stringify({ chat_id: $json.chatId, text: '⏳ Menyusun artikel' + ($json.planTitle ? ' “' + $json.planTitle + '”' : '') + ' (Indonesia lalu terjemahannya)… biasanya 2–3 menit.' }) }}`,
   [720, 0], true);
 code('Siapkan prompt ID', prepareId, [960, 0]);
 llm('AI: tulis ID', [1200, 0]);
 code('Olah ID', parseId, [1440, 0]);
 filterNode('✓ ID valid', 'i.json.ok', [1680, 0]);
 filterNode('✗ ID gagal', '!i.json.ok', [1680, 220]);
-tg('Telegram: gagal draft', 'sendMessage', errorBody('▶ Draft baru'), [1920, 220]);
+tg('Telegram: gagal draft', 'sendMessage', errorBody('Mulai draft'), [1920, 220]);
 codeX('Siapkan prompt EN', prepareEn, { __IDNODE__: 'Olah ID' }, [1920, 0]);
 llm('AI: terjemah EN', [2160, 0]);
 codeX('Gabung draft', combineEn, { __IDNODE__: 'Olah ID', __KEEPSLUG__: 'null' }, [2400, 0]);
@@ -450,11 +503,22 @@ dx('Directus: simpan draft', 'POST', '/items/articles', {
   json: '={{ JSON.stringify($json.article) }}',
 }, [3120, 0], true);
 codeX('Susun pratinjau draft', previewMessage,
-  { __CTX__: 'Tentukan slug unik', __ROUTE__: '▶ Draft baru', __LABEL__: 'Draft siap ditinjau' }, [3360, 0]);
+  { __CTX__: 'Tentukan slug unik', __ROUTE__: 'Mulai draft', __LABEL__: 'Draft siap ditinjau' }, [3360, 0]);
 tg('Telegram: kirim pratinjau', 'sendMessage', sendBody, [3600, 0]);
-link('▶ Draft baru', 'Telegram: sedang menyusun', 'Siapkan prompt ID', 'AI: tulis ID', 'Olah ID');
+// Draft dari roadmap → rencana jadi 📝 draft + tertaut ke artikelnya.
+code('Rencana jadi draft?', function () {
+  const ctx = $('Mulai draft').first().json;
+  const saved = $('Directus: simpan draft').first().json.data;
+  if (!ctx.planId || !saved || !saved.id) return [];
+  return [{ json: { planId: ctx.planId, article: saved.id } }];
+}, [3840, 0]);
+dx('Directus: rencana → draft', 'PATCH', '/items/article_plans/{{ $json.planId }}', {
+  json: `={{ JSON.stringify({ status: 'draft', article: $json.article }) }}`,
+}, [4080, 0], true);
+link('▶ Draft baru', 'Mulai draft', 'Telegram: sedang menyusun', 'Siapkan prompt ID', 'AI: tulis ID', 'Olah ID');
 link('Olah ID', '✓ ID valid', 'Siapkan prompt EN', 'AI: terjemah EN', 'Gabung draft',
-  'Directus: cek slug', 'Tentukan slug unik', 'Directus: simpan draft', 'Susun pratinjau draft', 'Telegram: kirim pratinjau');
+  'Directus: cek slug', 'Tentukan slug unik', 'Directus: simpan draft', 'Susun pratinjau draft', 'Telegram: kirim pratinjau',
+  'Rencana jadi draft?', 'Directus: rencana → draft');
 link('Olah ID', '✗ ID gagal', 'Telegram: gagal draft');
 
 // ── 4. Revisi (dua langkah) ────────────────────────────────────────────────
@@ -707,7 +771,33 @@ tg('Telegram: hapus tombol pub', 'editMessageReplyMarkup',
 tg('Telegram: info publish', 'sendMessage',
   `={{ JSON.stringify({ chat_id: $('Siapkan publish').first().json.chatId, text: $('Directus: publish (cover)').first().json.data?.slug ? '✅ Dipublish! Website diperbarui otomatis, tayang ±3 menit:\\n' + ${JSON.stringify(SITE)} + '/id/articles/' + $('Directus: publish (cover)').first().json.data.slug + '/' + ($('Siapkan publish').first().json.note ? '\\n\\n' + $('Siapkan publish').first().json.note : '') : '⚠️ Gagal mempublish (draft mungkin sudah dihapus).' }) }}`,
   [3220, 1720]);
-link('Siapkan publish', 'Directus: publish (cover)', 'Telegram: hapus tombol pub', 'Telegram: info publish');
+// Catat ke roadmap: rencana tertaut → ✅ tayang; artikel tanpa rencana → baris baru "Di luar roadmap".
+// Best-effort: gagal di sini tidak memengaruhi artikel yang sudah tayang.
+dx('Directus: cari rencana (publish)', 'GET', '/items/article_plans', {
+  query: [
+    { name: 'filter[article][_eq]', value: "={{ $('Siapkan publish').first().json.draftId }}" },
+    { name: 'fields', value: 'id' },
+    { name: 'limit', value: '1' },
+  ],
+}, [3460, 1720], true);
+code('Catat roadmap (publish)', function () {
+  const r = $input.first().json;
+  const pub = $('Directus: publish (cover)').first().json.data;
+  if (r.error || !pub || !pub.id || pub.status !== 'published') return []; // roadmap belum ada / publish gagal
+  const found = (r.data || [])[0];
+  if (found) return [{ json: { mode: 'update', planId: found.id } }];
+  return [{ json: { mode: 'create', body: { title: pub.title_id, roadmap: 'Di luar roadmap', status: 'tayang', article: pub.id } } }];
+}, [3700, 1720]);
+filterNode('✓ Rencana ada', "i.json.mode === 'update'", [3940, 1640]);
+filterNode('✓ Rencana baru', "i.json.mode === 'create'", [3940, 1800]);
+dx('Directus: rencana → tayang', 'PATCH', '/items/article_plans/{{ $json.planId }}', {
+  json: `={{ JSON.stringify({ status: 'tayang' }) }}`,
+}, [4180, 1640], true);
+dx('Directus: catat di luar roadmap', 'POST', '/items/article_plans', { json: '={{ JSON.stringify($json.body) }}' }, [4180, 1800], true);
+link('Siapkan publish', 'Directus: publish (cover)', 'Telegram: hapus tombol pub', 'Telegram: info publish',
+  'Directus: cari rencana (publish)', 'Catat roadmap (publish)');
+link('Catat roadmap (publish)', '✓ Rencana ada', 'Directus: rencana → tayang');
+link('Catat roadmap (publish)', '✓ Rencana baru', 'Directus: catat di luar roadmap');
 
 // ── 7. Tombol Batal ───────────────────────────────────────────────────────
 branch('▶ Batal', ['cancel'], [480, 1350]);
@@ -718,8 +808,426 @@ tg('Telegram: hapus tombol (batal)', 'editMessageReplyMarkup',
   [960, 1350], true);
 tg('Telegram: info batal', 'sendMessage',
   `={{ JSON.stringify({ chat_id: $('▶ Batal').first().json.chatId, text: '🗑 Draft dibatalkan dan dihapus dari CMS.' }) }}`, [1200, 1350], true);
-dx('Directus: hapus draft', 'DELETE', `/items/articles/{{ $('▶ Batal').first().json.draftId }}`, {}, [1440, 1350], true);
-link('▶ Batal', 'Telegram: jawab tombol batal', 'Telegram: hapus tombol (batal)', 'Telegram: info batal', 'Directus: hapus draft');
+// Cari rencana tertaut SEBELUM menghapus (relasi SET NULL mengosongkan tautannya).
+dx('Directus: cari rencana (batal)', 'GET', '/items/article_plans', {
+  query: [
+    { name: 'filter[article][_eq]', value: "={{ $('▶ Batal').first().json.draftId }}" },
+    { name: 'fields', value: 'id' },
+    { name: 'limit', value: '1' },
+  ],
+}, [1440, 1350], true);
+dx('Directus: hapus draft', 'DELETE', `/items/articles/{{ $('▶ Batal').first().json.draftId }}`, {}, [1680, 1350], true);
+code('Rencana kembali?', function () {
+  const found = ($('Directus: cari rencana (batal)').first().json.data || [])[0];
+  return found ? [{ json: { planId: found.id } }] : [];
+}, [1920, 1350]);
+dx('Directus: rencana → rencana', 'PATCH', '/items/article_plans/{{ $json.planId }}', {
+  json: `={{ JSON.stringify({ status: 'rencana', article: null }) }}`,
+}, [2160, 1350], true);
+link('▶ Batal', 'Telegram: jawab tombol batal', 'Telegram: hapus tombol (batal)', 'Telegram: info batal',
+  'Directus: cari rencana (batal)', 'Directus: hapus draft', 'Rencana kembali?', 'Directus: rencana → rencana');
+
+// ── 8. Roadmap artikel (koleksi Directus `article_plans`) ──────────────────
+// Status: usulan (hasil AI, belum disimpan) → rencana → draft → tayang | dilewati.
+// Prioritas = kolom `sort` (kecil = dulu). Callback memakai id angka: rm:12.
+const PLANS = '/items/article_plans';
+VARS.__ESC__ = "const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');";
+const editMsg = (name, pos) => tg(name, 'editMessageText', sendBody, pos, true);
+const answer = (name, text, pos) =>
+  tg(name, 'answerCallbackQuery', `={{ JSON.stringify({ callback_query_id: $json.callbackId${text ? `, text: ${JSON.stringify(text)}` : ''} }) }}`, pos, true);
+const dropButtons = (name, route, pos) =>
+  tg(name, 'editMessageReplyMarkup',
+    `={{ JSON.stringify({ chat_id: $('${route}').first().json.chatId, message_id: $('${route}').first().json.messageId, reply_markup: { inline_keyboard: [] } }) }}`, pos, true);
+// Filter usulan AI satu batch (id berurutan, hanya yang masih berstatus usulan).
+const batchFilter = (route) =>
+  `{ _and: [ { id: { _between: [$('${route}').first().json.from, $('${route}').first().json.to] } }, { status: { _eq: 'usulan' } } ] }`;
+
+function roadmapList() {
+  __ESC__
+  const r = $input.first().json;
+  const chatId = $('▶ Roadmap').first().json.chatId;
+  const cut = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+  const reply = (text, extra = {}) => [{ json: { body: { chat_id: chatId, text, ...extra } } }];
+  if (r.error) return reply('⚠️ Roadmap belum bisa dibaca dari CMS: ' + String(r.error.message || JSON.stringify(r.error)).slice(0, 200));
+  const items = r.data || [];
+  if (!items.length) return reply('🗺 Roadmap masih kosong.\n\nBuat dengan /roadmapbaru <fokus>, mis. /roadmapbaru limbah B3 Gresik — atau tambah satu dengan /tambah judul | kata kunci.');
+
+  const prio = (a, b) => (a.sort ?? 1e9) - (b.sort ?? 1e9) || a.id - b.id;
+  const groups = new Map();
+  for (const p of [...items].sort((a, b) => a.id - b.id)) {
+    const g = p.roadmap || 'Tanpa nama';
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(p);
+  }
+  const names = [...groups.keys()].sort((a, b) => (a === 'Di luar roadmap') - (b === 'Di luar roadmap'));
+  const count = (s) => items.filter((p) => p.status === s).length;
+  const todo = items.filter((p) => p.status === 'rencana').sort(prio);
+  const skipped = items.filter((p) => p.status === 'dilewati');
+  // level 0 = lengkap; 1 = artikel tayang diringkas; 2 = tanpa kata kunci & judul dipendekkan.
+  const render = (level) => {
+    const w = level >= 2 ? 45 : 70;
+    let t = `🗺 <b>Roadmap artikel ERI</b>\n✅ Tayang ${count('tayang')} · 📝 Draft ${count('draft')} · ⏳ Rencana ${count('rencana')}` +
+      (skipped.length ? ` · ⏭ ${skipped.length}` : '') + '\n';
+    for (const g of names) {
+      const ps = groups.get(g);
+      t += `\n<b>${esc(g)}</b>\n`;
+      const done = ps.filter((p) => p.status === 'tayang');
+      if (level === 0) for (const p of done) t += `✅ ${esc(cut(p.title, w))}\n`;
+      else if (done.length) t += `✅ ${done.length} artikel tayang\n`;
+      for (const p of ps.filter((p) => p.status === 'draft')) t += `📝 #${p.id} ${esc(cut(p.title, w))}\n`;
+      for (const p of ps.filter((p) => p.status === 'rencana').sort(prio)) {
+        t += `⏳ <b>#${p.id}</b> ${esc(cut(p.title, w))}${p.keyword && level < 2 ? ` <i>(${esc(p.keyword)})</i>` : ''}\n`;
+      }
+      for (const p of ps.filter((p) => p.status === 'dilewati')) t += `⏭ #${p.id} ${esc(cut(p.title, w))}\n`;
+    }
+    t += '\n' + (todo.length ? `Prioritas teratas: <b>#${todo[0].id}</b> → /tulis\n` : '') +
+      'Ketuk tombol di bawah untuk menulis atau memprioritaskan.\n/roadmapbaru &lt;fokus&gt; — tambah roadmap baru';
+    return t;
+  };
+  let text = render(0);
+  if (text.length > 3900) text = render(1);
+  if (text.length > 3900) text = render(2);
+  const buttons = [...todo.slice(0, 10), ...skipped.slice(0, Math.max(0, 12 - Math.min(todo.length, 10)))]
+    .map((p) => [{ text: `${p.status === 'dilewati' ? '⏭' : '⏳'} #${p.id} · ${cut(p.title, 38)}`, callback_data: `rm:${p.id}` }]);
+  if (text.length > 4000) {
+    // Darurat: kirim tanpa HTML supaya tidak ada tag terpotong.
+    return reply(text.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').slice(0, 4000), { reply_markup: { inline_keyboard: buttons } });
+  }
+  return reply(text, { parse_mode: 'HTML', disable_web_page_preview: true, reply_markup: { inline_keyboard: buttons } });
+}
+function planDetail() {
+  __ESC__
+  const r = $input.first().json;
+  const ctx = $('▶ Detail rencana').first().json;
+  const p = r.data;
+  if (!p || !p.id) return [{ json: { body: { chat_id: ctx.chatId, text: `⚠️ Rencana #${ctx.planId} tidak ditemukan (mungkin sudah dihapus). Lihat /roadmap.` } } }];
+  const ICON = { usulan: '💡', rencana: '⏳', draft: '📝', tayang: '✅', dilewati: '⏭' };
+  const LABEL = { usulan: 'usulan (belum disimpan)', rencana: 'rencana', draft: 'draft — lanjutkan dari pesan pratinjaunya (Publish/Revisi)', tayang: 'sudah tayang', dilewati: 'dilewati' };
+  let text = `${ICON[p.status] || '•'} <b>#${p.id} · ${esc(p.title)}</b>\n` +
+    (p.keyword ? `🔑 ${esc(p.keyword)}\n` : '') +
+    (p.angle ? `🧭 ${esc(p.angle)}\n` : '') +
+    `🗺 ${esc(p.roadmap || '-')}\nStatus: ${LABEL[p.status] || esc(p.status)}`;
+  const art = p.article && typeof p.article === 'object' ? p.article : null;
+  if (art && art.slug) {
+    text += p.status === 'tayang'
+      ? `\n🔗 <a href="${__SITE__}/id/articles/${art.slug}/">lihat di website</a>`
+      : `\n🔗 <a href="${__CMS__}/admin/content/articles/${art.id}">buka di CMS</a>`;
+  }
+  const kb = {
+    rencana: [
+      [{ text: '✍️ Tulis sekarang', callback_data: `rmw:${p.id}` }],
+      [{ text: '📌 Jadikan prioritas teratas', callback_data: `rmp:${p.id}` }],
+      [{ text: '⏭ Lewati', callback_data: `rms:${p.id}` }, { text: '🗑 Hapus', callback_data: `rmd:${p.id}` }],
+    ],
+    dilewati: [
+      [{ text: '↩️ Aktifkan lagi (prioritas teratas)', callback_data: `rmp:${p.id}` }],
+      [{ text: '🗑 Hapus', callback_data: `rmd:${p.id}` }],
+    ],
+  }[p.status];
+  return [{ json: { body: { chat_id: ctx.chatId, text, parse_mode: 'HTML', disable_web_page_preview: true, ...(kb ? { reply_markup: { inline_keyboard: kb } } : {}) } } }];
+}
+// Rencana terpilih (atau prioritas teratas) → bahan "Mulai draft".
+function planToDraft() {
+  const ctx = $('▶ Tulis rencana').first().json;
+  const r = $input.first().json;
+  const p = (r.data || [])[0];
+  if (!p) {
+    const why = r.error
+      ? 'Roadmap belum bisa dibaca dari CMS: ' + String(r.error.message || '').slice(0, 150)
+      : ctx.planId
+        ? `Rencana #${ctx.planId} tidak ditemukan atau bukan berstatus ⏳ rencana. Lihat /roadmap.`
+        : 'Belum ada rencana ⏳ di roadmap. Tambah dengan /roadmapbaru <fokus> atau /tambah judul | kata kunci.';
+    return [{ json: { ok: false, chatId: ctx.chatId, text: '⚠️ ' + why } }];
+  }
+  const notes = `Judul rencana: ${p.title}` + (p.angle ? `\nSudut bahasan: ${p.angle}` : '');
+  return [{ json: { ok: true, chatId: ctx.chatId, notes, planId: p.id, keyword: p.keyword || '', planTitle: p.title } }];
+}
+// Pesan hasil prioritas / lewati / hapus (menggantikan pesan detail rencana).
+function planActionInfo() {
+  const r = $input.first().json;
+  const ctx = $('__ROUTE__').first().json;
+  const p = r.data || {};
+  const title = p.title ? ` “${p.title}”` : '';
+  const MSG = {
+    prio: `📌 #${ctx.planId}${title} sekarang prioritas teratas.\n\n/tulis untuk menulisnya sekarang · /roadmap untuk melihat daftar.`,
+    skip: `⏭ #${ctx.planId}${title} dilewati. Bisa diaktifkan lagi dari /roadmap.`,
+    del: `🗑 Rencana #${ctx.planId} dihapus dari roadmap.`,
+  };
+  const text = r.error ? '⚠️ Gagal: ' + String(r.error.message || JSON.stringify(r.error)).slice(0, 200) : MSG['__KIND__'];
+  return [{ json: { body: { chat_id: ctx.chatId, message_id: ctx.messageId, text } } }];
+}
+function preparePlanAdd() {
+  const ctx = $('▶ Tambah rencana').first().json;
+  const top = ($input.first().json.data || [])[0];
+  const sort = (top && typeof top.sort === 'number' ? top.sort : 0) + 10;
+  return [{ json: { body: { title: ctx.title, keyword: ctx.keyword || null, angle: ctx.angle || null, roadmap: 'Tambahan manual', status: 'rencana', sort } } }];
+}
+function planAddInfo() {
+  const r = $input.first().json;
+  const ctx = $('▶ Tambah rencana').first().json;
+  const p = r.data;
+  if (!p || !p.id) return [{ json: { body: { chat_id: ctx.chatId, text: '⚠️ Gagal menambah rencana: ' + String((r.error && r.error.message) || JSON.stringify(r)).slice(0, 200) } } }];
+  return [{
+    json: {
+      body: {
+        chat_id: ctx.chatId,
+        text: `➕ Ditambahkan ke roadmap (Tambahan manual):\n#${p.id} ${p.title}${p.keyword ? `\n🔑 ${p.keyword}` : ''}\n\nPosisinya di akhir antrean.`,
+        reply_markup: { inline_keyboard: [[{ text: '✍️ Tulis sekarang', callback_data: `rmw:${p.id}` }, { text: '📌 Jadikan prioritas', callback_data: `rmp:${p.id}` }]] },
+      },
+    },
+  }];
+}
+function prepareRoadmapIdeas() {
+  const ctx = $('Mulai roadmap baru').first().json;
+  const existing = ($input.first().json.data || []).filter((p) => p.status !== 'usulan');
+  const titles = existing.map((p) => p.title).filter(Boolean).slice(-80);
+  return [{
+    json: {
+      request: {
+        model: $env.LLM_MODEL,
+        max_tokens: 3000,
+        messages: [
+          { role: 'system', content: __SYSTEM_RM__ },
+          {
+            role: 'user',
+            content: `Fokus roadmap: ${ctx.focus}\n\n` +
+              (titles.length ? `Judul yang SUDAH ada (jangan diulang):\n- ${titles.join('\n- ')}\n\n` : '') +
+              'Mulai LANGSUNG dengan <artikel>.',
+          },
+        ],
+      },
+    },
+  }];
+}
+// Ambil blok <artikel> dari jawaban AI → baris article_plans berstatus "usulan".
+function parseRoadmapIdeas() {
+  const r = $input.first().json;
+  const ctx = $('Mulai roadmap baru').first().json;
+  const existing = ($('Directus: daftar rencana (usulan)').first().json.data || []).filter((p) => p.status !== 'usulan');
+  const fail = (error) => [{ json: { ok: false, error } }];
+  if (r.error) return fail('Gagal memanggil AI: ' + String(r.error.message || JSON.stringify(r.error)).slice(0, 200));
+  const choice = (r.choices || [])[0];
+  if (!choice) return fail('Jawaban AI kosong. Coba lagi sebentar lagi.');
+  const m = choice.message || {};
+  let text = Array.isArray(m.content) ? m.content.map((p) => (typeof p === 'string' ? p : p.text || '')).join('') : String(m.content || '');
+  if (!text.trim() && m.reasoning_content) text = String(m.reasoning_content);
+  const clean = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const grab = (b, k) => { const mm = b.match(new RegExp('<' + k + '>([\\s\\S]*?)</' + k + '>', 'i')); return mm ? clean(mm[1]) : ''; };
+  const seen = new Set(existing.map((p) => String(p.title || '').toLowerCase().trim()));
+  const ideas = [];
+  for (const mm of text.matchAll(/<artikel>([\s\S]*?)<\/artikel>/gi)) {
+    const title = grab(mm[1], 'judul').slice(0, 200);
+    if (!title || seen.has(title.toLowerCase())) continue;
+    seen.add(title.toLowerCase());
+    ideas.push({ title, keyword: grab(mm[1], 'keyword').toLowerCase().slice(0, 100), angle: grab(mm[1], 'sudut').slice(0, 500) });
+  }
+  if (ideas.length < 3) {
+    if (choice.finish_reason === 'length') return fail('Jawaban AI terpotong. Coba lagi.');
+    return fail('AI tidak memberi daftar yang bisa dibaca (' + ideas.length + ' judul). Cuplikan: ' + (text.trim().slice(0, 150).replace(/\s+/g, ' ') || '(kosong)'));
+  }
+  const nums = existing.map((p) => (String(p.roadmap || '').match(/^Roadmap (\d+)/) || [])[1]).filter(Boolean).map(Number);
+  const roadmap = `Roadmap ${(nums.length ? Math.max(...nums) : 0) + 1} · ${ctx.focus}`;
+  const maxSort = Math.max(0, ...existing.map((p) => (typeof p.sort === 'number' ? p.sort : 0)));
+  const items = ideas.slice(0, __RM_COUNT__).map((x, i) => ({ ...x, roadmap, status: 'usulan', sort: maxSort + (i + 1) * 10 }));
+  return [{ json: { ok: true, roadmap, items } }];
+}
+function roadmapIdeasMessage() {
+  __ESC__
+  const r = $input.first().json;
+  const ctx = $('Mulai roadmap baru').first().json;
+  const u = $('Olah usulan roadmap').first().json;
+  const saved = Array.isArray(r.data) ? r.data : [];
+  if (!saved.length) {
+    return [{ json: { body: { chat_id: ctx.chatId, text: '⚠️ Gagal menyimpan usulan ke CMS: ' + String((r.error && r.error.message) || JSON.stringify(r)).slice(0, 200) } } }];
+  }
+  const ids = saved.map((p) => p.id);
+  const range = `${Math.min(...ids)}-${Math.max(...ids)}`;
+  const list = [...saved].sort((a, b) => (a.sort || 0) - (b.sort || 0)).map((p, i) =>
+    `${i + 1}. <b>${esc(p.title)}</b>\n🔑 ${esc(p.keyword || '-')}${p.angle ? `\n<i>${esc(String(p.angle).slice(0, 200))}</i>` : ''}`).join('\n\n');
+  const text = `💡 <b>Usulan ${esc(u.roadmap)}</b> — ${saved.length} judul\n\n${list}\n\n` +
+    'Simpan ke roadmap? Setelah disimpan, judul yang kurang cocok bisa dilewati/dihapus satu per satu lewat /roadmap.';
+  return [{
+    json: {
+      body: {
+        chat_id: ctx.chatId, text, parse_mode: 'HTML',
+        reply_markup: { inline_keyboard: [
+          [{ text: '✅ Simpan semua', callback_data: `rmok:${range}` }],
+          [{ text: '🔄 Usulkan ulang', callback_data: `rmre:${range}` }, { text: '🗑 Batal', callback_data: `rmx:${range}` }],
+        ] },
+      },
+    },
+  }];
+}
+
+// 8a. /roadmap → daftar.
+branch('▶ Roadmap', ['rm_list'], [480, 2600]);
+dx('Directus: daftar roadmap', 'GET', PLANS, {
+  query: [
+    { name: 'filter[status][_neq]', value: 'usulan' },
+    { name: 'fields', value: 'id,title,keyword,roadmap,status,sort' },
+    { name: 'sort', value: 'id' },
+    { name: 'limit', value: '-1' },
+  ],
+}, [720, 2600], true);
+code('Susun roadmap', roadmapList, [960, 2600]);
+tg('Telegram: kirim roadmap', 'sendMessage', sendBody, [1200, 2600]);
+link('▶ Roadmap', 'Directus: daftar roadmap', 'Susun roadmap', 'Telegram: kirim roadmap');
+
+// 8b. Ketuk rencana → detail + tombol aksi.
+branch('▶ Detail rencana', ['rm_detail'], [480, 2780]);
+answer('Telegram: jawab detail', '', [720, 2780]);
+dx('Directus: ambil rencana', 'GET', `${PLANS}/{{ $('▶ Detail rencana').first().json.planId }}`, {
+  query: [{ name: 'fields', value: 'id,title,keyword,angle,roadmap,status,article.id,article.slug' }],
+}, [960, 2780], true);
+code('Susun detail rencana', planDetail, [1200, 2780]);
+tg('Telegram: kirim detail', 'sendMessage', sendBody, [1440, 2780]);
+link('▶ Detail rencana', 'Telegram: jawab detail', 'Directus: ambil rencana', 'Susun detail rencana', 'Telegram: kirim detail');
+
+// 8c. ✍️ Tulis sekarang / /tulis [#id] → pipeline draft (Mulai draft).
+branch('▶ Tulis rencana', ['rm_write'], [480, 2960]);
+answer('Telegram: jawab tulis', 'Mulai menulis…', [720, 2960]);
+dropButtons('Telegram: tutup detail', '▶ Tulis rencana', [960, 2960]);
+dx('Directus: pilih rencana', 'GET', PLANS, {
+  query: [
+    {
+      name: 'filter',
+      value: "={{ JSON.stringify($('▶ Tulis rencana').first().json.planId ? { _and: [ { id: { _eq: $('▶ Tulis rencana').first().json.planId } }, { status: { _eq: 'rencana' } } ] } : { status: { _eq: 'rencana' } }) }}",
+    },
+    { name: 'fields', value: 'id,title,keyword,angle' },
+    { name: 'sort', value: 'sort,id' },
+    { name: 'limit', value: '1' },
+  ],
+}, [1200, 2960], true);
+code('Siapkan draft rencana', planToDraft, [1440, 2960]);
+filterNode('✓ Rencana siap', 'i.json.ok', [1680, 2960]);
+filterNode('✗ Rencana tidak ada', '!i.json.ok', [1680, 3100]);
+tg('Telegram: rencana tidak ada', 'sendMessage', '={{ JSON.stringify({ chat_id: $json.chatId, text: $json.text }) }}', [1920, 3100]);
+link('▶ Tulis rencana', 'Telegram: jawab tulis', 'Telegram: tutup detail', 'Directus: pilih rencana', 'Siapkan draft rencana');
+link('Siapkan draft rencana', '✓ Rencana siap', 'Mulai draft');
+link('Siapkan draft rencana', '✗ Rencana tidak ada', 'Telegram: rencana tidak ada');
+
+// 8d. 📌 Jadikan prioritas (juga mengaktifkan lagi yang dilewati).
+branch('▶ Prioritaskan', ['rm_prio'], [480, 3260]);
+answer('Telegram: jawab prioritas', 'Dipindah ke urutan teratas', [720, 3260]);
+dx('Directus: prioritas teratas', 'GET', PLANS, {
+  query: [
+    { name: 'filter[status][_in]', value: 'rencana,dilewati' },
+    { name: 'filter[sort][_nnull]', value: 'true' },
+    { name: 'fields', value: 'sort' },
+    { name: 'sort', value: 'sort' },
+    { name: 'limit', value: '1' },
+  ],
+}, [960, 3260], true);
+dx('Directus: set prioritas', 'PATCH', `${PLANS}/{{ $('▶ Prioritaskan').first().json.planId }}`, {
+  json: "={{ JSON.stringify({ status: 'rencana', sort: (typeof (($json.data || [])[0] || {}).sort === 'number' ? $json.data[0].sort : 0) - 1 }) }}",
+}, [1200, 3260], true);
+codeX('Info prioritas', planActionInfo, { __ROUTE__: '▶ Prioritaskan', __KIND__: 'prio' }, [1440, 3260]);
+editMsg('Telegram: hasil prioritas', [1680, 3260]);
+link('▶ Prioritaskan', 'Telegram: jawab prioritas', 'Directus: prioritas teratas', 'Directus: set prioritas', 'Info prioritas', 'Telegram: hasil prioritas');
+
+// 8e. ⏭ Lewati.
+branch('▶ Lewati rencana', ['rm_skip'], [480, 3420]);
+answer('Telegram: jawab lewati', 'Dilewati', [720, 3420]);
+dx('Directus: lewati rencana', 'PATCH', `${PLANS}/{{ $('▶ Lewati rencana').first().json.planId }}`, {
+  json: `={{ JSON.stringify({ status: 'dilewati' }) }}`,
+}, [960, 3420], true);
+codeX('Info lewati', planActionInfo, { __ROUTE__: '▶ Lewati rencana', __KIND__: 'skip' }, [1200, 3420]);
+editMsg('Telegram: hasil lewati', [1440, 3420]);
+link('▶ Lewati rencana', 'Telegram: jawab lewati', 'Directus: lewati rencana', 'Info lewati', 'Telegram: hasil lewati');
+
+// 8f. 🗑 Hapus rencana.
+branch('▶ Hapus rencana', ['rm_delete'], [480, 3580]);
+answer('Telegram: jawab hapus', 'Dihapus', [720, 3580]);
+dx('Directus: hapus rencana', 'DELETE', `${PLANS}/{{ $('▶ Hapus rencana').first().json.planId }}`, {}, [960, 3580], true);
+codeX('Info hapus', planActionInfo, { __ROUTE__: '▶ Hapus rencana', __KIND__: 'del' }, [1200, 3580]);
+editMsg('Telegram: hasil hapus', [1440, 3580]);
+link('▶ Hapus rencana', 'Telegram: jawab hapus', 'Directus: hapus rencana', 'Info hapus', 'Telegram: hasil hapus');
+
+// 8g. /tambah judul | kata kunci | sudut → di akhir antrean.
+branch('▶ Tambah rencana', ['rm_add'], [480, 3740]);
+dx('Directus: prioritas terakhir', 'GET', PLANS, {
+  query: [
+    { name: 'filter[sort][_nnull]', value: 'true' },
+    { name: 'fields', value: 'sort' },
+    { name: 'sort', value: '-sort' },
+    { name: 'limit', value: '1' },
+  ],
+}, [720, 3740], true);
+code('Siapkan rencana baru', preparePlanAdd, [960, 3740]);
+dx('Directus: simpan rencana', 'POST', PLANS, { json: '={{ JSON.stringify($json.body) }}' }, [1200, 3740], true);
+code('Info tambah', planAddInfo, [1440, 3740]);
+tg('Telegram: info tambah', 'sendMessage', sendBody, [1680, 3740]);
+link('▶ Tambah rencana', 'Directus: prioritas terakhir', 'Siapkan rencana baru', 'Directus: simpan rencana', 'Info tambah', 'Telegram: info tambah');
+
+// 8h. /roadmapbaru <fokus> (juga dari 🔄 Usulkan ulang) → AI usul 8 judul → simpan sbg "usulan".
+branch('▶ Roadmap baru', ['rm_new'], [480, 3900]);
+code('Mulai roadmap baru', function () { return $input.all(); }, [600, 3900]);
+tg('Telegram: info usulan', 'sendMessage',
+  `={{ JSON.stringify({ chat_id: $json.chatId, text: '⏳ Menyusun ${RM_COUNT} usulan judul untuk fokus “' + $json.focus + '”… (±1 menit)' }) }}`, [720, 3900], true);
+dx('Directus: daftar rencana (usulan)', 'GET', PLANS, {
+  query: [
+    { name: 'fields', value: 'title,roadmap,status,sort' },
+    { name: 'sort', value: 'id' },
+    { name: 'limit', value: '-1' },
+  ],
+}, [960, 3900], true);
+code('Siapkan usulan roadmap', prepareRoadmapIdeas, [1200, 3900]);
+llm('AI: usulan roadmap', [1440, 3900], 180000);
+code('Olah usulan roadmap', parseRoadmapIdeas, [1680, 3900]);
+filterNode('✓ Usulan valid', 'i.json.ok', [1920, 3900]);
+filterNode('✗ Usulan gagal', '!i.json.ok', [1920, 4060]);
+tg('Telegram: usulan gagal', 'sendMessage', errorBody('Mulai roadmap baru'), [2160, 4060]);
+dx('Directus: simpan usulan', 'POST', PLANS, { json: '={{ JSON.stringify($json.items) }}' }, [2160, 3900], true);
+code('Susun pesan usulan', roadmapIdeasMessage, [2400, 3900]);
+tg('Telegram: kirim usulan', 'sendMessage', sendBody, [2640, 3900]);
+link('▶ Roadmap baru', 'Mulai roadmap baru', 'Telegram: info usulan', 'Directus: daftar rencana (usulan)', 'Siapkan usulan roadmap', 'AI: usulan roadmap', 'Olah usulan roadmap');
+link('Olah usulan roadmap', '✓ Usulan valid', 'Directus: simpan usulan', 'Susun pesan usulan', 'Telegram: kirim usulan');
+link('Olah usulan roadmap', '✗ Usulan gagal', 'Telegram: usulan gagal');
+
+// 8i. ✅ Simpan semua usulan → rencana.
+branch('▶ Simpan usulan', ['rm_save'], [480, 4220]);
+answer('Telegram: jawab simpan', 'Menyimpan…', [720, 4220]);
+dropButtons('Telegram: tutup usulan (simpan)', '▶ Simpan usulan', [960, 4220]);
+dx('Directus: usulan → rencana', 'PATCH', PLANS, {
+  json: `={{ JSON.stringify({ query: { filter: ${batchFilter('▶ Simpan usulan')}, limit: -1 }, data: { status: 'rencana' } }) }}`,
+}, [1200, 4220], true);
+tg('Telegram: info simpan', 'sendMessage',
+  `={{ JSON.stringify({ chat_id: $('▶ Simpan usulan').first().json.chatId, text: $json.error ? '⚠️ Gagal menyimpan usulan: ' + String($json.error.message || '').slice(0, 200) : (($json.data || []).length ? '✅ ' + $json.data.length + ' rencana disimpan ke ' + $json.data[0].roadmap + '.\\n\\n/roadmap untuk melihat & memilih · /tulis untuk menulis prioritas teratas' : 'Usulan ini sudah diproses sebelumnya.') }) }}`,
+  [1440, 4220]);
+link('▶ Simpan usulan', 'Telegram: jawab simpan', 'Telegram: tutup usulan (simpan)', 'Directus: usulan → rencana', 'Telegram: info simpan');
+
+// 8j. 🗑 Batal usulan → hapus.
+branch('▶ Buang usulan', ['rm_discard'], [480, 4380]);
+answer('Telegram: jawab buang', 'Usulan dibuang', [720, 4380]);
+dropButtons('Telegram: tutup usulan (buang)', '▶ Buang usulan', [960, 4380]);
+dx('Directus: hapus usulan', 'DELETE', PLANS, {
+  json: `={{ JSON.stringify({ query: { filter: ${batchFilter('▶ Buang usulan')}, limit: -1 } }) }}`,
+}, [1200, 4380], true);
+tg('Telegram: info buang', 'sendMessage',
+  `={{ JSON.stringify({ chat_id: $('▶ Buang usulan').first().json.chatId, text: '🗑 Usulan dibuang. Buat lagi kapan saja dengan /roadmapbaru <fokus>.' }) }}`, [1440, 4380], true);
+link('▶ Buang usulan', 'Telegram: jawab buang', 'Telegram: tutup usulan (buang)', 'Directus: hapus usulan', 'Telegram: info buang');
+
+// 8k. 🔄 Usulkan ulang → baca fokus dari nama roadmap, buang usulan lama, ulangi 8h.
+branch('▶ Usulkan ulang', ['rm_redo'], [480, 4540]);
+answer('Telegram: jawab ulang', 'Menyusun ulang…', [720, 4540]);
+dropButtons('Telegram: tutup usulan (ulang)', '▶ Usulkan ulang', [960, 4540]);
+dx('Directus: baca usulan lama', 'GET', PLANS, {
+  query: [
+    { name: 'filter', value: `={{ JSON.stringify(${batchFilter('▶ Usulkan ulang')}) }}` },
+    { name: 'fields', value: 'roadmap' },
+    { name: 'limit', value: '1' },
+  ],
+}, [1200, 4540], true);
+dx('Directus: hapus usulan lama', 'DELETE', PLANS, {
+  json: `={{ JSON.stringify({ query: { filter: ${batchFilter('▶ Usulkan ulang')}, limit: -1 } }) }}`,
+}, [1440, 4540], true);
+code('Fokus ulang', function () {
+  const ctx = $('▶ Usulkan ulang').first().json;
+  const name = (($('Directus: baca usulan lama').first().json.data || [])[0] || {}).roadmap || '';
+  const focus = name.split(' · ').slice(1).join(' · ').trim();
+  return focus ? [{ json: { chatId: ctx.chatId, focus } }] : [];
+}, [1680, 4540]);
+link('▶ Usulkan ulang', 'Telegram: jawab ulang', 'Telegram: tutup usulan (ulang)', 'Directus: baca usulan lama', 'Directus: hapus usulan lama', 'Fokus ulang', 'Mulai roadmap baru');
 
 // ── Tulis file ────────────────────────────────────────────────────────────
 const workflow = {
